@@ -1,0 +1,144 @@
+from dataclasses import dataclass
+from enum import Enum
+from typing import List, Dict, Optional
+
+
+# USER TABLE___________________________________________________________
+@dataclass
+class UserRecord:
+    userId: str
+    firstName: str
+    lastName: str
+    email: str
+    createdAt: str
+    executionSocketUrl: Optional[str] = None
+    chatSocketUrl: Optional[str] = None
+    currentAssessmentTimestamp: Optional[str] = None
+
+
+# QUESTION BANK TABLE__________________________________________________
+class Difficulty(Enum):
+    EASY = "easy"
+    MEDIUM = "medium"
+    HARD = "hard"
+
+
+class Topic(Enum):
+    ARRAY = "Array"
+    STRING = "String"
+    HASH_TABLE = "Hash Table"
+    DYNAMIC_PROGRAMMING = "Dynamic Programming"
+    SORTING = "Sorting"
+    GREEDY = "Greedy"
+    DEPTH_FIRST_SEARCH = "Depth-First Search"
+    BINARY_SEARCH = "Binary Search"
+    MATRIX = "Matrix"
+    BREADTH_FIRST_SEARCH = "Breadth-First Search"
+    TREE = "Tree"
+    BIT_MANIPULATION = "Bit Manipulation"
+    TWO_POINTERS = "Two Pointers"
+    HEAP = "Heap (Priority Queue)"
+    BINARY_TREE = "Binary Tree"
+    STACK = "Stack"
+    GRAPH = "Graph"
+    SLIDING_WINDOW = "Sliding Window"
+    LINKED_LIST = "Linked List"
+    ORDERED_SET = "Ordered Set"
+    QUEUE = "Queue"
+    RECURSION = "Recursion"
+
+
+@dataclass
+class QuestionRecord:
+    questionId: str
+    topics: List[Topic]  # Array of Topic enums
+    difficulty: Difficulty
+    title: str
+    description: str
+    testCases: List[str]
+    testAnswers: List[str]
+    starterCode: str
+    hints: List[str]
+
+
+# ASSESSMENTS TABLE____________________________________________________
+class Status(Enum):
+    COMPLETE = "complete"
+    ONGOING = "ongoing"
+    INCOMPLETE = "incomplete"
+
+
+class AttemptStatus(Enum):
+    SUCCESS = "success"
+    FAIL = "fail"
+
+
+class QuestionStatus(Enum):
+    PASS = "pass"
+    INCOMPLETE = "incomplete"
+    FAIL = "fail"
+
+
+@dataclass
+class Attempt:
+    execTimeTaken: int  # Time taken in seconds
+    execMemoryTaken: int  # Memory taken in KB
+    status: AttemptStatus  # Status of the attempt (success or fail)
+
+
+@dataclass
+class QuestionsDone:
+    questionId: str
+    attempts: List[Attempt]
+    timeStarted: str
+    timeEnded: str
+    bestExecTime: int
+    bestExecMem: int
+    testCasesPassed: int
+    status: QuestionStatus
+
+
+@dataclass
+class MetricsValues:
+    count: int
+    total: int
+
+
+@dataclass
+class Metrics:
+    # Keyed by scope: count and total
+    scope: Dict[str, MetricsValues]
+
+
+@dataclass
+class AssessmentRecord:
+    userId: str  # User ID as partition key
+    timestamp: str  # Timestamp (as sort key)
+    selectedTopics: List[Topic]
+    selectedDifficulty: List[Difficulty]
+    selectedDuration: int
+    selectedNumberOfQuestions: int
+    status: Status
+    metrics: Metrics
+    questions: List[QuestionsDone]
+
+
+# ASSESSMENT QUESTION LOCATOR TABLE____________________________________
+@dataclass
+class LocationEntry:
+    # assessmentTimestamp -> array of indices
+    assessmentTimestamp: Dict[str, List[str]]
+
+
+@dataclass
+class QuestionLocatorRecord:
+    userId: str  # User ID as partition key
+    scope: str  # Scope as sort key
+    location: LocationEntry
+
+
+# METRICS TABLE_________________________________________________________
+@dataclass
+class MetricsRecord:
+    userId: str
+    metrics: Metrics
