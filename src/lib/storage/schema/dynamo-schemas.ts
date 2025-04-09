@@ -11,7 +11,7 @@ export type UserRecord = {
 };
 
 // Example
-// user: UserRecord = {}
+// let user: UserRecord = {}
 
 // QUESTION BANK TABLE__________________________________________________
 export enum Difficulty {
@@ -57,6 +57,29 @@ export type QuestionRecord = {
   hints: string[];
 };
 
+// METRICS TABLE_________________________________________________________
+export enum MetricTypes {
+  ATTEMPTS = "attempts",
+  EXECUTION_TIME = "execution_time",
+  EXECUTION_MEMORY = "execution_memory",
+  TIME_SPENT = "time_spent",
+}
+
+export type Metrics = Record<
+  MetricTypes,
+  {
+    [scope: string]: {
+      count: number;
+      total: number;
+    };
+  }
+>;
+
+export type MetricsRecord = {
+  userId: string;
+  metrics: Metrics;
+};
+
 // ASSESSMENTS TABLE____________________________________________________
 export enum Status {
   COMPLETE = "complete",
@@ -92,19 +115,12 @@ export type QuestionsDone = {
   status: QuestionStatus;
 };
 
-export type Metrics = {
-  [scope: string]: {
-    count: number;
-    total: number;
-  };
-};
-
 export type AssessmentRecord = {
   userId: string; // User ID as partition key
   timestamp: string; // Timestamp (as sort key)
   selectedTopics: Topic[];
   selectedDifficulty: Difficulty[];
-  selectedDuration: number;
+  selectedDuration: number; // Duration in minutes
   selectedNumberOfQuestions: number;
   status: Status;
   metrics: Metrics;
@@ -120,10 +136,4 @@ export type QuestionLocatorRecord = {
   userId: string; // User ID as partition key
   scope: string; // Scope as sort key
   location: LocationEntry;
-};
-
-// METRICS TABLE_________________________________________________________
-export type MetricsRecord = {
-  userId: string;
-  metrics: Metrics;
 };

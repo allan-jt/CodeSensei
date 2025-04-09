@@ -16,6 +16,9 @@ class UserRecord:
     currentAssessmentTimestamp: Optional[str] = None
 
 
+# user: UserRecord = UserRecord()
+
+
 # QUESTION BANK TABLE__________________________________________________
 class Difficulty(Enum):
     EASY = "easy"
@@ -61,6 +64,36 @@ class QuestionRecord:
     hints: List[str]
 
 
+# METRICS TABLE_________________________________________________________
+class MetricTypes(Enum):
+    ATTEMPTS = "attempts"
+    EXECUTION_TIME = "execution_time"
+    EXECUTION_MEMORY = "execution_memory"
+    TIME_SPENT = "time_spent"
+
+
+@dataclass
+class MetricsValues:
+    count: int
+    total: int
+
+
+@dataclass
+class MetricScopes:
+    scopes: Dict[str, MetricsValues]
+
+
+@dataclass
+class Metrics:
+    metrics: Dict[MetricTypes, MetricScopes]
+
+
+@dataclass
+class MetricsRecord:
+    userId: str
+    metrics: Metrics
+
+
 # ASSESSMENTS TABLE____________________________________________________
 class Status(Enum):
     COMPLETE = "complete"
@@ -99,24 +132,12 @@ class QuestionsDone:
 
 
 @dataclass
-class MetricsValues:
-    count: int
-    total: int
-
-
-@dataclass
-class Metrics:
-    # Keyed by scope: count and total
-    scope: Dict[str, MetricsValues]
-
-
-@dataclass
 class AssessmentRecord:
     userId: str  # User ID as partition key
     timestamp: str  # Timestamp (as sort key)
     selectedTopics: List[Topic]
     selectedDifficulty: List[Difficulty]
-    selectedDuration: int
+    selectedDuration: int  # Duration in minutes
     selectedNumberOfQuestions: int
     status: Status
     metrics: Metrics
@@ -135,10 +156,3 @@ class QuestionLocatorRecord:
     userId: str  # User ID as partition key
     scope: str  # Scope as sort key
     location: LocationEntry
-
-
-# METRICS TABLE_________________________________________________________
-@dataclass
-class MetricsRecord:
-    userId: str
-    metrics: Metrics
