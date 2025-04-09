@@ -1,3 +1,11 @@
+export enum DynamoTables {
+  USERS = "UserTable",
+  QUESTION_BANK = "QuestionBankTable",
+  ASSESSMENTS = "AssessmentsTable",
+  ASSESSMENT_QUESTION_LOCATOR = "AssessmentQuestionLocatorTable",
+  METRICS = "MetricsTable",
+}
+
 // USER TABLE___________________________________________________________
 export type UserRecord = {
   userId: string;

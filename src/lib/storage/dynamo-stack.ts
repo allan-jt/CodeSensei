@@ -1,20 +1,21 @@
 import * as cdk from "aws-cdk-lib";
-import { Table } from "aws-cdk-lib/aws-dynamodb";
+import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
+import { DynamoTables } from "./schema/dynamo-schemas";
 
 export class DynamoStack extends cdk.Stack {
-  public readonly userTable: Table;
-  public readonly questionBankTable: Table;
-  public readonly assessmentsTable: Table;
-  public readonly assessmentQuestionLocatorTable: Table;
-  public readonly metricsTable: Table;
+  public readonly userTable: TableV2;
+  public readonly questionBankTable: TableV2;
+  public readonly assessmentsTable: TableV2;
+  public readonly assessmentQuestionLocatorTable: TableV2;
+  public readonly metricsTable: TableV2;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // USERS
-    this.userTable = new Table(this, "UserTable", {
-      tableName: "UserTable",
+    this.userTable = new TableV2(this, DynamoTables.USERS, {
+      tableName: DynamoTables.USERS,
       partitionKey: {
         name: "userId",
         type: cdk.aws_dynamodb.AttributeType.STRING,
@@ -23,18 +24,18 @@ export class DynamoStack extends cdk.Stack {
     });
 
     // QUESTION BANK
-    this.questionBankTable = new Table(this, "QuestionBankTable", {
-      tableName: "QuestionBankTable",
+    this.questionBankTable = new TableV2(this, DynamoTables.QUESTION_BANK, {
+      tableName: DynamoTables.QUESTION_BANK,
       partitionKey: {
         name: "questionId",
-        type: cdk.aws_dynamodb.AttributeType.NUMBER,
+        type: cdk.aws_dynamodb.AttributeType.STRING,
       },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     // ASSESSMENTS
-    this.assessmentsTable = new Table(this, "AssessmentsTable", {
-      tableName: "AssessmentsTable",
+    this.assessmentsTable = new TableV2(this, DynamoTables.ASSESSMENTS, {
+      tableName: DynamoTables.ASSESSMENTS,
       partitionKey: {
         name: "userId",
         type: cdk.aws_dynamodb.AttributeType.STRING,
@@ -47,11 +48,11 @@ export class DynamoStack extends cdk.Stack {
     });
 
     // ASSESSMENT QUESTION LOCATOR
-    this.assessmentQuestionLocatorTable = new Table(
+    this.assessmentQuestionLocatorTable = new TableV2(
       this,
-      "AssessmentQuestionLocatorTable",
+      DynamoTables.ASSESSMENT_QUESTION_LOCATOR,
       {
-        tableName: "AssessmentQuestionLocatorTable",
+        tableName: DynamoTables.ASSESSMENT_QUESTION_LOCATOR,
         partitionKey: {
           name: "userId",
           type: cdk.aws_dynamodb.AttributeType.STRING,
@@ -65,8 +66,8 @@ export class DynamoStack extends cdk.Stack {
     );
 
     // METRICS
-    this.metricsTable = new Table(this, "MetricsTable", {
-      tableName: "MetricsTable",
+    this.metricsTable = new TableV2(this, DynamoTables.METRICS, {
+      tableName: DynamoTables.METRICS,
       partitionKey: {
         name: "userId",
         type: cdk.aws_dynamodb.AttributeType.STRING,

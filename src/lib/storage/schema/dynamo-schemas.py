@@ -3,6 +3,15 @@ from enum import Enum
 from typing import List, Dict, Optional
 
 
+# TABLE NAMES___________________________________________________________
+class DynamoTables(Enum):
+    USERS = ("UserTable",)
+    QUESTION_BANK = "QuestionBankTable"
+    ASSESSMENTS = "AssessmentsTable"
+    ASSESSMENT_QUESTION_LOCATOR = "AssessmentQuestionLocatorTable"
+    METRICS = "MetricsTable"
+
+
 # USER TABLE___________________________________________________________
 @dataclass
 class UserRecord:
