@@ -1,7 +1,7 @@
 SRC = ./src
 BIN = ${SRC}/bin
 LIB = ${SRC}/lib
-DATA = ${LIB}/storage/scripts
+DYNAMO_DATA = ${LIB}/storage/dynamo-stack/scripts
 
 CMD = cd ${SRC} && cdk
 
@@ -17,8 +17,8 @@ destroy_all:
 destroy:
 	${CMD} destroy $(filter-out $@,$(MAKECMDGOALS))
 
-seed:
-	cd ${DATA} && npx ts-node seed-users-dynamo.ts $(filter-out $@,$(MAKECMDGOALS))
+seed_dynamo:
+	cd ${DYNAMO_DATA} && npx ts-node seed-dynamo.ts $(filter-out $@,$(MAKECMDGOALS))
 
 %:
 	@:

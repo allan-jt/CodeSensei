@@ -12,7 +12,7 @@ import {
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 
-dotenv.config({ path: path.join(__dirname, "../../../.env") });
+dotenv.config({ path: path.join(__dirname, "../../../../.env") });
 
 const dynamo = new DynamoDBClient({ region: process.env.AWS_REGION });
 
