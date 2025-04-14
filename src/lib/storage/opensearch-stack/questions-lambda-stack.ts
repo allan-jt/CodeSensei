@@ -1,5 +1,6 @@
 import { PythonFunction } from "@aws-cdk/aws-lambda-python-alpha";
 import * as cdk from "aws-cdk-lib";
+import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 
 interface LambdaStackProps extends cdk.StackProps {
@@ -7,13 +8,16 @@ interface LambdaStackProps extends cdk.StackProps {
   collectionName: string;
   role: cdk.aws_iam.Role;
   region: string;
+  dynamoTable: TableV2;
 }
 
-export class LambdaForOpenSearchStack extends cdk.Stack {
+export class QuestionsLambdaStack extends cdk.Stack {
+  public readonly fn: PythonFunction;
+
   constructor(scope: Construct, id: string, props: LambdaStackProps) {
     super(scope, id, props);
 
-    const fn = new PythonFunction(this, id, {
+    this.fn = new PythonFunction(this, id, {
       entry: __dirname + "/lambda-code",
       runtime: cdk.aws_lambda.Runtime.PYTHON_3_13,
       handler: "handler",
@@ -22,8 +26,12 @@ export class LambdaForOpenSearchStack extends cdk.Stack {
         OPENSEARCH_COLLECTION: props.collectionName,
         OPENSEARCH_ENDPOINT: props.endpoint,
         AWSREGION: props.region,
+        DYNAMO_TABLE_NAME: props.dynamoTable.tableName,
       },
       role: props.role,
+      timeout: cdk.Duration.seconds(60),
     });
+
+    props.dynamoTable.grantReadWriteData(this.fn);
   }
 }
