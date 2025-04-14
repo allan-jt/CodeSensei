@@ -28,14 +28,14 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
           Rules: [
             {
               ResourceType: "collection",
-              Resource: [`collection/${collection.attrId}`],
+              Resource: [`collection/${this.collectionName}`],
             },
           ],
           AWSOwnedKey: true,
         }),
       }
     );
-    // collection.addDependency(encryptionPolicy);
+    collection.addDependency(encryptionPolicy);
 
     const networkPolicy = new cdk.aws_opensearchserverless.CfnSecurityPolicy(
       this,
@@ -48,7 +48,7 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
             Rules: [
               {
                 ResourceType: "collection",
-                Resource: [`collection/${collection.attrId}`],
+                Resource: [`collection/${this.collectionName}`],
               },
             ],
             AllowFromPublic: true,
@@ -56,7 +56,7 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
         ]),
       }
     );
-    // collection.addDependency(networkPolicy);
+    collection.addDependency(networkPolicy);
 
     this.lambdaRole = new cdk.aws_iam.Role(this, "LambdaExecutionRole", {
       assumedBy: new cdk.aws_iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -67,6 +67,7 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
         actions: [
           "aoss:DescribeCollectionItems",
           "aoss:UpdateCollectionItems",
+          "aoss:CreateCollectionItems",
           "aoss:ReadDocument",
           "aoss:WriteDocument",
           "aoss:DescribeIndex",
@@ -84,6 +85,7 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
         actions: ["aoss:APIAccessAll"],
         resources: [
           `arn:aws:aoss:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:collection/${collection.attrId}`,
+          `arn:aws:aoss:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:index/${this.collectionName}/*`,
         ],
       })
     );
@@ -105,7 +107,7 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
             Rules: [
               {
                 ResourceType: "collection",
-                Resource: [`collection/${collection.attrId}`],
+                Resource: [`collection/${this.collectionName}`],
                 Permission: [
                   "aoss:DescribeCollectionItems",
                   "aoss:UpdateCollectionItems",
