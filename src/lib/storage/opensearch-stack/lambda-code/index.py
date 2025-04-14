@@ -26,8 +26,8 @@ def sign_request(method, url, body, region, service="aoss"):
     return request
 
 
-def create_index_if_not_exists(endpoint, region):
-    index_url = f"{endpoint}/questions"
+def create_index_if_not_exists(endpoint, region, collection):
+    index_url = f"{endpoint}/{collection}"
     check_response = requests.get(index_url)
     if check_response.status_code == 200:
         print("Index already exists.")
@@ -52,8 +52,8 @@ def create_index_if_not_exists(endpoint, region):
     print("Index created.")
 
 
-def seed_opensearch(endpoint, region):
-    create_index_if_not_exists(endpoint, region)
+def seed_opensearch(endpoint, region, collection):
+    create_index_if_not_exists(endpoint, region, collection)
 
     dynamodb = boto3.resource("dynamodb")
     table_name = os.environ["DYNAMO_TABLE_NAME"]
@@ -76,7 +76,7 @@ def seed_opensearch(endpoint, region):
         if not question_id or not difficulty:
             continue
 
-        metadata = {"index": {"_index": "questions", "_id": question_id}}
+        metadata = {"index": {"_index": collection, "_id": question_id}}
         doc = {
             "questionId": question_id,
             "difficulty": difficulty,
@@ -97,7 +97,7 @@ def seed_opensearch(endpoint, region):
     print("Bulk insert completed.")
 
 
-def query_opensearch(endpoint, region, topic=None, difficulty=None):
+def query_opensearch(endpoint, region, collection, topic=None, difficulty=None):
     must_clauses = []
 
     if topic:
@@ -111,7 +111,7 @@ def query_opensearch(endpoint, region, topic=None, difficulty=None):
         query = {"query": {"match_all": {}}}
 
     body = json.dumps(query)
-    search_url = f"{endpoint}/questions/_search"
+    search_url = f"{endpoint}/{collection}/_search"
     signed = sign_request("POST", search_url, body, region)
 
     response = requests.post(
@@ -127,15 +127,18 @@ def query_opensearch(endpoint, region, topic=None, difficulty=None):
 def handler(event, context):
     endpoint = os.environ["OPENSEARCH_ENDPOINT"]
     region = os.environ["AWSREGION"]
+    collection = os.environ["OPENSEARCH_COLLECTION"]
 
     if event.get("action") == "seed":
-        seed_opensearch(endpoint, region)
+        seed_opensearch(endpoint, region, collection)
         return {"statusCode": 200, "body": json.dumps("Seeding complete.")}
     elif event.get("action") == "query":
         topic = event.get("topic")
         difficulty = event.get("difficulty")
         try:
-            question_ids = query_opensearch(endpoint, region, topic, difficulty)
+            question_ids = query_opensearch(
+                endpoint, region, collection, topic, difficulty
+            )
             return {"statusCode": 200, "body": json.dumps(question_ids)}
         except Exception as e:
             return {"statusCode": 500, "body": json.dumps({"error": str(e)})}

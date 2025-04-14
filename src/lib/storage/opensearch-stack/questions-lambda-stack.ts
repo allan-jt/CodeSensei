@@ -30,8 +30,26 @@ export class QuestionsLambdaStack extends cdk.Stack {
       },
       role: props.role,
       timeout: cdk.Duration.seconds(60),
+      functionName: "LambdaForOpenSearchService",
     });
 
     props.dynamoTable.grantReadWriteData(this.fn);
   }
 }
+
+/*
+  Expected payload during invokation
+
+  FOR INITIAL SEEDING
+  {
+    "action": "seed"
+  }
+
+  FOR QUERYING (both topic and difficulty are optional -- you don't need both!)
+  {
+    "action": "query",
+    "topic": "{topic}",
+    "difficulty": "{difficulty}",
+  }
+
+*/

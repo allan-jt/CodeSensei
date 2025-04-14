@@ -11,8 +11,13 @@ run_all:
 run:
 	${CMD} deploy $(filter-out $@,$(MAKECMDGOALS))
 
+prune:
+	docker system prune
+
 destroy_all:
 	${CMD} destroy --all
+
+destroy_all_prune: destroy_all prune
 
 destroy:
 	${CMD} destroy $(filter-out $@,$(MAKECMDGOALS))
