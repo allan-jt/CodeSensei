@@ -9,6 +9,15 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const collection = new cdk.aws_opensearchserverless.CfnCollection(
+      this,
+      "QuestionsCollection",
+      {
+        name: this.collectionName,
+        type: "SEARCH",
+      }
+    );
+
     const encryptionPolicy = new cdk.aws_opensearchserverless.CfnSecurityPolicy(
       this,
       "EncryptionPolicy",
@@ -19,13 +28,14 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
           Rules: [
             {
               ResourceType: "collection",
-              Resource: [`collection/${this.collectionName}`],
+              Resource: [`collection/${collection.attrId}`],
             },
           ],
           AWSOwnedKey: true,
         }),
       }
     );
+    // collection.addDependency(encryptionPolicy);
 
     const networkPolicy = new cdk.aws_opensearchserverless.CfnSecurityPolicy(
       this,
@@ -38,7 +48,7 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
             Rules: [
               {
                 ResourceType: "collection",
-                Resource: [`collection/${this.collectionName}`],
+                Resource: [`collection/${collection.attrId}`],
               },
             ],
             AllowFromPublic: true,
@@ -46,18 +56,7 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
         ]),
       }
     );
-
-    const collection = new cdk.aws_opensearchserverless.CfnCollection(
-      this,
-      "QuestionsCollection",
-      {
-        name: this.collectionName,
-        type: "SEARCH",
-      }
-    );
-
-    collection.addDependency(encryptionPolicy);
-    collection.addDependency(networkPolicy);
+    // collection.addDependency(networkPolicy);
 
     this.lambdaRole = new cdk.aws_iam.Role(this, "LambdaExecutionRole", {
       assumedBy: new cdk.aws_iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -65,10 +64,26 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
 
     this.lambdaRole.addToPolicy(
       new cdk.aws_iam.PolicyStatement({
-        actions: ["aoss:DescribeCollectionItems", "aoss:UpdateCollectionItems"],
+        actions: [
+          "aoss:DescribeCollectionItems",
+          "aoss:UpdateCollectionItems",
+          "aoss:ReadDocument",
+          "aoss:WriteDocument",
+          "aoss:DescribeIndex",
+        ],
         resources: [
-          `arn:aws:aoss:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:collection/${this.collectionName}`,
+          `arn:aws:aoss:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:collection/${collection.attrId}`,
           `arn:aws:aoss:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:index/${this.collectionName}/*`,
+        ],
+      })
+    );
+
+    this.lambdaRole.addToPolicy(
+      new cdk.aws_iam.PolicyStatement({
+        effect: cdk.aws_iam.Effect.ALLOW,
+        actions: ["aoss:APIAccessAll"],
+        resources: [
+          `arn:aws:aoss:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:collection/${collection.attrId}`,
         ],
       })
     );
@@ -79,31 +94,44 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
       )
     );
 
-    new cdk.aws_opensearchserverless.CfnAccessPolicy(this, "AccessPolicy", {
-      name: "lambda-access",
-      type: "data",
-      policy: JSON.stringify([
-        {
-          Rules: [
-            {
-              ResourceType: "collection",
-              Resource: [`collection/${this.collectionName}`],
-              Permission: [
-                "aoss:DescribeCollectionItems",
-                "aoss:UpdateCollectionItems",
-              ],
-            },
-            {
-              ResourceType: "index",
-              Resource: [`index/${this.collectionName}/*`],
-              Permission: ["aoss:ReadDocument", "aoss:WriteDocument"],
-            },
-          ],
-          Principal: [this.lambdaRole.roleArn],
-        },
-      ]),
-    });
+    const accessPolicy = new cdk.aws_opensearchserverless.CfnAccessPolicy(
+      this,
+      "AccessPolicy",
+      {
+        name: "lambda-access",
+        type: "data",
+        policy: JSON.stringify([
+          {
+            Rules: [
+              {
+                ResourceType: "collection",
+                Resource: [`collection/${collection.attrId}`],
+                Permission: [
+                  "aoss:DescribeCollectionItems",
+                  "aoss:UpdateCollectionItems",
+                  "aoss:CreateCollectionItems",
+                ],
+              },
+              {
+                ResourceType: "index",
+                Resource: [`index/${this.collectionName}/*`],
+                Permission: [
+                  "aoss:CreateIndex",
+                  "aoss:UpdateIndex",
+                  "aoss:DeleteIndex",
+                  "aoss:ReadDocument",
+                  "aoss:WriteDocument",
+                  "aoss:DescribeIndex",
+                ],
+              },
+            ],
+            Principal: [this.lambdaRole.roleArn],
+          },
+        ]),
+      }
+    );
+    // collection.addDependency(accessPolicy);
 
-    this.domainEndpoint = `https://${this.collectionName}.${this.region}.aoss.amazonaws.com`;
+    this.domainEndpoint = collection.attrCollectionEndpoint;
   }
 }

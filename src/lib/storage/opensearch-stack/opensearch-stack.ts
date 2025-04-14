@@ -11,10 +11,18 @@ export class OpenSearchStack extends cdk.Stack {
       this,
       "QuestionsOpenSearchStack"
     );
-    new LambdaForOpenSearchStack(this, "LambdaForOpenSearchStack", {
-      endpoint: opensearch.domainEndpoint,
-      collectionName: opensearch.collectionName,
-      role: opensearch.lambdaRole,
-    });
+
+    const lambdaOS = new LambdaForOpenSearchStack(
+      this,
+      "LambdaForOpenSearchStack",
+      {
+        endpoint: opensearch.domainEndpoint,
+        collectionName: opensearch.collectionName,
+        role: opensearch.lambdaRole,
+        region: this.region,
+      }
+    );
+
+    lambdaOS.addDependency(opensearch);
   }
 }

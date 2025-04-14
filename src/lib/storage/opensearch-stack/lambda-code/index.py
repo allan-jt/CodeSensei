@@ -1,12 +1,15 @@
 import json
 import os
 import requests
+from requests_aws4auth import AWS4Auth
+import boto3
 
 
 def handler(event, context):
     # Get OpenSearch endpoint and region from environment variables
     endpoint = os.environ["OPENSEARCH_ENDPOINT"]
     collectionName = os.environ["OPENSEARCH_COLLECTION"]
+    region = os.environ["AWSREGION"]
 
     # Construct the OpenSearch URL for querying
     url = f"{endpoint}/{collectionName}/_search"
@@ -24,10 +27,21 @@ def handler(event, context):
     if topic:
         query["query"]["bool"]["must"].append({"term": {"topic": topic}})
 
+    # Get AWS credentials for signing the request
+    session = boto3.Session()
+    credentials = session.get_credentials()
+    awsauth = AWS4Auth(
+        credentials.access_key,
+        credentials.secret_key,
+        region,
+        "aoss",
+        session_token=credentials.token,
+    )
+
     headers = {"Content-Type": "application/json"}
 
     # Make a request to OpenSearch
-    response = requests.post(url, json=query, headers=headers)
+    response = requests.post(url, json=query, headers=headers, auth=awsauth)
 
     if response.status_code == 200:
         # If the query is successful, return the question IDs
