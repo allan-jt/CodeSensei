@@ -8,98 +8,139 @@ from botocore.awsrequest import AWSRequest
 from botocore.session import get_session
 
 
-def handler(event, context):
-    endpoint = os.environ[
-        "OPENSEARCH_ENDPOINT"
-    ]  # e.g. https://abc123.us-east-1.aoss.amazonaws.com
-    region = os.environ["AWSREGION"]
-
-    # Create the 'questions' index if it doesn't exist
-    create_index_url = f"{endpoint}/questions"
-    create_index_body = json.dumps(
-        {
-            "mappings": {
-                "properties": {
-                    "questionId": {"type": "keyword"},
-                    "questionText": {"type": "text"},
-                    "difficulty": {"type": "integer"},
-                }
-            }
-        }
-    )
-    hashed_create_body = hashlib.sha256(create_index_body.encode("utf-8")).hexdigest()
-
-    # Prepare request to create the index
+def sign_request(method, url, body, region, service="aoss"):
     session = get_session()
     credentials = session.get_credentials().get_frozen_credentials()
-    create_request = AWSRequest(
-        method="PUT",
-        url=create_index_url,
-        data=create_index_body,
-        headers={
-            "Content-Type": "application/json",
-            "X-Amz-Content-Sha256": hashed_create_body,
-            "Host": endpoint.replace("https://", ""),
-        },
-    )
-
-    # Sign the create index request
-    SigV4Auth(credentials, "aoss", region).add_auth(create_request)
-
-    # Debug log for creating index
-    print(f"Signed create index request headers: {create_request.headers}")
-
-    # Send the create index request
-    try:
-        create_response = requests.put(
-            url=create_request.url,
-            data=create_request.body,
-            headers=dict(create_request.headers),
-        )
-        create_response.raise_for_status()
-        print("Index created successfully.")
-    except Exception as e:
-        print(f"Error creating index: {e}")
-        return {"statusCode": 500, "body": json.dumps({"error": str(e)})}
-
-    # Construct the query (perform a search on 'questions')
-    query = {"query": {"match_all": {}}}
-    body = json.dumps(query)
-
-    # Compute SHA256 hash of the body (required by OpenSearch Serverless)
     hashed_body = hashlib.sha256(body.encode("utf-8")).hexdigest()
-
-    # Create the signed query request
-    search_url = f"{endpoint}/questions/_search"
-    search_request = AWSRequest(
-        method="POST",
-        url=search_url,
+    request = AWSRequest(
+        method=method,
+        url=url,
         data=body,
         headers={
             "Content-Type": "application/json",
             "X-Amz-Content-Sha256": hashed_body,
-            "Host": endpoint.replace("https://", ""),
+            "Host": url.replace("https://", "").split("/")[0],
         },
     )
+    SigV4Auth(credentials, service, region).add_auth(request)
+    return request
 
-    # Sign the search request
-    SigV4Auth(credentials, "aoss", region).add_auth(search_request)
 
-    # Debug log headers for search request
-    print(f"Signed search request headers: {search_request.headers}")
+def create_index_if_not_exists(endpoint, region):
+    index_url = f"{endpoint}/questions"
+    check_response = requests.get(index_url)
+    if check_response.status_code == 200:
+        print("Index already exists.")
+        return
 
-    # Send search request
-    try:
-        response = requests.post(
-            url=search_request.url,
-            data=search_request.body,
-            headers=dict(search_request.headers),
-        )
-        response.raise_for_status()
-        data = response.json()
-        hits = data.get("hits", {}).get("hits", [])
-        question_ids = [hit["_source"]["questionId"] for hit in hits]
-        return {"statusCode": 200, "body": json.dumps(question_ids)}
-    except Exception as e:
-        print(f"Error querying OpenSearch: {e}")
-        return {"statusCode": 500, "body": json.dumps({"error": str(e)})}
+    print("Creating index...")
+    mappings = {
+        "mappings": {
+            "properties": {
+                "questionId": {"type": "keyword"},
+                "difficulty": {"type": "keyword"},
+                "topics": {"type": "keyword"},
+            }
+        }
+    }
+    body = json.dumps(mappings)
+    signed = sign_request("PUT", index_url, body, region)
+    response = requests.put(
+        url=signed.url, data=signed.body, headers=dict(signed.headers)
+    )
+    response.raise_for_status()
+    print("Index created.")
+
+
+def seed_opensearch(endpoint, region):
+    create_index_if_not_exists(endpoint, region)
+
+    dynamodb = boto3.resource("dynamodb")
+    table_name = os.environ["DYNAMO_TABLE_NAME"]
+    table = dynamodb.Table(table_name)
+
+    all_records = []
+    scan_kwargs = {}
+    while True:
+        response = table.scan(**scan_kwargs)
+        all_records.extend(response["Items"])
+        if "LastEvaluatedKey" not in response:
+            break
+        scan_kwargs["ExclusiveStartKey"] = response["LastEvaluatedKey"]
+
+    bulk_body = ""
+    for record in all_records:
+        question_id = record.get("questionId")
+        difficulty = record.get("difficulty")
+        topics = record.get("topics", [])
+        if not question_id or not difficulty:
+            continue
+
+        metadata = {"index": {"_index": "questions", "_id": question_id}}
+        doc = {
+            "questionId": question_id,
+            "difficulty": difficulty,
+            "topics": topics,
+        }
+        bulk_body += json.dumps(metadata) + "\n" + json.dumps(doc) + "\n"
+
+    if not bulk_body:
+        print("No valid records to index.")
+        return
+
+    bulk_url = f"{endpoint}/_bulk"
+    signed = sign_request("POST", bulk_url, bulk_body, region)
+    response = requests.post(
+        url=signed.url, data=signed.body, headers=dict(signed.headers)
+    )
+    response.raise_for_status()
+    print("Bulk insert completed.")
+
+
+def query_opensearch(endpoint, region, topic=None, difficulty=None):
+    must_clauses = []
+
+    if topic:
+        must_clauses.append({"term": {"topics": topic}})
+    if difficulty:
+        must_clauses.append({"term": {"difficulty": difficulty}})
+
+    if must_clauses:
+        query = {"query": {"bool": {"must": must_clauses}}}
+    else:
+        query = {"query": {"match_all": {}}}
+
+    body = json.dumps(query)
+    search_url = f"{endpoint}/questions/_search"
+    signed = sign_request("POST", search_url, body, region)
+
+    response = requests.post(
+        url=signed.url, data=signed.body, headers=dict(signed.headers)
+    )
+    response.raise_for_status()
+
+    data = response.json()
+    hits = data.get("hits", {}).get("hits", [])
+    return [hit["_source"]["questionId"] for hit in hits]
+
+
+def handler(event, context):
+    endpoint = os.environ["OPENSEARCH_ENDPOINT"]
+    region = os.environ["AWSREGION"]
+
+    if event.get("action") == "seed":
+        seed_opensearch(endpoint, region)
+        return {"statusCode": 200, "body": json.dumps("Seeding complete.")}
+    elif event.get("action") == "query":
+        topic = event.get("topic")
+        difficulty = event.get("difficulty")
+        try:
+            question_ids = query_opensearch(endpoint, region, topic, difficulty)
+            return {"statusCode": 200, "body": json.dumps(question_ids)}
+        except Exception as e:
+            return {"statusCode": 500, "body": json.dumps({"error": str(e)})}
+
+    return {
+        "statusCode": 400,
+        "body": json.dumps("Invalid action. Must be 'seed' or 'query'."),
+    }

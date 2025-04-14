@@ -132,7 +132,6 @@ export class QuestionsOpenSearchStack extends cdk.Stack {
         ]),
       }
     );
-    // collection.addDependency(accessPolicy);
 
     this.domainEndpoint = collection.attrCollectionEndpoint;
   }
