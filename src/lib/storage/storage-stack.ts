@@ -8,7 +8,7 @@ export class StorageStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    new DynamoStack(this, "DynamoStack");
+    // new DynamoStack(this, "DynamoStack");
     new OpenSearchStack(this, "OpenSearchStack");
     // new OpenSearchLambdaStack(this, "OpenSearchLambdaStack");
   }

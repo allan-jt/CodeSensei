@@ -12,7 +12,7 @@ export class OpenSearchStack extends cdk.Stack {
       "QuestionsOpenSearchStack"
     );
 
-    const lambdaOS = new LambdaForOpenSearchStack(
+    const lambdaForOS = new LambdaForOpenSearchStack(
       this,
       "LambdaForOpenSearchStack",
       {
@@ -23,6 +23,6 @@ export class OpenSearchStack extends cdk.Stack {
       }
     );
 
-    lambdaOS.addDependency(opensearch);
+    lambdaForOS.addDependency(opensearch);
   }
 }
