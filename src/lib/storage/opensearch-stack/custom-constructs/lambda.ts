@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
+import { Role } from "aws-cdk-lib/aws-iam";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 import path = require("path");
@@ -7,7 +8,7 @@ import path = require("path");
 export interface LambdaProps {
   endpoint: string;
   collectionName: string;
-  role: cdk.aws_iam.Role;
+  role: Role;
   region: string;
   dynamoTable: TableV2;
 }
@@ -18,7 +19,7 @@ export class LambdaCustom extends Construct {
   constructor(scope: Construct, id: string, props: LambdaProps) {
     super(scope, id);
 
-    this.fn = new cdk.aws_lambda.Function(this, "LambdaForOpenSearchService", {
+    this.fn = new Function(this, "LambdaForOpenSearchService", {
       runtime: Runtime.PYTHON_3_13,
       code: Code.fromAsset(path.join(__dirname, "../lambda-code")),
       handler: "index.handler",
