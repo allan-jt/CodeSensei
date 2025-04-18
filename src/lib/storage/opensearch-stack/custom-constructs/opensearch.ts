@@ -1,69 +1,69 @@
 import * as cdk from "aws-cdk-lib";
+import {
+  Effect,
+  ManagedPolicy,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from "aws-cdk-lib/aws-iam";
+import {
+  CfnAccessPolicy,
+  CfnCollection,
+  CfnSecurityPolicy,
+} from "aws-cdk-lib/aws-opensearchserverless";
 import { Construct } from "constructs";
 
-export class OpenSearchCustom extends cdk.Stack {
+export class OpenSearchCustom extends Construct {
   public readonly domainEndpoint: string;
   public readonly collectionName: string = "questions";
-  public readonly lambdaRole: cdk.aws_iam.Role;
+  public readonly lambdaRole: Role;
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
 
-    const collection = new cdk.aws_opensearchserverless.CfnCollection(
-      this,
-      "QuestionsCollection",
-      {
-        name: this.collectionName,
-        type: "SEARCH",
-      }
-    );
+    const collection = new CfnCollection(this, "QuestionsCollection", {
+      name: this.collectionName,
+      type: "SEARCH",
+    });
 
-    const encryptionPolicy = new cdk.aws_opensearchserverless.CfnSecurityPolicy(
-      this,
-      "EncryptionPolicy",
-      {
-        name: "encryption-policy",
-        type: "encryption",
-        policy: JSON.stringify({
+    const encryptionPolicy = new CfnSecurityPolicy(this, "EncryptionPolicy", {
+      name: "encryption-policy",
+      type: "encryption",
+      policy: JSON.stringify({
+        Rules: [
+          {
+            ResourceType: "collection",
+            Resource: [`collection/${this.collectionName}`],
+          },
+        ],
+        AWSOwnedKey: true,
+      }),
+    });
+    collection.addDependency(encryptionPolicy);
+
+    const networkPolicy = new CfnSecurityPolicy(this, "NetworkPolicy", {
+      name: "public-access",
+      type: "network",
+      policy: JSON.stringify([
+        {
           Rules: [
             {
               ResourceType: "collection",
               Resource: [`collection/${this.collectionName}`],
             },
           ],
-          AWSOwnedKey: true,
-        }),
-      }
-    );
-    collection.addDependency(encryptionPolicy);
-
-    const networkPolicy = new cdk.aws_opensearchserverless.CfnSecurityPolicy(
-      this,
-      "NetworkPolicy",
-      {
-        name: "public-access",
-        type: "network",
-        policy: JSON.stringify([
-          {
-            Rules: [
-              {
-                ResourceType: "collection",
-                Resource: [`collection/${this.collectionName}`],
-              },
-            ],
-            AllowFromPublic: true,
-          },
-        ]),
-      }
-    );
+          AllowFromPublic: true,
+        },
+      ]),
+    });
     collection.addDependency(networkPolicy);
 
-    this.lambdaRole = new cdk.aws_iam.Role(this, "LambdaExecutionRole", {
-      assumedBy: new cdk.aws_iam.ServicePrincipal("lambda.amazonaws.com"),
+    this.lambdaRole = new Role(this, "LambdaExecutionRole", {
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
     });
 
     this.lambdaRole.addToPolicy(
-      new cdk.aws_iam.PolicyStatement({
+      new PolicyStatement({
         actions: [
           "aoss:DescribeCollectionItems",
           "aoss:UpdateCollectionItems",
@@ -80,8 +80,8 @@ export class OpenSearchCustom extends cdk.Stack {
     );
 
     this.lambdaRole.addToPolicy(
-      new cdk.aws_iam.PolicyStatement({
-        effect: cdk.aws_iam.Effect.ALLOW,
+      new PolicyStatement({
+        effect: Effect.ALLOW,
         actions: ["aoss:APIAccessAll"],
         resources: [
           `arn:aws:aoss:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:collection/${collection.attrId}`,
@@ -91,47 +91,43 @@ export class OpenSearchCustom extends cdk.Stack {
     );
 
     this.lambdaRole.addManagedPolicy(
-      cdk.aws_iam.ManagedPolicy.fromAwsManagedPolicyName(
+      ManagedPolicy.fromAwsManagedPolicyName(
         "service-role/AWSLambdaBasicExecutionRole"
       )
     );
 
-    const accessPolicy = new cdk.aws_opensearchserverless.CfnAccessPolicy(
-      this,
-      "AccessPolicy",
-      {
-        name: "lambda-access",
-        type: "data",
-        policy: JSON.stringify([
-          {
-            Rules: [
-              {
-                ResourceType: "collection",
-                Resource: [`collection/${this.collectionName}`],
-                Permission: [
-                  "aoss:DescribeCollectionItems",
-                  "aoss:UpdateCollectionItems",
-                  "aoss:CreateCollectionItems",
-                ],
-              },
-              {
-                ResourceType: "index",
-                Resource: [`index/${this.collectionName}/*`],
-                Permission: [
-                  "aoss:CreateIndex",
-                  "aoss:UpdateIndex",
-                  "aoss:DeleteIndex",
-                  "aoss:ReadDocument",
-                  "aoss:WriteDocument",
-                  "aoss:DescribeIndex",
-                ],
-              },
-            ],
-            Principal: [this.lambdaRole.roleArn],
-          },
-        ]),
-      }
-    );
+    const accessPolicy = new CfnAccessPolicy(this, "AccessPolicy", {
+      name: "lambda-access",
+      type: "data",
+      policy: JSON.stringify([
+        {
+          Rules: [
+            {
+              ResourceType: "collection",
+              Resource: [`collection/${this.collectionName}`],
+              Permission: [
+                "aoss:DescribeCollectionItems",
+                "aoss:UpdateCollectionItems",
+                "aoss:CreateCollectionItems",
+              ],
+            },
+            {
+              ResourceType: "index",
+              Resource: [`index/${this.collectionName}/*`],
+              Permission: [
+                "aoss:CreateIndex",
+                "aoss:UpdateIndex",
+                "aoss:DeleteIndex",
+                "aoss:ReadDocument",
+                "aoss:WriteDocument",
+                "aoss:DescribeIndex",
+              ],
+            },
+          ],
+          Principal: [this.lambdaRole.roleArn],
+        },
+      ]),
+    });
 
     this.domainEndpoint = collection.attrCollectionEndpoint;
   }
