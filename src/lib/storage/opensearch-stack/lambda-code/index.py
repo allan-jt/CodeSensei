@@ -1,11 +1,10 @@
 import boto3
 import os
-import json
-import requests
-import hashlib
-from botocore.auth import SigV4Auth
-from botocore.awsrequest import AWSRequest
-from botocore.session import get_session
+import sys
+import urllib.parse
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "opensearch-py"))
+from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
 
 
 def sign_request(method, url, body, region, service="aoss"):
