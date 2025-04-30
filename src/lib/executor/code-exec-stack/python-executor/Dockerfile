@@ -1,5 +1,11 @@
 FROM python:alpine
 
-COPY executor.py .
+WORKDIR /app
 
-CMD ["python", "executor.py"]
+COPY main.py .
+
+RUN pip install --no-cache-dir flask boto3
+
+EXPOSE 80
+
+CMD ["python", "main.py"]

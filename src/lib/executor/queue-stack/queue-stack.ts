@@ -1,16 +1,21 @@
 import * as cdk from "aws-cdk-lib";
+import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import { Construct } from "constructs";
 import path = require("path");
 
+interface QueueStackProps extends cdk.StackProps {
+  readonly fargateService: ApplicationLoadBalancedFargateService;
+}
+
 export class QueueStack extends cdk.Stack {
   public readonly producerLambda: Function;
   public readonly consumerLambda: Function;
   public readonly sqsQueue: Queue;
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: QueueStackProps) {
     super(scope, id, props);
 
     this.sqsQueue = new Queue(this, "ExecutorSQSQueue");
@@ -32,6 +37,9 @@ export class QueueStack extends cdk.Stack {
       handler: "index.handler",
       timeout: cdk.Duration.seconds(10),
       functionName: "ExecutorConsumerLambda",
+      environment: {
+        SERVICE_URL: props.fargateService.loadBalancer.loadBalancerDnsName,
+      },
     });
 
     this.sqsQueue.grantSendMessages(this.producerLambda);

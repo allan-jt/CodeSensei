@@ -6,15 +6,24 @@ import {
   LogDrivers,
 } from "aws-cdk-lib/aws-ecs";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+import { Function } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
+import { join } from "path";
 
+interface CodeExecStackProps extends cdk.StackProps {
+  readonly resultManagerLambda: Function;
+}
 export class CodeExecStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  public readonly cluster: Cluster;
+  public readonly taskDefinition: FargateTaskDefinition;
+  public readonly fargateService: ApplicationLoadBalancedFargateService;
+
+  constructor(scope: Construct, id: string, props: CodeExecStackProps) {
     super(scope, id, props);
 
-    const cluster = new Cluster(this, "ECSCluster");
+    this.cluster = new Cluster(this, "ECSCluster");
 
-    const taskDefinition = new FargateTaskDefinition(
+    this.taskDefinition = new FargateTaskDefinition(
       this,
       "ECSFargateTaskDefinition",
       {
@@ -23,18 +32,24 @@ export class CodeExecStack extends cdk.Stack {
       }
     );
 
-    taskDefinition.addContainer("ECSFargateContainer", {
-      image: ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+    this.taskDefinition.addContainer("ECSFargateContainer", {
+      image: ContainerImage.fromAsset(join(__dirname, "python-executor")),
       logging: LogDrivers.awsLogs({ streamPrefix: "ecs" }),
       portMappings: [{ containerPort: 80 }],
+      environment: {
+        LAMBDA_FUNCTION_NAME: props.resultManagerLambda.functionName,
+        AWSREGION: this.region,
+      },
     });
 
-    const newFargateService = new ApplicationLoadBalancedFargateService(
+    props.resultManagerLambda.grantInvoke(this.taskDefinition.taskRole);
+
+    this.fargateService = new ApplicationLoadBalancedFargateService(
       this,
       "ECSFargateServiceWithALB",
       {
-        cluster: cluster,
-        taskDefinition: taskDefinition,
+        cluster: this.cluster,
+        taskDefinition: this.taskDefinition,
         publicLoadBalancer: true,
         loadBalancerName: "ECSExecutorALB",
         desiredCount: 1,
