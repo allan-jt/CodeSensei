@@ -40,7 +40,7 @@ export class AssessmentStack extends cdk.Stack {
     // Pull out the Task Role from the service’s TaskDefinition
     const ecsTaskRole = this.ecsFargate.service.taskDefinition.taskRole;
 
-    // Build a least-privilege statement for invoke/list/get
+    // Build open privilege bedrock IAM policy for invoke/list/get
     const bedrockPolicy = new PolicyStatement({
       effect:    Effect.ALLOW,
       actions:   ['bedrock:InvokeModel', 'bedrock:ListFoundationModels', 'bedrock:GetFoundationModel'],
