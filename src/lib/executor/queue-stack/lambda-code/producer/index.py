@@ -2,28 +2,62 @@ import os
 import json
 import boto3
 
-sqs = boto3.client("sqs")
-queue_url = os.environ["QUEUE_URL"]
-
+REQUIRED_FIELDS = ["userID", "questionID", "assessmentID", "userCode", "userSelectedLanguage"]
+def valid_body(body):
+    return all(isinstance(body.get(field), str) for field in REQUIRED_FIELDS)
 
 def handler(event, context):
-    message_body = {
-        "message": "Hello from the Producer Lambda!",
-        "timestamp": context.timestamp if hasattr(context, "timestamp") else "N/A",
-    }
+    print("Received event:", json.dumps(event))
 
     try:
-        response = sqs.send_message(
-            QueueUrl=queue_url, MessageBody=json.dumps(message_body)
-        )
-        return {
-            "statusCode": 200,
-            "body": json.dumps(
-                {
-                    "message": "Message sent successfully!",
-                    "messageId": response.get("MessageId"),
-                }
-            ),
-        }
+        body = json.loads(event.get("body", "{}"))
+    except json.JSONDecodeError:
+        print("Invalid JSON body")
+        return "400 Bad Request"
+    
+    if not valid_body(body):
+        print(f"Invalid body: {body}")
+        return "400 Bad Request"
+
+    try:
+        sqs = boto3.client("sqs")
+        queue_url = os.environ["QUEUE_URL"]
+        sqs.send_message(QueueUrl=queue_url, MessageBody=json.dumps(body))
     except Exception as e:
-        return {"statusCode": 500, "body": json.dumps({"error": str(e)})}
+        print(f"Error sending message to SQS: {e}")
+        return "500 Internal Server Error"
+
+
+    print("Message sent to SQS successfully")
+    return "200 OK"
+    
+
+
+# Overview
+# This service handles assessing whether the user submitted code correctly answer the question.
+
+# input
+# {
+# userID (string);
+# questionID (string);
+
+# assessmentID (timestamp);
+
+# userCode (string);
+# userSelectedLanguage (string/enum);
+# } 
+
+# OUTPUT
+# {
+# assessmentID;
+
+# questionID;
+
+# status (enum = pass/fail);
+
+# codeOutput (string);
+
+# executionTime (seconds);
+
+# executionMemory (kb);
+# }
