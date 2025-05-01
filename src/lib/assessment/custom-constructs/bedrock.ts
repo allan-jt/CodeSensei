@@ -29,10 +29,8 @@ export class BedrockConstruct extends Construct {
       ],
     });
     this.bedrockRole.addToPolicy(new PolicyStatement({
-      actions: ['bedrock:InvokeModel', 'bedrock:ListModels', 'bedrock:GetModel'],
-      resources: props.modelIds.map(id => 
-        `arn:aws:bedrock:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:model/${id}`
-      ),
+      actions: ['bedrock:InvokeModel', 'bedrock:ListFoundationModels', 'bedrock:GetFoundationModel'],
+      resources: ['*'],
     }));
 
     // 2) If you provided a VPC, optionally spin up a private interface endpoint 
