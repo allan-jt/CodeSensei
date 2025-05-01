@@ -38,7 +38,8 @@ export class QueueStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(10),
       functionName: "ExecutorConsumerLambda",
       environment: {
-        SERVICE_URL: props.fargateService.loadBalancer.loadBalancerDnsName,
+        PYTHON_SERVICE_URL:
+          props.fargateService.loadBalancer.loadBalancerDnsName,
       },
     });
 

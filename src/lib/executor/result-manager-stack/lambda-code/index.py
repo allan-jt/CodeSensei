@@ -1,4 +1,4 @@
 def handler(event, context):
-    code = event.get("code")
-    print("Received code from ECS:", code)
-    return {"statusCode": 200, "body": f"Got your code: {code}"}
+    results = event.get("results")
+    print("Received code from ECS:", results)
+    return {"statusCode": 200, "body": f"Got your code: {results}"}

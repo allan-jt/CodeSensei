@@ -1,4 +1,5 @@
 import * as cdk from "aws-cdk-lib";
+import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 import {
   Cluster,
   ContainerImage,
@@ -12,6 +13,7 @@ import { join } from "path";
 
 interface CodeExecStackProps extends cdk.StackProps {
   readonly resultManagerLambda: Function;
+  readonly questionBankTable: TableV2;
 }
 export class CodeExecStack extends cdk.Stack {
   public readonly cluster: Cluster;
@@ -43,6 +45,7 @@ export class CodeExecStack extends cdk.Stack {
     });
 
     props.resultManagerLambda.grantInvoke(this.taskDefinition.taskRole);
+    props.questionBankTable.grantReadData(this.taskDefinition.taskRole);
 
     this.fargateService = new ApplicationLoadBalancedFargateService(
       this,

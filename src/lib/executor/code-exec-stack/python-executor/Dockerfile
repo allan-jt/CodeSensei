@@ -2,7 +2,7 @@ FROM python:alpine
 
 WORKDIR /app
 
-COPY main.py .
+COPY /src/ .
 
 RUN pip install --no-cache-dir flask boto3
 

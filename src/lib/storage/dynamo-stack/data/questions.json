@@ -6,8 +6,8 @@
     "title": "Two Sum",
     "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
     "testCases": ["[2,7,11,15], 9", "[3,2,4], 6", "[3,3], 6"],
-    "testAnswers": ["[0,1]", "[1,2]", "[0,1]"],
-    "starterCode": "function twoSum(nums, target) {\n  // Your code here\n}",
+    "testAnswers": ["[0, 1]", "[1, 2]", "[0, 1]"],
+    "starterCode": "def solution(nums, target):\n    # Your code here\n    pass",
     "hints": [
       "Use a hash map to store value:index pairs.",
       "Check if (target - current) exists in the map."
@@ -21,7 +21,7 @@
     "description": "Given a string s, find the length of the longest substring without repeating characters.",
     "testCases": ["\"abcabcbb\"", "\"bbbbb\"", "\"pwwkew\""],
     "testAnswers": ["3", "1", "3"],
-    "starterCode": "function lengthOfLongestSubstring(s) {\n  // Your code here\n}",
+    "starterCode": "def solution(s):\n    # Your code here\n    pass",
     "hints": [
       "Use a sliding window.",
       "Keep track of seen characters with a set or map."
@@ -35,10 +35,21 @@
     "description": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money. You cannot rob two adjacent houses.",
     "testCases": ["[1,2,3,1]", "[2,7,9,3,1]"],
     "testAnswers": ["4", "12"],
-    "starterCode": "function rob(nums) {\n  // Your code here\n}",
+    "starterCode": "def solution(nums):\n    # Your code here\n    pass",
     "hints": [
       "Use dynamic programming to track max loot at each step.",
       "At each house, choose to rob it or skip it based on previous results."
     ]
+  },
+  {
+    "questionId": "4",
+    "topics": ["String"],
+    "difficulty": "easy",
+    "title": "Print String",
+    "description": "Write a function that takes a string as input and prints it.",
+    "testCases": ["\"Hello, world!\"", "\"OpenAI GPT\""],
+    "testAnswers": ["Hello, world!", "OpenAI GPT"],
+    "starterCode": "def solution(input_str):\n    # Your code here\n    pass",
+    "hints": ["Use the print() function to display the string."]
   }
 ]
