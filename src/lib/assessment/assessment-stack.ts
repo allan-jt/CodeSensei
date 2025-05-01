@@ -29,7 +29,7 @@ export class AssessmentStack extends cdk.Stack {
     });
 
     // Bedrock integration (shared VPC)
-    const models = ['amazon.titan-tg1-large'];
+    const models = ['mistral.mistral-7b-instruct-v0:2'];
 
     this.bedrock = new BedrockConstruct(this, 'Bedrock', {
       vpc:      this.ecsFargate.cluster.vpc,
@@ -43,8 +43,8 @@ export class AssessmentStack extends cdk.Stack {
     // Build a least-privilege statement for invoke/list/get
     const bedrockPolicy = new PolicyStatement({
       effect:    Effect.ALLOW,
-      actions:   ['bedrock:InvokeModel', 'bedrock:ListModels', 'bedrock:GetModel'],
-      resources: models.map(m => `arn:aws:bedrock:${this.region}:${this.account}:foundation-model/${m}`),
+      actions:   ['bedrock:InvokeModel', 'bedrock:ListFoundationModels', 'bedrock:GetFoundationModel'],
+      resources: ['*'],
     });
 
     // Attach it
