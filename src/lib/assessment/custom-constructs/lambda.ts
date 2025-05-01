@@ -47,6 +47,7 @@ export class LambdaForEcsFargate extends Construct {
 
     // Define the Lambda function
     this.fn = new Function(this, 'LambdaForEcsFargate', {
+      functionName: 'Code_Sensei_LF_1-0',
       runtime: Runtime.PYTHON_3_13,
       code: Code.fromAsset(path.join(__dirname, '../lambda-code')),
       handler: 'preprocess.handler',

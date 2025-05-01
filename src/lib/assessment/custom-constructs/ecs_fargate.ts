@@ -35,6 +35,7 @@ export class EcsFargateConstruct extends Construct {
     // Define Fargate service + ALB
     this.service = new ecs_patterns.ApplicationLoadBalancedFargateService(this, 'FargateService', {
       cluster: this.cluster,
+      serviceName: 'Code_Sensei_ECS_1-0',
       cpu: props?.cpu ?? 256,
       memoryLimitMiB: props?.memoryLimitMiB ?? 512,
       desiredCount: props?.desiredCount ?? 1,
@@ -48,7 +49,12 @@ export class EcsFargateConstruct extends Construct {
     // Output ALB DNS for convenience
     new cdk.CfnOutput(this, 'LoadBalancerDNS', {
       value: this.service.loadBalancer.loadBalancerDnsName,
-      description: 'Public DNS for your Fargate service',
+      description: 'Public DNS for the ECS Fargate service',
+    });
+
+    new cdk.CfnOutput(this, 'ServiceName', {
+      value: this.service.service.serviceName,  // outputs the actual service name
+      description: 'The name of the ECS service',
     });
   }
 }
