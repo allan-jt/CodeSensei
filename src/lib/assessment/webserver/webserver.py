@@ -15,7 +15,7 @@ class HealthHandler(BaseHTTPRequestHandler):
             logger.info("Responding to /health with base message: %s", health_msg)
 
             # 2) Call Bedrock
-            model_id   = os.environ.get('MODEL_ID', 'amazon.titan-tg1-large')
+            model_id   = os.environ.get('MODEL_ID', 'mistral.mistral-7b-instruct-v0:2')
             region     = os.environ.get('AWS_REGION', 'us-east-1')
             payload    = {"inputText": "Health check"}  # simple prompt
             try:
