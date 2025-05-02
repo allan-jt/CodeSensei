@@ -6,7 +6,7 @@ DYNAMO_DATA = ${LIB}/storage/dynamo-stack/scripts
 CMD = cd ${SRC} && cdk
 
 run_all:
-	${CMD} deploy --all
+	${CMD} deploy --all --require-approval never
 
 run:
 	${CMD} deploy $(filter-out $@,$(MAKECMDGOALS))

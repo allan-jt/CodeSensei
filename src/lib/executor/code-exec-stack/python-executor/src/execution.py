@@ -2,6 +2,9 @@ import subprocess
 import tempfile
 import os
 import boto3
+import time
+
+import resource
 from dynamo_schemas import QuestionRecord, DynamoTables
 
 
@@ -22,7 +25,7 @@ def run_code_against_tests(code, test_cases, expected_outputs):
     results = []
     for test_case, expected_output in zip(test_cases, expected_outputs):
         try:
-            result = run_code(code, test_case)
+            result, exec_time = run_code(code, test_case)
             passed = str(result).strip() == str(expected_output).strip()
             results.append(
                 {
@@ -30,6 +33,8 @@ def run_code_against_tests(code, test_cases, expected_outputs):
                     "expected_output": expected_output,
                     "result": result,
                     "passed": passed,
+                    "exec_time": exec_time,
+                    # "mem_kb": mem_kb,
                 }
             )
         except Exception as e:
@@ -52,6 +57,8 @@ def run_code(code, test_case):
         temp_filename = f.name
 
     try:
+        start_time = time.perf_counter()
+        usage_before = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
         result = subprocess.run(
             ["python3", temp_filename],
             input=test_case,
@@ -59,8 +66,14 @@ def run_code(code, test_case):
             text=True,
             timeout=5,
         )
+        end_time = time.perf_counter()
+        usage_after = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
+
+        exec_time = end_time - start_time
+        mem_kb = usage_after - usage_before
+
         if result.returncode != 0:
             raise RuntimeError(result.stderr.strip())
-        return result.stdout.strip()
+        return result.stdout.strip(), exec_time
     finally:
         os.remove(temp_filename)

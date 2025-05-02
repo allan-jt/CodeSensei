@@ -5,7 +5,7 @@ import urllib.request
 
 def get_url(language):
     try:
-        service_url = os.environ.get(f"{language}_SERVICE_URL")
+        service_url = os.environ.get(f"{language.upper()}_SERVICE_URL")
         return f"http://{service_url}/execute"
     except KeyError:
         raise ValueError(

@@ -2,19 +2,29 @@ import os
 import json
 import boto3
 
-REQUIRED_FIELDS = ["userID", "questionID", "assessmentID", "userCode", "userSelectedLanguage"]
+REQUIRED_FIELDS = [
+    "userID",
+    "questionID",
+    "assessmentID",
+    "userCode",
+    "userSelectedLanguage",
+]
+
+
 def valid_body(body):
     return all(isinstance(body.get(field), str) for field in REQUIRED_FIELDS)
+
 
 def handler(event, context):
     print("Received event:", json.dumps(event))
 
     try:
-        body = json.loads(event.get("body", "{}"))
+        raw_body = event.get("body", "{}")
+        body = raw_body if isinstance(raw_body, dict) else json.loads(raw_body)
     except json.JSONDecodeError:
         print("Invalid JSON body")
         return "400 Bad Request"
-    
+
     if not valid_body(body):
         print(f"Invalid body: {body}")
         return "400 Bad Request"
@@ -27,10 +37,8 @@ def handler(event, context):
         print(f"Error sending message to SQS: {e}")
         return "500 Internal Server Error"
 
-
     print("Message sent to SQS successfully")
     return "200 OK"
-    
 
 
 # Overview
@@ -45,7 +53,7 @@ def handler(event, context):
 
 # userCode (string);
 # userSelectedLanguage (string/enum);
-# } 
+# }
 
 # OUTPUT
 # {

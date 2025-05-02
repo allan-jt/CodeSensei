@@ -18,7 +18,11 @@ export class ExecutorStack extends cdk.Stack {
 
     const resultManagerStack = new ResultManagerStack(
       this,
-      "ExecutorResultManagerStack"
+      "ExecutorResultManagerStack",
+      {
+        userTable: props.userTable,
+        assessmentsTable: props.assessmentsTable,
+      }
     );
 
     const codeExecStack = new CodeExecStack(this, "ExecutorCodeExecStack", {

@@ -29,10 +29,11 @@ def execute_code():
         question = get_question_by_id(question_id)
         results = run_code_against_tests(code, question.testCases, question.testAnswers)
 
+        payload["results"] = results
         lambda_client.invoke(
             FunctionName=lambda_name,
             InvocationType="RequestResponse",
-            Payload=json.dumps({"results": results}).encode(),
+            Payload=json.dumps(payload).encode(),
         )
         return "Executed", 200
     except Exception as e:
