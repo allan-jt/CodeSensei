@@ -37,9 +37,9 @@ export class CodeExecStack extends cdk.Stack {
       );
 
       taskDefinition.addContainer(`ECSFargateContainer${language}`, {
-        image: ContainerImage.fromAsset(
-          join(__dirname, `${language}-executor`)
-        ),
+        image: ContainerImage.fromAsset(join(__dirname, `executors`), {
+          file: `Dockerfile.${language}`,
+        }),
         logging: LogDrivers.awsLogs({ streamPrefix: `ecs${language}` }),
         portMappings: [{ containerPort: 80 }],
         environment: {
@@ -66,39 +66,5 @@ export class CodeExecStack extends cdk.Stack {
       this.taskDefinition.push(taskDefinition);
       this.fargateService.push(fargateService);
     }
-
-    // this.taskDefinition = new FargateTaskDefinition(
-    //   this,
-    //   "ECSFargateTaskDefinition",
-    //   {
-    //     cpu: 256,
-    //     memoryLimitMiB: 512,
-    //   }
-    // );
-
-    // this.taskDefinition.addContainer("ECSFargateContainer", {
-    //   image: ContainerImage.fromAsset(join(__dirname, "python-executor")),
-    //   logging: LogDrivers.awsLogs({ streamPrefix: "ecs" }),
-    //   portMappings: [{ containerPort: 80 }],
-    //   environment: {
-    //     LAMBDA_FUNCTION_NAME: props.resultManagerLambda.functionName,
-    //     AWSREGION: this.region,
-    //   },
-    // });
-
-    // props.resultManagerLambda.grantInvoke(this.taskDefinition.taskRole);
-    // props.questionBankTable.grantReadData(this.taskDefinition.taskRole);
-
-    // this.fargateService = new ApplicationLoadBalancedFargateService(
-    //   this,
-    //   "ECSFargateServiceWithALB",
-    //   {
-    //     cluster: this.cluster,
-    //     taskDefinition: this.taskDefinition,
-    //     publicLoadBalancer: true,
-    //     loadBalancerName: "ECSExecutorALB",
-    //     desiredCount: 1,
-    //   }
-    // );
   }
 }
