@@ -29,7 +29,9 @@ export class ExecutorStack extends cdk.Stack {
       resultManagerLambda: resultManagerStack.resultManagerLambda,
       questionBankTable: props.questionBankTable,
     });
+
     const queueStack = new QueueStack(this, "ExecutorQueueStack", {
+      languages: codeExecStack.languages,
       fargateService: codeExecStack.fargateService,
     });
   }

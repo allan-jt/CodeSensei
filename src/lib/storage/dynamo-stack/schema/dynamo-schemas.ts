@@ -53,6 +53,11 @@ export enum Topic {
   RECURSION = "Recursion",
 }
 
+export enum Language {
+  PYTHON = "python",
+  JAVASCRIPT = "javascript",
+}
+
 export type QuestionRecord = {
   questionId: string;
   topics: Topic[]; // Array of Topic enums
@@ -61,7 +66,7 @@ export type QuestionRecord = {
   description: string;
   testCases: string[];
   testAnswers: string[];
-  starterCode: string;
+  ststarterCode: Partial<Record<Language, string>>;
   hints: string[];
 };
 
