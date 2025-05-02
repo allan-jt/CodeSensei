@@ -1,4 +1,14 @@
+import json
+
+
 def handler(event, context):
-    results = event.get("results")
-    print("Received code from ECS:", results)
-    return {"statusCode": 200, "body": f"Got your code: {results}"}
+    print("Received code from ECS:", json.dumps(event, indent=2))
+    return {"statusCode": 200, "body": f"Received"}
+
+
+# {
+# userID,
+# timestamp,
+# results
+
+# }
