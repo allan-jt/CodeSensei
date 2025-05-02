@@ -2,7 +2,11 @@ FROM python:alpine
 
 WORKDIR /app
 
-COPY /src/ .
+RUN apk add --no-cache nodejs npm
+
+COPY /javascript-executor/ .
+
+COPY /shared/ .
 
 RUN pip install --no-cache-dir flask boto3
 

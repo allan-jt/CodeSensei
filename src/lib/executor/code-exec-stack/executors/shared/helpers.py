@@ -1,12 +1,8 @@
-import subprocess
-import tempfile
 import os
 import boto3
-# import time
+from execution import *
 
-# import resource
 from dynamo_schemas import QuestionRecord, DynamoTables
-
 
 def get_question_by_id(question_id) -> QuestionRecord:
     """
@@ -19,7 +15,6 @@ def get_question_by_id(question_id) -> QuestionRecord:
         question_record = QuestionRecord(**response["Item"])
         return question_record
     return None
-
 
 def run_code_against_tests(code, test_cases, expected_outputs):
     results = []
@@ -47,25 +42,3 @@ def run_code_against_tests(code, test_cases, expected_outputs):
                 }
             )
     return results
-
-
-def run_code(code, test_case):
-    wrapper_code = f"{code}\n\nconsole.log(solution({test_case}));"
-
-    with tempfile.NamedTemporaryFile(suffix=".js", mode="w", delete=False) as f:
-        f.write(wrapper_code)
-        f.flush()
-        temp_filename = f.name
-
-    try:
-        result = subprocess.run(
-            ["node", temp_filename],
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
-        if result.returncode != 0:
-            raise RuntimeError(result.stderr.strip())
-        return result.stdout.strip()
-    finally:
-        os.remove(temp_filename)

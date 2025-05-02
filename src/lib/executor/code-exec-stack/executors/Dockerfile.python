@@ -2,9 +2,9 @@ FROM python:alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache nodejs npm
+COPY /python-executor/ .
 
-COPY /src/ .
+COPY /shared/ .
 
 RUN pip install --no-cache-dir flask boto3
 

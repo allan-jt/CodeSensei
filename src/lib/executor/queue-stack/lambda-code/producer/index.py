@@ -69,3 +69,18 @@ def handler(event, context):
 
 # executionMemory (kb);
 # }
+
+# {
+#   "userID": "user123",
+#   "questionID": "4",
+#   "assessmentID": "2025-05-02T10:30:00Z",
+#   "userCode": "def solution(input_str):\n    print(input_str)",
+#   "userSelectedLanguage": "python"
+# }
+# {
+#   "userID": "user456",
+#   "questionID": "4",
+#   "assessmentID": "2025-05-02T10:35:00Z",
+#   "userCode": "function solution(inputStr) {\n  console.log(inputStr);\n}",
+#   "userSelectedLanguage": "javascript"
+# }
