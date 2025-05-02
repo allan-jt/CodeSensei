@@ -7,7 +7,8 @@ import { Construct } from "constructs";
 import path = require("path");
 
 interface QueueStackProps extends cdk.StackProps {
-  readonly fargateService: ApplicationLoadBalancedFargateService;
+  readonly languages: string[];
+  readonly fargateService: ApplicationLoadBalancedFargateService[];
 }
 
 export class QueueStack extends cdk.Stack {
@@ -31,16 +32,22 @@ export class QueueStack extends cdk.Stack {
       functionName: "ExecutorProducerLambda",
     });
 
+    const env_urls: Record<string, string> = props.languages.reduce(
+      (acc, language, index) => {
+        acc[`${language.toLocaleUpperCase()}_SERVICE_URL`] =
+          props.fargateService[index].loadBalancer.loadBalancerDnsName;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
     this.consumerLambda = new Function(this, "ExecutorConsumerLambda", {
       runtime: Runtime.PYTHON_3_13,
       code: Code.fromAsset(path.join(__dirname, "lambda-code/consumer")),
       handler: "index.handler",
       timeout: cdk.Duration.seconds(10),
       functionName: "ExecutorConsumerLambda",
-      environment: {
-        PYTHON_SERVICE_URL:
-          props.fargateService.loadBalancer.loadBalancerDnsName,
-      },
+      environment: env_urls,
     });
 
     this.sqsQueue.grantSendMessages(this.producerLambda);
