@@ -20,7 +20,7 @@ def run_code_against_tests(code, test_cases, expected_outputs):
     results = []
     for test_case, expected_output in zip(test_cases, expected_outputs):
         try:
-            result = run_code(code, test_case)
+            result, exec_time, mem_kb = run_code(code, test_case)
             passed = str(result).strip() == str(expected_output).strip()
             results.append(
                 {
@@ -28,8 +28,8 @@ def run_code_against_tests(code, test_cases, expected_outputs):
                     "expected_output": expected_output,
                     "result": result,
                     "passed": passed,
-                    # "exec_time": exec_time,
-                    # "mem_kb": mem_kb,
+                    "exec_time": exec_time,
+                    "mem_kb": mem_kb,
                 }
             )
         except Exception as e:
