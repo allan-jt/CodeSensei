@@ -24,16 +24,17 @@ def execute_code():
         payload = json.loads(request.data.decode("utf-8"))
         code = payload.get("userCode", "")
         question_id = payload.get("questionID", "")
-        print(f"Received: {code} and {question_id}")
 
         question = get_question_by_id(question_id)
         results = run_code_against_tests(code, question.testCases, question.testAnswers)
-
-        payload["results"] = results
+        
+        new_payload = payload.copy()
+        new_payload.pop("userCode", None)
+        new_payload["results"] = results
         lambda_client.invoke(
             FunctionName=lambda_name,
             InvocationType="RequestResponse",
-            Payload=json.dumps(payload).encode(),
+            Payload=json.dumps(new_payload).encode(),
         )
         return "Executed", 200
     except Exception as e:
