@@ -23,7 +23,7 @@ def handler(event, context):
             url = get_url(body["userSelectedLanguage"])
 
             request = urllib.request.Request(
-                url, data=json.dumps(body).encode("utf-8"), headers=headers
+                url, method="POST", data=json.dumps(body).encode("utf-8"), headers=headers
             )
             with urllib.request.urlopen(request) as response:
                 response_body = response.read().decode("utf-8")
