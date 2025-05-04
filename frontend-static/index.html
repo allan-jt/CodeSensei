@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Assessment Input</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      margin-bottom: 20px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .question {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-left: 4px solid #4CAF50;
+    }
+    .options label {
+      display: block;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Assessment System</h1>
+
+  <div id="assessment-form-container" class="container">
+    <h2>Create New Assessment</h2>
+    <form id="assessment-form">
+      <label>Topics (Select multiple):</label><br>
+      <select id="topics" multiple size="6">
+        <option value="arrays">Arrays</option>
+        <option value="linked-lists">Linked Lists</option>
+        <option value="trees">Trees</option>
+        <option value="graphs">Graphs</option>
+        <option value="stacks">Stacks</option>
+        <option value="queues">Queues</option>
+      </select><br><br>
+
+      <label for="num-questions">Number of Questions (1–10):</label><br>
+      <input type="number" id="num-questions" min="1" max="10" value="5"><br><br>
+
+      <label>Difficulty:</label><br>
+      <select id="difficulty">
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select><br><br>
+
+      <button type="submit">Create Assessment</button>
+    </form>
+
+    <div id="response" style="margin-top: 20px;"></div>
+  </div>
+
+  <div id="assessment-info" class="container" style="display: none;">
+    <h2>Assessment Created</h2>
+    <div id="assessment-details"></div>
+    <button id="start-assessment">Start Assessment</button>
+  </div>
+
+  <div id="question-container" class="container" style="display: none;">
+    <div id="question-progress"></div>
+    <div class="question">
+      <div id="question-topic"></div>
+      <div id="question-difficulty"></div>
+      <div id="question-content"></div>
+      <div id="question-options" class="options"></div>
+    </div>
+    <button id="next-question">Next Question</button>
+    <div id="question-error"></div>
+  </div>
+  
+  <div id="assessment-complete" class="container" style="display: none;">
+    <h2>Assessment Complete!</h2>
+    <p>You have completed all questions in this assessment.</p>
+    <button id="start-new">Start New Assessment</button>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Assessment Input</title>
+</head>
+<body>
+  <h1>Start Assessment</h1>
+
+  <form id="assessment-form">
+    <label>Topics (Select multiple):</label><br>
+    <select id="topics" multiple>
+      <option value="arrays">Arrays</option>
+      <option value="linked-lists">Linked Lists</option>
+      <option value="trees">Trees</option>
+      <option value="graphs">Graphs</option>
+      <option value="stacks">Stacks</option>
+      <option value="queues">Queues</option>
+    </select><br><br>
+
+    <label for="num-questions">Number of Questions (0–10):</label><br>
+    <input type="number" id="num-questions" min="0" max="10" value="5"><br><br>
+
+    <label>Difficulty:</label><br>
+    <select id="difficulty">
+      <option value="Easy">Easy</option>
+      <option value="Medium">Medium</option>
+      <option value="Hard">Hard</option>
+    </select><br><br>
+
+    <button type="submit">Send to Lambda</button>
+  </form>
+
+  <div id="response" style="margin-top: 20px;"></div>
+  <script>
+    document.getElementById("assessment-form").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const selectedTopics = Array.from(document.getElementById("topics").selectedOptions)
+                              .map(opt => opt.value);
+  const numQuestions = parseInt(document.getElementById("num-questions").value);
+  const difficulty = document.getElementById("difficulty").value; // Fixed this line - removed extra parenthesis
+
+  const payload = {
+    topics: selectedTopics,
+    num_questions: numQuestions,
+    difficulty: difficulty
+  };
+
+  // Just the assessments endpoint for creating records
+  const apiUrl = "https://nrrtze58o7.execute-api.us-east-1.amazonaws.com/prod";
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    document.getElementById("response").innerText = "Response: " + JSON.stringify(data);
+  } catch (err) {
+    console.error(err);
+    document.getElementById("response").innerText = "Error: " + err.message;
+  }
+});
+  </script>
+</body>
+</html>

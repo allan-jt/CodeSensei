@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Assessment Input</title>
+</head>
+<body>
+  <h1>Start Assessment</h1>
+
+  <div id="assessment-form-container">
+    <form id="assessment-form">
+      <label>Topics (Select multiple):</label><br>
+      <select id="topics" multiple>
+        <option value="arrays">Arrays</option>
+        <option value="linked-lists">Linked Lists</option>
+        <option value="trees">Trees</option>
+        <option value="graphs">Graphs</option>
+        <option value="stacks">Stacks</option>
+        <option value="queues">Queues</option>
+      </select><br><br>
+
+      <label for="num-questions">Number of Questions (0–10):</label><br>
+      <input type="number" id="num-questions" min="0" max="10" value="5"><br><br>
+
+      <label>Difficulty:</label><br>
+      <select id="difficulty">
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select><br><br>
+
+      <button type="submit">Start Assessment</button>
+    </form>
+
+    <div id="response" style="margin-top: 20px;"></div>
+  </div>
+
+  <div id="question-container" style="display: none;">
+    <div id="question-progress"></div>
+    <div id="question-topic"></div>
+    <div id="question-difficulty"></div>
+    <div id="question-content"></div>
+    <div id="question-options"></div>
+    <button id="next-question">Next Question</button>
+    <div id="question-error"></div>
+  </div>
+  
+  <div id="assessment-complete" style="display: none;">
+    <h2>Assessment Complete!</h2>
+    <p>You have completed all questions in this assessment.</p>
+    <button id="start-new">Start New Assessment</button>
+  </div>
+  
+  <!-- Script tag to include the external JavaScript file -->
+  <script src="app.js"></script>
+</body>
+</html>

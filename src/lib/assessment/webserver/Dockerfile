@@ -1,14 +1,6 @@
-# assessment/webserver/Dockerfile
-FROM python:3.9-slim
-
+FROM --platform=linux/amd64 python:3.11-slim
 WORKDIR /app
-
-# 1) Install AWS SDK so boto3 is available at runtime
-RUN pip install --no-cache-dir boto3
-
-# 2) Copy your server into the image
-COPY webserver.py .
-
-# 3) Expose the port and launch
-EXPOSE 80
-CMD ["python", "webserver.py"]
+COPY . /app
+RUN pip install fastapi uvicorn boto3
+ENV PATH="/usr/local/bin:${PATH}"
+CMD ["uvicorn", "webserver:app", "--host", "0.0.0.0", "--port", "80"]

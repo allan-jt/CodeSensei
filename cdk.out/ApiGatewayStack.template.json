@@ -1,0 +1,585 @@
+{
+ "Resources": {
+  "AssessmentRestApi1CDAF06A": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Assessment API with simplified structure",
+    "Name": "AssessmentRestApi",
+    "Tags": [
+     {
+      "Key": "awsApplication",
+      "Value": "undefined"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Resource"
+   }
+  },
+  "AssessmentRestApiDeployment12B9D8913470539d05fd716d5d9b4f5ac299fda8": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Assessment API with simplified structure",
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "DependsOn": [
+    "AssessmentRestApiassessmentsactionOPTIONS22663013",
+    "AssessmentRestApiassessmentsactionPOST4A6D54CA",
+    "AssessmentRestApiassessmentsaction7ED64035",
+    "AssessmentRestApiassessmentsOPTIONS17AC5598",
+    "AssessmentRestApiassessmentsB15ACF03",
+    "AssessmentRestApiOPTIONS62903ACB",
+    "AssessmentRestApipingGETFA10D95F",
+    "AssessmentRestApipingOPTIONS2FB7D1D1",
+    "AssessmentRestApiping929E75B4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Deployment/Resource"
+   }
+  },
+  "AssessmentRestApiDeploymentStageprodAFE088A2": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "AssessmentRestApiDeployment12B9D8913470539d05fd716d5d9b4f5ac299fda8"
+    },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": false,
+      "HttpMethod": "*",
+      "ResourcePath": "/*",
+      "ThrottlingBurstLimit": 50,
+      "ThrottlingRateLimit": 100
+     }
+    ],
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    },
+    "StageName": "prod",
+    "Tags": [
+     {
+      "Key": "awsApplication",
+      "Value": "undefined"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "AssessmentRestApiOPTIONS62903ACB": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Credentials": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "AssessmentRestApi1CDAF06A",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/OPTIONS/Resource"
+   }
+  },
+  "AssessmentRestApiping929E75B4": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "AssessmentRestApi1CDAF06A",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "ping",
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/ping/Resource"
+   }
+  },
+  "AssessmentRestApipingOPTIONS2FB7D1D1": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Credentials": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "AssessmentRestApiping929E75B4"
+    },
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/ping/OPTIONS/Resource"
+   }
+  },
+  "AssessmentRestApipingGETApiPermissionApiGatewayStackAssessmentRestApiE808F873GETping75A0BC14": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "AssessmentRestApi1CDAF06A"
+       },
+       "/",
+       {
+        "Ref": "AssessmentRestApiDeploymentStageprodAFE088A2"
+       },
+       "/GET/ping"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/ping/GET/ApiPermission.ApiGatewayStackAssessmentRestApiE808F873.GET..ping"
+   }
+  },
+  "AssessmentRestApipingGETApiPermissionTestApiGatewayStackAssessmentRestApiE808F873GETpingCB722DBB": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "AssessmentRestApi1CDAF06A"
+       },
+       "/test-invoke-stage/GET/ping"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/ping/GET/ApiPermission.Test.ApiGatewayStackAssessmentRestApiE808F873.GET..ping"
+   }
+  },
+  "AssessmentRestApipingGETFA10D95F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "AssessmentRestApiping929E75B4"
+    },
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/ping/GET/Resource"
+   }
+  },
+  "AssessmentRestApiassessmentsB15ACF03": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "AssessmentRestApi1CDAF06A",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "assessments",
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/assessments/Resource"
+   }
+  },
+  "AssessmentRestApiassessmentsOPTIONS17AC5598": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Credentials": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "AssessmentRestApiassessmentsB15ACF03"
+    },
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/assessments/OPTIONS/Resource"
+   }
+  },
+  "AssessmentRestApiassessmentsaction7ED64035": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "AssessmentRestApiassessmentsB15ACF03"
+    },
+    "PathPart": "action",
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/assessments/action/Resource"
+   }
+  },
+  "AssessmentRestApiassessmentsactionOPTIONS22663013": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Credentials": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "AssessmentRestApiassessmentsaction7ED64035"
+    },
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/assessments/action/OPTIONS/Resource"
+   }
+  },
+  "AssessmentRestApiassessmentsactionPOSTApiPermissionApiGatewayStackAssessmentRestApiE808F873POSTassessmentsaction886E5959": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "AssessmentRestApi1CDAF06A"
+       },
+       "/",
+       {
+        "Ref": "AssessmentRestApiDeploymentStageprodAFE088A2"
+       },
+       "/POST/assessments/action"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/assessments/action/POST/ApiPermission.ApiGatewayStackAssessmentRestApiE808F873.POST..assessments.action"
+   }
+  },
+  "AssessmentRestApiassessmentsactionPOSTApiPermissionTestApiGatewayStackAssessmentRestApiE808F873POSTassessmentsaction1440A156": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "AssessmentRestApi1CDAF06A"
+       },
+       "/test-invoke-stage/POST/assessments/action"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/assessments/action/POST/ApiPermission.Test.ApiGatewayStackAssessmentRestApiE808F873.POST..assessments.action"
+   }
+  },
+  "AssessmentRestApiassessmentsactionPOST4A6D54CA": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "AssessmentRestApiassessmentsaction7ED64035"
+    },
+    "RestApiId": {
+     "Ref": "AssessmentRestApi1CDAF06A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Default/assessments/action/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1VTW/bMAz9LdWxULympy63NTusWLsEbm9BMLARY7OVJY2iF2SG//sQW05SdDtsGIYNyMn248cTH2nqMhtfvc0uzmATRyvzPLL0mDX3AqtnDZv4uYFABQhuYJs1OUZ5F2jRKINxxRSEvFMTda60MriG2srUc5wzri0Vpcw6h6gmjQJr/eYDgkGOKaKD7lBKb15AU0aDTghsVBPhGhM+YyrI9a7tjjBYvz2iiAIFfoIKUzIp2YtYckUOgrdUkbyyXNcc5WBq26Werl2qU7/vKCp08sOSIVB6YxQgd3AfDtkoMObB3/qCVmBvjJosmnb53+OdSIdq9f1O+U6iAUq6/ImWdGQdg84x+ppXeA0RF+pcLXU/PotGcTKldKVI6G0JICdYMBx1zx8NZy2lZ/qG/PLrZogeoC7+YRtwGEII9BG3OX6pidGoyRpsxJ/5a1V1R8oxBu8ixp2cO42kjlNvcD9MvXkODBXK8MO0yzY15O5Fll9Nok9i/S2x0g44yX2azX9OrP1q7QP2u3XRqAB8WOEBpJwDy36af9s6XK0dTastVI8GsunazZEripG8a3cus1pCLa123mD2FN98vbzIxlfZ+OwpEo24dkIVZnn//A7NbEwJvwgAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "AssessmentRestApiEndpoint69F393E6": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "AssessmentRestApi1CDAF06A"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "AssessmentRestApiDeploymentStageprodAFE088A2"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "RestApiUrl": {
+   "Description": "API Gateway REST API endpoint",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "AssessmentRestApi1CDAF06A"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "AssessmentRestApiDeploymentStageprodAFE088A2"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

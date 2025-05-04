@@ -3,6 +3,8 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecs_patterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as cdk from 'aws-cdk-lib';
+import * as ecr from 'aws-cdk-lib/aws-ecr';
+import * as iam from 'aws-cdk-lib/aws-iam'; // Add this import
 
 export interface EcsFargateProps {
   /** Optionally provide an existing VPC */
@@ -22,6 +24,8 @@ export class EcsFargateConstruct extends Construct {
   public readonly cluster: ecs.Cluster;
   /** Fargate service behind an ALB */
   public readonly service: ecs_patterns.ApplicationLoadBalancedFargateService;
+  /** Task role for the Fargate service */
+  public readonly taskRole: iam.Role;
 
   constructor(scope: Construct, id: string, props?: EcsFargateProps) {
     super(scope, id);
@@ -32,6 +36,30 @@ export class EcsFargateConstruct extends Construct {
     // Create ECS cluster in the VPC
     this.cluster = new ecs.Cluster(this, 'Cluster', { vpc });
 
+    // Create the task role that will be used by the container
+    this.taskRole = new iam.Role(this, 'TaskRole', {
+      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+    });
+    
+    // Add DynamoDB permissions to the task role
+    this.taskRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:DeleteItem", 
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:BatchGetItem"
+        ],
+        resources: [
+          `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:table/AssessmentsTable`
+        ]
+      })
+    );
+
     // Define Fargate service + ALB
     this.service = new ecs_patterns.ApplicationLoadBalancedFargateService(this, 'FargateService', {
       cluster: this.cluster,
@@ -40,8 +68,16 @@ export class EcsFargateConstruct extends Construct {
       desiredCount: props?.desiredCount ?? 1,
       publicLoadBalancer: true,
       taskImageOptions: {
-        image: ecs.ContainerImage.fromRegistry(props?.containerImage ?? 'aaronbengo/ai_webserver:latest'),
+        image: ecs.ContainerImage.fromEcrRepository(
+          ecr.Repository.fromRepositoryName(
+            this, 
+            'AssessmentHandlerRepo', 
+            'assessment-handler'
+          ), 
+          'latest'
+        ),
         containerPort: 80,
+        taskRole: this.taskRole, // Use the custom task role with DynamoDB permissions
       },
     });
 

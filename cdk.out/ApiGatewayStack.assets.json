@@ -1,0 +1,21 @@
+{
+  "version": "41.0.0",
+  "files": {
+    "af4467bd61f1212c51740f7de8987ea5482ff3ad173fb2c7de4cf2f284dba235": {
+      "displayName": "ApiGatewayStack Template",
+      "source": {
+        "path": "ApiGatewayStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
+          "objectKey": "af4467bd61f1212c51740f7de8987ea5482ff3ad173fb2c7de4cf2f284dba235.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

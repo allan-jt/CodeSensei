@@ -1,0 +1,21 @@
+{
+  "version": "41.0.0",
+  "files": {
+    "f9ff7df3900d05b1a8967f7be0d6291c45614975c3fb32e84413ceea1e15e377": {
+      "displayName": "CodeSenseiStack Template",
+      "source": {
+        "path": "CodeSenseiStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
+          "objectKey": "f9ff7df3900d05b1a8967f7be0d6291c45614975c3fb32e84413ceea1e15e377.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
