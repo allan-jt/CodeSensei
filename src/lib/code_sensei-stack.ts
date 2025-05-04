@@ -4,6 +4,7 @@ import { StorageStack } from "./storage/storage-stack";
 import { ExecutorStack } from "./executor/executor-stack";
 import { ApiGatewayStack } from "./api/api-gateway-stack";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { AuthStack } from "./auth/auth-stack";
 
 export class CodeSenseiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
