@@ -8,6 +8,7 @@ import {
 } from "aws-cdk-lib/aws-ecs";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import { Function } from "aws-cdk-lib/aws-lambda";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
 import { join } from "path";
 
@@ -40,7 +41,10 @@ export class CodeExecStack extends cdk.Stack {
         image: ContainerImage.fromAsset(join(__dirname, `executors`), {
           file: `Dockerfile.${language}`,
         }),
-        logging: LogDrivers.awsLogs({ streamPrefix: `ecs${language}` }),
+        logging: LogDrivers.awsLogs({
+          streamPrefix: `ecs${language}`,
+          logRetention: RetentionDays.ONE_DAY,
+        }),
         portMappings: [{ containerPort: 80 }],
         environment: {
           LAMBDA_FUNCTION_NAME: props.resultManagerLambda.functionName,

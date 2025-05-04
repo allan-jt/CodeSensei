@@ -14,12 +14,12 @@ export class SocketApiCustom extends Construct {
     const api = new WebSocketApi(this, "WebSocketApiConstruct");
     api.addRoute("executeCode", {
       integration: new WebSocketLambdaIntegration(
-        "ExecutionLambdaIntegration",
+        "SocketExecutionLambdaIntegration",
         props.codeExecutionLambda
       ),
     });
 
-    new WebSocketStage(this, "DevDeployStage", {
+    new WebSocketStage(this, "SocketDevDeployStage", {
       webSocketApi: api,
       stageName: "dev",
       autoDeploy: true,
