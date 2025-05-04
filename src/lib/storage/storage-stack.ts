@@ -23,9 +23,9 @@ export class StorageStack extends cdk.Stack {
     this.assessmentQuestionLocatorTable = dynamo.assessmentQuestionLocatorTable;
     this.metricsTable = dynamo.metricsTable;
 
-    // Comment out if you don't want to create OpenSearch
-    this.opensearchLamba = new OpenSearchStack(this, "OpenSearchStack", {
-      dynamoTable: this.questionBankTable,
-    }).opensearchLamba;
+    // // Comment out if you don't want to create OpenSearch
+    // this.opensearchLamba = new OpenSearchStack(this, "OpenSearchStack", {
+    //   dynamoTable: this.questionBankTable,
+    // }).opensearchLamba;
   }
 }
