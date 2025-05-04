@@ -1,5 +1,5 @@
 import * as cdk from "aws-cdk-lib";
-import { UserPool, UserPoolClient, UserPoolDomain } from "aws-cdk-lib/aws-cognito";
+import { ManagedLoginVersion, UserPool, UserPoolClient, UserPoolDomain } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs"
 
 export class AuthStack extends cdk.Stack {
@@ -26,7 +26,8 @@ export class AuthStack extends cdk.Stack {
 
         this.userPoolDomain = new UserPoolDomain(this, "UserPoolDomain", {
             userPool: this.userPool,
-            cognitoDomain: { domainPrefix: "CodeSenseiApp" }
+            cognitoDomain: { domainPrefix: "codesensei-app" },
+            managedLoginVersion: ManagedLoginVersion.NEWER_MANAGED_LOGIN
         })
     }
 }
