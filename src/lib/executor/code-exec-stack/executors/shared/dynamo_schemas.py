@@ -59,11 +59,9 @@ class Topic(Enum):
     QUEUE = "Queue"
     RECURSION = "Recursion"
 
-
 class Language(Enum):
     PYTHON = "python"
     JAVASCRIPT = "javascript"
-
 
 @dataclass
 class QuestionRecord:
