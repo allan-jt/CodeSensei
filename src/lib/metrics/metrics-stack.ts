@@ -26,6 +26,11 @@ export class MetricsStack extends cdk.Stack {
             metricsTable: metricsTable
         });
         
+        const sqsStack = new MetricsSqsStack(this, "MetricsSqsStack", {
+            stackName: `${appName}MetricsSqsStack`,
+            queueName: `${appName}MetricsQueue`
+        });
+
         const lambdaStack = new MetricsLambdaStack(this, "MetricsLambdaStack", {
             stackName: `${appName}MetricsLambdaStack`,
             lambdaName1: `${appName}LF4_0`,
@@ -33,9 +38,8 @@ export class MetricsStack extends cdk.Stack {
             lambdaName3: `${appName}LF4_2`,
             ecsCluster: ecsStack.cluster,
             taskDefinition: ecsStack.taskDefinition,
-            taskSecurityGroup: ecsStack.securityGroup
-        });
-        
-        const sqsStack = new MetricsSqsStack(this, "MetricsSqsStack", { stackName: `${appName}MetricsSqsStack` });
+            taskSecurityGroup: ecsStack.securityGroup,
+            sqsQueue: sqsStack.queue
+        });  
     }
 }
