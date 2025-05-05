@@ -1,4 +1,13 @@
-import { Box, Button, Group, Paper, ScrollArea, SegmentedControl, Stack, Text } from "@mantine/core";
+import {
+  Button,
+  Card,
+  Group,
+  Paper,
+  ScrollArea,
+  SegmentedControl,
+  Stack,
+  Text,
+} from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import { useState } from "react";
 
@@ -17,9 +26,8 @@ function CodeEditorComponent({
   codeOutput,
   getLanguage,
   getCode,
-  handleSubmit
-}:
-  CodeEditorProps) {
+  handleSubmit,
+}: CodeEditorProps) {
   const [language, setLanguage] = useState(languages[0]);
   const [code, setCode] = useState(languageSnippets[0]);
 
@@ -29,30 +37,27 @@ function CodeEditorComponent({
     setLanguage(selectedLanguage);
     setCode(newCode);
 
-    getLanguage(selectedLanguage)
-    getCode(newCode)
+    getLanguage(selectedLanguage);
+    getCode(newCode);
   };
 
   const handleEditorChange = (newCode: string | undefined) => {
     const updatedCode = newCode || "";
     setCode(updatedCode);
-    getLanguage(language)
-    getCode(newCode)
+    getLanguage(language);
+    getCode(newCode);
   };
 
   return (
-    <Paper shadow="md" radius="md" p="xl" withBorder>
-      <Stack align="flex-start" bg="var(--mantine-color-body)">
-
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Stack gap="sm">
         <Group justify="space-between" w="100%" mb="md">
           <SegmentedControl
             value={language}
             onChange={handleLanguageChange}
             data={languages}
           />
-          <Button onClick={handleSubmit}>
-            Submit
-          </Button>
+          <Button onClick={handleSubmit}>Submit</Button>
         </Group>
 
         <Editor
@@ -71,14 +76,14 @@ function CodeEditorComponent({
           ff="monospace"
           p="md"
           offsetScrollbars
-          scrollHideDelay={500}>
+          scrollHideDelay={500}
+        >
           <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
             {codeOutput}
           </Text>
         </ScrollArea>
-
       </Stack>
-    </Paper >
+    </Card>
   );
 }
 
