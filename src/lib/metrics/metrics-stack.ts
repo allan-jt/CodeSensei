@@ -6,6 +6,7 @@ import { MetricsSqsStack } from "./sqs/sqs-stack";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 
 interface MetricsStackProps extends cdk.StackProps {
+    appName: string;
     metricsTable: TableV2
 }
 
@@ -13,9 +14,7 @@ export class MetricsStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: MetricsStackProps) {
         super(scope, id, props);
 
-        const { metricsTable } = props;
-        
-        const appName = "CodeSensei";
+        const { appName, metricsTable } = props;
         
         const ecsStack = new MetricsEcsStack(this, "MetricsEcsStack", {
             stackName: `${appName}MetricsEcsStack`,
@@ -23,6 +22,7 @@ export class MetricsStack extends cdk.Stack {
             taskDefinitionName: `${appName}MetricsTaskDefinition`,
             containerName: `${appName}MetricsTaskDefinitionContainer`,
             streamPrefix: `${appName}Metrics`,
+            loadBalancerName: `${appName}MetricsLoadBalancer`,
             metricsTable: metricsTable
         });
         
@@ -36,9 +36,7 @@ export class MetricsStack extends cdk.Stack {
             lambdaName1: `${appName}LF4_0`,
             lambdaName2: `${appName}LF4_1`,
             lambdaName3: `${appName}LF4_2`,
-            ecsCluster: ecsStack.cluster,
-            taskDefinition: ecsStack.taskDefinition,
-            taskSecurityGroup: ecsStack.securityGroup,
+            loadBalancer: ecsStack.loadBalancer,
             sqsQueue: sqsStack.queue
         });  
     }

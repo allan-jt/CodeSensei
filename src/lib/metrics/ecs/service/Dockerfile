@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY main.py .
 
-RUN pip install --no-cache-dir boto3
+RUN pip install --no-cache-dir boto3 flask
 
 EXPOSE 80
 
