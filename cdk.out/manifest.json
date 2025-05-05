@@ -89,7 +89,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/d70b061e56e719ba0f0f8c1d241df371ba69fcb2f71618c3651b17f23613dbdf.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/561e395733c6dd21d00de04794c67b865a81a022a48091b364f614fd9983f1e5.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -510,6 +510,22 @@
           {
             "type": "aws:cdk:analytics:method",
             "data": {
+              "addToPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
               "addToPrincipalPolicy": [
                 {}
               ]
@@ -546,6 +562,14 @@
             "data": {
               "attachToRole": [
                 "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
               ]
             }
           },
@@ -850,7 +874,7 @@
               "new BaseService (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/node_modules/aws-cdk-lib/aws-ecs/lib/base/base-service.js:1:8100)",
               "new FargateService (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/node_modules/aws-cdk-lib/aws-ecs/lib/fargate/fargate-service.js:1:3551)",
               "new ApplicationLoadBalancedFargateService (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/node_modules/aws-cdk-lib/aws-ecs-patterns/lib/fargate/application-load-balanced-fargate-service.js:1:3340)",
-              "new EcsFargateConstruct (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/lib/assessment/custom-constructs/ecs_fargate.ts:64:20)",
+              "new EcsFargateConstruct (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/lib/assessment/custom-constructs/ecs_fargate.ts:74:20)",
               "new AssessmentStack (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/lib/assessment/assessment-stack.ts:22:23)",
               "Object.<anonymous> (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/bin/code_sensei.ts:24:25)",
               "Module._compile (node:internal/modules/cjs/loader:1469:14)",

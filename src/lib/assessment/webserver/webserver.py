@@ -178,11 +178,10 @@ async def process_assessment_action(action: dict):
                         question = random.choice(matching_questions)
                         
                         # Create question record
-                        # Create question record
                         question_record = {
                             "questionId": question.get("questionId", ""),
-                            "topic": question.get("topics", [action["selectedTopics"][0]])[0],  # Include topic of question
-                            "difficulty": question.get("difficulty", action["selectedDifficulty"][0]),  # Include difficulty
+                            "topic": str(question.get("topics", [action["selectedTopics"][0]])[0]),  # Include topic of question
+                            "difficulty":str(question.get("difficulty", action["selectedDifficulty"][0])),  # Include difficulty
                             "attempts": [],
                             "timeStarted": datetime.now().isoformat(),
                             "timeEnded": "",
@@ -241,46 +240,102 @@ async def process_assessment_action(action: dict):
             assessment_id = f"{user_id}#{timestamp}"
 
             try:
-                # Fetch the record from DynamoDB
+                # Fetch assessment
                 response = assessments_table.get_item(
-                    Key={
-                        "userId": user_id,
-                        "timestamp": timestamp
-                    }
+                    Key={"userId": user_id, "timestamp": timestamp}
                 )
 
                 if 'Item' not in response:
                     logger.error(f"Assessment not found for user {user_id} at {timestamp}")
                     raise HTTPException(status_code=404, detail="Assessment not found")
 
-                # Deserialize to schema
                 assessment_record = deserialize(AssessmentRecord, response["Item"])
-
+                logger.info(f"Deserialized assessment:\n{serialize(assessment_record)}")
                 if assessment_record is None:
-                    logger.error("Deserialization returned None for assessment")
-                    raise HTTPException(status_code=500, detail="Failed to deserialize assessment")
+                    logger.error("Deserialization returned None")
+                    raise HTTPException(status_code=500, detail="Failed to deserialize")
 
-                # Optional update back to DynamoDB (only needed if modifying something)
-                # item = serialize(assessment_record)
-                # item = sanitize_floats_to_decimal(item)
-                # assessments_table.put_item(Item=item)
+                # 1. Determine served topic-difficulty pairs
+                served_pairs = {
+                    (q.topic.lower(), q.difficulty.lower())
+                    for q in assessment_record.questions
+                }
 
-                def safe_enum_values(enum_cls, items):
-                    return [item.value if isinstance(item, enum_cls) else item for item in items]
-                # Return only the requested fields
+                # 2. Determine all requested combinations (use strings directly)
+                all_pairs = {
+                    (t.lower(), d.lower())
+                    for t in assessment_record.selectedTopics
+                    for d in assessment_record.selectedDifficulty
+                }
+                remaining_pairs = list(all_pairs - served_pairs)
+
+                if not remaining_pairs:
+                    return {
+                        "assessmentId": assessment_id,
+                        "selectedTopics": assessment_record.selectedTopics,
+                        "selectedDifficulty": assessment_record.selectedDifficulty,
+                        "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
+                        "questions": [serialize(q) for q in assessment_record.questions],
+                        "nextRecommendation": None,
+                        "message": "All topic-difficulty pairs served."
+                    }
+
+                # 3. Ask Bedrock which to serve next
+                prompt = f"""
+        You are a recommender.
+        Selected topics: {assessment_record.selectedTopics}
+        Selected difficulties: {assessment_record.selectedDifficulty}
+        Already served: {list(served_pairs)}
+        Pick ONE unserved (topic, difficulty) pair from the rest.
+        Respond as JSON: {{ "topic": "<>", "difficulty": "<>" }}
+        """
+                payload_to_bedrock = {
+                    "anthropic_version": "bedrock-2023-05-31",
+                    "max_tokens": 50,
+                    "temperature": 0.7,
+                    "messages": [
+                        {"role": "user", "content": prompt}
+                    ]
+                }
+
+                logger.info(f"🧠 Calling Bedrock with payload:\n{json.dumps(payload_to_bedrock, indent=2)}")
+
+                bedrock_response = bedrock.invoke_model(
+    modelId="us.anthropic.claude-3-5-sonnet-20241022-v2:0",  # Use inference profile ID
+    contentType="application/json",
+    accept="application/json",
+    body=json.dumps(payload_to_bedrock)
+)
+                
+
+                # Parse model output
+                # Parse model output
+                raw_body = bedrock_response["body"].read()
+                completion = json.loads(raw_body)
+
+                # Extract the actual text from the Claude v3 style response
+                text = completion["content"][0]["text"]
+
+                # Now parse the JSON inside that text
+                model_response = json.loads(text)
+                next_topic = model_response["topic"]
+                next_difficulty = model_response["difficulty"]
+
                 return {
                     "assessmentId": assessment_id,
-                    "selectedTopics": safe_enum_values(Topic, assessment_record.selectedTopics),
-                    "selectedDifficulty": safe_enum_values(Difficulty, assessment_record.selectedDifficulty),
+                    "selectedTopics": assessment_record.selectedTopics,
+                    "selectedDifficulty": assessment_record.selectedDifficulty,
                     "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
-                    "questions": [serialize(q) for q in assessment_record.questions]
+                    "questions": [serialize(q) for q in assessment_record.questions],
+                    "nextRecommendation": {
+                        "topic": next_topic,
+                        "difficulty": next_difficulty
+                    }
                 }
 
             except Exception as e:
                 logger.error(f"Error retrieving assessment: {str(e)}")
                 raise HTTPException(status_code=500, detail=f"Failed to retrieve assessment: {str(e)}")
-
-
 
         elif action["type"] == "end":
             # Get userId and assessmentId

@@ -59,6 +59,16 @@ export class EcsFargateConstruct extends Construct {
         ]
       })
     );
+    this.taskRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: [
+          "bedrock:InvokeModel",
+          "bedrock:ListFoundationModels",
+          "bedrock:GetFoundationModel"
+        ],
+        resources: ["*"] // Or restrict to only the models you use
+      })
+    );
 
     // Define Fargate service + ALB
     this.service = new ecs_patterns.ApplicationLoadBalancedFargateService(this, 'FargateService', {

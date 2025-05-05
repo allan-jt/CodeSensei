@@ -29,7 +29,9 @@ export class AssessmentStack extends cdk.Stack {
     });
 
     // Bedrock integration (shared VPC)
-    const models = ['amazon.titan-tg1-large'];
+    const models = ['amazon.titan-tg1-large',
+      'us.anthropic.claude-3-5-sonnet-20241022-v2:0'
+    ];
 
     this.bedrock = new BedrockConstruct(this, 'Bedrock', {
       vpc:      this.ecsFargate.cluster.vpc,

@@ -132,10 +132,11 @@ class Attempt:
     execMemoryTaken: int  # Memory taken in KB
     status: AttemptStatus  # Status of the attempt (success or fail)
 
-
 @dataclass
 class QuestionsDone:
     questionId: str
+    topic: str              # I need it for bedrock
+    difficulty: str         # <I need it for bedrock
     attempts: List[Attempt]
     timeStarted: str
     timeEnded: str
