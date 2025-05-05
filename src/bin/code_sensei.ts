@@ -6,6 +6,7 @@ import { CodeSenseiStack } from "../lib/code_sensei-stack";
 import { AssessmentStack } from "../lib/assessment/assessment-stack";
 import { ApiGatewayStack } from "../lib/api/api-gateway-stack";
 import { FrontendStack } from "../lib/frontend/frontend-stack";
+import { StorageStack } from "../lib/storage/storage-stack";
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 

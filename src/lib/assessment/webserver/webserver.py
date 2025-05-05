@@ -5,12 +5,17 @@ import boto3
 import logging
 import json
 from datetime import datetime
+from dynamo_schemas import *
+from dynamo_reader import serialize, deserialize
+from decimal import Decimal
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 app = FastAPI()
+bedrock = boto3.client("bedrock-runtime", region_name="us-east-1")
 
 class AssessmentAction(BaseModel):
     userId: str
@@ -36,32 +41,66 @@ async def process_assessment_action(action: dict):
         dynamodb = boto3.resource('dynamodb')
         assessments_table = dynamodb.Table('AssessmentsTable')
         question_bank_table = dynamodb.Table('QuestionBankTable')
+        matching_questions = []
+        question = {}
         
         if action["type"] == "begin":
             # Use the provided userId and timestamp
             user_id = action["userId"]
             timestamp = action["timestamp"]
             
-            # Create assessment record with proper schema
+            # Convert string topics to Topic enum - Handle multiple topics correctly
+            selected_topics = []
+            for topic_str in action.get("selectedTopics", []):
+                found_match = False
+                for topic_enum in Topic:
+                    # Exact match (case insensitive)
+                    if topic_enum.value.lower() == topic_str.lower():
+                        selected_topics.append(topic_enum)
+                        found_match = True
+                        break
+                    # Handle plural forms (e.g., "Arrays" matches "Array")
+                    elif topic_str.lower().rstrip('s') == topic_enum.value.lower():
+                        selected_topics.append(topic_enum)
+                        found_match = True
+                        break
+                
+                if not found_match:
+                    logger.warning(f"Topic '{topic_str}' not found in enum")
+            
+            # Convert string difficulties to Difficulty enum
+            selected_difficulties = []
+            for diff_str in action.get("selectedDifficulty", ["medium"]):
+                found_match = False
+                for diff_enum in Difficulty:
+                    if diff_enum.value.lower() == diff_str.lower():
+                        selected_difficulties.append(diff_enum)
+                        found_match = True
+                        break
+                
+                if not found_match:
+                    logger.warning(f"Difficulty '{diff_str}' not found in enum")
+            
+            # Create assessment record - make sure all fields are included
             assessment_record = {
                 "userId": user_id,
                 "timestamp": timestamp,
-                "selectedTopics": action.get("selectedTopics", []),
-                "selectedDifficulty": action.get("selectedDifficulty", ["Medium"]),
-                "selectedDuration": action.get("selectedDuration", 60) * 60,  # Convert minutes to seconds
-                "selectedNumberOfQuestions": 1,  # Set to 1 for begin action
-                "status": "ongoing",  # Set status as ongoing for begin action
+                "selectedTopics": [topic.value for topic in selected_topics],  # Convert enums to values
+                "selectedDifficulty": [diff.value for diff in selected_difficulties],  # Convert enums to values
+                "selectedDuration": action.get("selectedDuration", 60) * 60,  # Convert to seconds
+                "selectedNumberOfQuestions": 1,  # Start with 1, will increment on ongoing calls
+                "status": "ongoing",
                 "metrics": {
                     "scope": {
                         "count": 0,
                         "total": 0
                     }
                 },
-                "questions": []  # Initialize empty questions array
+                "questions": []
             }
             
             try:
-                # Conditional write - only create if it doesn't exist
+                # Save to DynamoDB
                 assessments_table.put_item(
                     Item=assessment_record,
                     ConditionExpression="attribute_not_exists(userId) AND attribute_not_exists(#ts)",
@@ -85,85 +124,89 @@ async def process_assessment_action(action: dict):
                 
                 assessment_record = existing_assessment.get("Item", assessment_record)
             
+            # Initialize variables for question finding
+            matching_questions = []
+            question = {}
+            
             # Query for a question based on selected topic and difficulty
             if action.get("selectedTopics") and action.get("selectedDifficulty"):
                 try:
-                    # Get the first topic and difficulty
+                    # Get the first topic and difficulty for querying
                     requested_topic = action["selectedTopics"][0].lower()
                     requested_difficulty = action["selectedDifficulty"][0].lower()
                     
                     # Scan the table for all questions
-                    all_questions = question_bank_table.scan()
+                    response = question_bank_table.scan()
+                    all_questions = response.get("Items", [])
                     
-                    # Filter questions that match topic and difficulty (case-insensitive)
-                    matching_questions = []
-                    for q in all_questions.get("Items", []):
+                    # Filter questions that match topic and difficulty
+                    for q in all_questions:
                         q_topics = [t.lower() for t in q.get("topics", [])]
                         q_difficulty = q.get("difficulty", "").lower()
                         
-                        topic_match = any(requested_topic in topic for topic in q_topics)
+                        # Check if the requested topic matches any question topic
+                        topic_match = any(
+                            requested_topic in topic or 
+                            requested_topic.rstrip('s') in topic or
+                            topic in requested_topic
+                            for topic in q_topics
+                        )
                         difficulty_match = requested_difficulty == q_difficulty
                         
                         if topic_match and difficulty_match:
                             matching_questions.append(q)
                     
                     # If no exact matches, try matching just by topic
-                    if not matching_questions:
+                    if len(matching_questions) == 0:
                         logger.warning(f"No questions found for topic: {requested_topic}, difficulty: {requested_difficulty}")
                         
-                        matching_questions = []
-                        for q in all_questions.get("Items", []):
+                        for q in all_questions:
                             q_topics = [t.lower() for t in q.get("topics", [])]
-                            topic_match = any(requested_topic in topic for topic in q_topics)
+                            topic_match = any(
+                                requested_topic in topic or 
+                                requested_topic.rstrip('s') in topic or
+                                topic in requested_topic
+                                for topic in q_topics
+                            )
                             
                             if topic_match:
                                 matching_questions.append(q)
                     
                     # If we found matching questions, select one randomly
-                    if matching_questions:
+                    if len(matching_questions) > 0:
                         import random
                         question = random.choice(matching_questions)
                         
-                        # Get current time for timeStarted
-                        import datetime
-                        current_time = datetime.datetime.now().isoformat()
-                        
-                        # Create question record for the assessment
+                        # Create question record
+                        # Create question record
                         question_record = {
                             "questionId": question.get("questionId", ""),
-                            "topic": question.get("topics", [action["selectedTopics"][0]])[0],  # Use first topic
-                            "difficulty": question.get("difficulty", action["selectedDifficulty"][0]),
-                            "attempts": 0,  # Initialize attempts count
-                            "timeStarted": current_time,  # Set start time
-                            "timeEnd": "",  # Empty until completed
-                            "attempts": [],  # Initialize empty attempts array
-                            "bestExecTime": 0,  # Initialize best execution time
-                            "bestExecMem": 0,  # Initialize best execution memory
-                            "testCasesPassed": 0,  # Initialize test cases passed
-                            "status": "incomplete"  # Set initial status as incomplete
+                            "topic": question.get("topics", [action["selectedTopics"][0]])[0],  # Include topic of question
+                            "difficulty": question.get("difficulty", action["selectedDifficulty"][0]),  # Include difficulty
+                            "attempts": [],
+                            "timeStarted": datetime.now().isoformat(),
+                            "timeEnded": "",
+                            "bestExecTime": 999999999,
+                            "bestExecMem": 999999999,
+                            "testCasesPassed": 0,
+                            "status": "incomplete"
                         }
                         
-                        # Update assessment record with this question
-                        assessments_table.update_item(
-                            Key={
-                                "userId": user_id,
-                                "timestamp": timestamp
-                            },
-                            UpdateExpression="SET questions = list_append(if_not_exists(questions, :empty_list), :question)",
-                            ExpressionAttributeValues={
-                                ":empty_list": [],
-                                ":question": [question_record]
-                            }
-                        )
+                        # Update assessment record with question
+                        assessment_record["questions"].append(question_record)
                         
-                    else:
-                        # No matches found
-                        question = {}
+                        # Save the updated assessment
+                        assessments_table.put_item(Item=assessment_record)
                     
-                    if not question:
-                        # If still no questions, return a placeholder
+                    # Return response based on whether question was found
+                    if question:
+                        # Return the entire assessment record
+                        assessment_record["assessmentId"] = f"{user_id}#{timestamp}"
+                        return assessment_record
+                    else:
+                        # No questions found, return placeholder
                         return {
-                            "assessmentId": timestamp,
+                            "assessmentId": f"{user_id}#{timestamp}",
                             "message": "No matching questions found. Using placeholder.",
                             "questionId": "",
                             "questionTitle": "Sample Question",
@@ -173,23 +216,11 @@ async def process_assessment_action(action: dict):
                             "questionDifficulty": action["selectedDifficulty"][0]
                         }
                     
-                    # Return question information
-                    return {
-                        "assessmentId": timestamp,
-                        "questionId": question.get("questionId", ""),
-                        "questionTitle": question.get("title", "Sample Question"),
-                        "questionDescription": question.get("description", "This is a placeholder question"),
-                        "starterCode": question.get("starterCode", "# Your code here"),
-                        "questionTopics": question.get("topics", action["selectedTopics"]),
-                        "questionDifficulty": question.get("difficulty", action["selectedDifficulty"][0]),
-                        "testCases": question.get("testCases", [])
-                    }
-                    
                 except Exception as e:
                     logger.error(f"Error querying questions: {str(e)}")
                     return {
-                        "assessmentId": timestamp,
-                        "message": "Assessment created, but error fetching questions: " + str(e),
+                        "assessmentId": f"{user_id}#{timestamp}",
+                        "message": f"Assessment created, but error fetching questions: {str(e)}",
                         "questionId": "",
                         "questionTitle": "Sample Question",
                         "questionDescription": "This is a placeholder question.",
@@ -200,17 +231,64 @@ async def process_assessment_action(action: dict):
             else:
                 # If no topics or difficulties selected, return a generic response
                 return {
-                    "assessmentId": timestamp,
+                    "assessmentId": f"{user_id}#{timestamp}",
                     "message": "Assessment created successfully, but no topics or difficulty specified."
                 }
                     
         elif action["type"] == "ongoing":
-    # Extract user_id and timestamp from the request
             user_id = action["userId"]
             timestamp = action["timestamp"]
+            assessment_id = f"{user_id}#{timestamp}"
+
+            try:
+                # Fetch the record from DynamoDB
+                response = assessments_table.get_item(
+                    Key={
+                        "userId": user_id,
+                        "timestamp": timestamp
+                    }
+                )
+
+                if 'Item' not in response:
+                    logger.error(f"Assessment not found for user {user_id} at {timestamp}")
+                    raise HTTPException(status_code=404, detail="Assessment not found")
+
+                # Deserialize to schema
+                assessment_record = deserialize(AssessmentRecord, response["Item"])
+
+                if assessment_record is None:
+                    logger.error("Deserialization returned None for assessment")
+                    raise HTTPException(status_code=500, detail="Failed to deserialize assessment")
+
+                # Optional update back to DynamoDB (only needed if modifying something)
+                # item = serialize(assessment_record)
+                # item = sanitize_floats_to_decimal(item)
+                # assessments_table.put_item(Item=item)
+
+                def safe_enum_values(enum_cls, items):
+                    return [item.value if isinstance(item, enum_cls) else item for item in items]
+                # Return only the requested fields
+                return {
+                    "assessmentId": assessment_id,
+                    "selectedTopics": safe_enum_values(Topic, assessment_record.selectedTopics),
+                    "selectedDifficulty": safe_enum_values(Difficulty, assessment_record.selectedDifficulty),
+                    "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
+                    "questions": [serialize(q) for q in assessment_record.questions]
+                }
+
+            except Exception as e:
+                logger.error(f"Error retrieving assessment: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Failed to retrieve assessment: {str(e)}")
+
+
+
+        elif action["type"] == "end":
+            # Get userId and assessmentId
+            user_id = action["userId"]
+            timestamp = action["assessmentId"]
             
             try:
-                # First, get the current assessment
+                # Get the assessment first
                 response = assessments_table.get_item(
                     Key={
                         "userId": user_id,
@@ -218,78 +296,26 @@ async def process_assessment_action(action: dict):
                     }
                 )
                 
-                # Check if assessment exists
                 if 'Item' not in response:
-                    logger.error(f"Assessment not found for user {user_id} at {timestamp}")
                     raise HTTPException(status_code=404, detail="Assessment not found")
                 
-                # Get the assessment data
-                assessment = response['Item']
+                # Deserialize the assessment
+                assessment = deserialize(AssessmentRecord, response['Item'])
                 
-                # Then, increment the selectedNumberOfQuestions counter
-                assessments_table.update_item(
-                    Key={
-                        "userId": user_id,
-                        "timestamp": timestamp
-                    },
-                    UpdateExpression="SET selectedNumberOfQuestions = if_not_exists(selectedNumberOfQuestions, :zero) + :one",
-                    ExpressionAttributeValues={
-                        ":zero": 0,
-                        ":one": 1
-                    }
-                )
+                # Update the status
+                assessment.status = AssessmentStatus.COMPLETE
                 
-                # Check if there are any questions in the assessment
-                questions = assessment.get("questions", [])
+                # Serialize and save back to DynamoDB
+                assessments_table.put_item(Item=serialize(assessment))
                 
-                if not questions:
-                    logger.warning(f"No questions found in assessment for user {user_id} at {timestamp}")
-                    
-                    return {
-                        "assessmentId": timestamp,
-                        "message": "Assessment found but no questions are available.",
-                        "questions": []
-                    }
-                
-                # Return the assessment data in the exact format requested
                 return {
-                    "assessmentId": timestamp,
-                    "message": "Assessment retrieved successfully",
-                    "questions": questions,
-                    "selectedTopics": assessment.get("selectedTopics", []),
-                    "selectedDifficulty": assessment.get("selectedDifficulty", []),
-                    "selectedDuration": assessment.get("selectedDuration", 0),
-                    "status": assessment.get("status", "ongoing")
+                    "status": "completed",
+                    "assessmentId": timestamp
                 }
                 
             except Exception as e:
-                logger.error(f"Error retrieving assessment: {str(e)}")
-                raise HTTPException(status_code=500, detail=f"Failed to retrieve assessment: {str(e)}")
-       
-        elif action["type"] == "end":
-            # Get userId and assessmentId
-            user_id = action["userId"]
-            timestamp = action["assessmentId"]
-            
-            # Update the assessment status
-            assessments_table.update_item(
-                Key={
-                    "userId": user_id,
-                    "timestamp": timestamp
-                },
-                UpdateExpression="SET #status = :status",
-                ExpressionAttributeNames={
-                    "#status": "status"
-                },
-                ExpressionAttributeValues={
-                    ":status": "complete"
-                }
-            )
-            
-            return {
-                "status": "completed",
-                "assessmentId": timestamp
-            }
+                logger.error(f"Error ending assessment: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Failed to end assessment: {str(e)}")
         
         else:
             raise HTTPException(status_code=400, detail=f"Invalid action type: {action['type']}")
@@ -300,3 +326,13 @@ async def process_assessment_action(action: dict):
     except Exception as e:
         logger.error(f"Error processing assessment action: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to process assessment action: {str(e)}")
+    
+def sanitize_floats_to_decimal(obj):
+    if isinstance(obj, float):
+        return Decimal(str(obj))
+    elif isinstance(obj, dict):
+        return {k: sanitize_floats_to_decimal(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_floats_to_decimal(v) for v in obj]
+    else:
+        return obj

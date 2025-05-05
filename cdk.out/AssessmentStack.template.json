@@ -721,23 +721,12 @@
       },
       {
        "Action": [
-        "bedrock:GetModel",
+        "bedrock:GetFoundationModel",
         "bedrock:InvokeModel",
-        "bedrock:ListModels"
+        "bedrock:ListFoundationModels"
        ],
        "Effect": "Allow",
-       "Resource": {
-        "Fn::Join": [
-         "",
-         [
-          "arn:aws:bedrock:us-east-1:",
-          {
-           "Ref": "AWS::AccountId"
-          },
-          ":foundation-model/amazon.titan-tg1-large"
-         ]
-        ]
-       }
+       "Resource": "*"
       }
      ],
      "Version": "2012-10-17"
@@ -1468,27 +1457,12 @@
      "Statement": [
       {
        "Action": [
-        "bedrock:GetModel",
+        "bedrock:GetFoundationModel",
         "bedrock:InvokeModel",
-        "bedrock:ListModels"
+        "bedrock:ListFoundationModels"
        ],
        "Effect": "Allow",
-       "Resource": {
-        "Fn::Join": [
-         "",
-         [
-          "arn:aws:bedrock:",
-          {
-           "Ref": "AWS::Region"
-          },
-          ":",
-          {
-           "Ref": "AWS::AccountId"
-          },
-          ":model/amazon.titan-tg1-large"
-         ]
-        ]
-       }
+       "Resource": "*"
       }
      ],
      "Version": "2012-10-17"
