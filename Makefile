@@ -14,6 +14,9 @@ run_infra:
 run_frontend:
 	${F_CMD} deploy --all --require-approval never
 
+run_frontend_local:
+	cd ${REACT_APP} && npm run dev
+
 build_frontend:
 	cd ${REACT_APP} && npm run build
 
