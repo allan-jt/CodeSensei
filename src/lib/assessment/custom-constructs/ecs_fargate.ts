@@ -3,6 +3,9 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecs_patterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as cdk from 'aws-cdk-lib';
+import * as path from 'path';
+import * as fs from 'fs';
+import { Platform } from 'aws-cdk-lib/aws-ecr-assets';
 
 export interface EcsFargateProps {
   /** Optionally provide an existing VPC */
@@ -32,6 +35,20 @@ export class EcsFargateConstruct extends Construct {
     // Create ECS cluster in the VPC
     this.cluster = new ecs.Cluster(this, 'Cluster', { vpc });
 
+    // Autodetect local webserver directory
+    const webserverPath = path.join(__dirname, '../webserver');
+    let image: ecs.ContainerImage;
+
+    // If the webserver directory exists, use it as the image
+    // Otherwise, use the default image from Docker Hub
+    if (fs.existsSync(webserverPath)) {
+      image = ecs.ContainerImage.fromAsset(webserverPath, {
+        platform: Platform.LINUX_AMD64,
+      });
+    } else {
+      image = ecs.ContainerImage.fromRegistry('aaronbengo/ai_webserver:latest');
+    }
+
     // Define Fargate service + ALB
     this.service = new ecs_patterns.ApplicationLoadBalancedFargateService(this, 'FargateService', {
       cluster: this.cluster,
@@ -41,7 +58,7 @@ export class EcsFargateConstruct extends Construct {
       desiredCount: props?.desiredCount ?? 1,
       publicLoadBalancer: true,
       taskImageOptions: {
-        image: ecs.ContainerImage.fromRegistry(props?.containerImage ?? 'aaronbengo/ai_webserver:latest'),
+        image: image,
         containerPort: 80,
       },
     });
