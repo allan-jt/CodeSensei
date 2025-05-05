@@ -35,7 +35,7 @@ def run_task(payload):
 if __name__ == "__main__":
     payload = {
         "user_id": "u001",
-        "scope": "Array#easy",
+        "scopes": ["array#easy"],
         "time_spent": 300,
         "execution_time": 1.5,
         "execution_memory": 128

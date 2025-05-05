@@ -4,6 +4,7 @@ import { Function, Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { Cluster, FargateTaskDefinition } from "aws-cdk-lib/aws-ecs";
 import { SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import { SubnetType } from "aws-cdk-lib/aws-ec2";
+import { Queue } from "aws-cdk-lib/aws-sqs";
 import * as path from "path";
 
 interface MetricsLambdaStackProps extends cdk.StackProps {
@@ -12,14 +13,15 @@ interface MetricsLambdaStackProps extends cdk.StackProps {
     lambdaName3: string;
     ecsCluster: Cluster;
     taskDefinition: FargateTaskDefinition;
-    taskSecurityGroup: SecurityGroup
+    taskSecurityGroup: SecurityGroup;
+    sqsQueue: Queue;
 }
 
 export class MetricsLambdaStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: MetricsLambdaStackProps) {
         super(scope, id, props);
         
-        const { lambdaName1, lambdaName2, lambdaName3, ecsCluster, taskDefinition, taskSecurityGroup } = props;
+        const { lambdaName1, lambdaName2, lambdaName3, ecsCluster, taskDefinition, taskSecurityGroup, sqsQueue } = props;
 
         const lf4_0 = new Function(this, "LF4_0", {
             functionName: lambdaName1,
@@ -38,7 +40,8 @@ export class MetricsLambdaStack extends cdk.Stack {
                 TASK_DEFINITION_ARN: taskDefinition.taskDefinitionArn,
                 CONTAINER_NAME: taskDefinition.defaultContainer?.containerName || "",
                 SECURITY_GROUP_ID: taskSecurityGroup.securityGroupId,
-                SUBNET_IDS: ecsCluster.vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }).subnetIds.join(",")
+                SUBNET_IDS: ecsCluster.vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }).subnetIds.join(","),
+                SQS_QUEUE_URL: sqsQueue.queueUrl
             }
         });
         
@@ -51,5 +54,6 @@ export class MetricsLambdaStack extends cdk.Stack {
 
         // Add permissions
         taskDefinition.grantRun(lf4_1);
+        sqsQueue.grantSendMessages(lf4_1);
     }
 }
