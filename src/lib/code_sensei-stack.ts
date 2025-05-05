@@ -9,6 +9,9 @@ export class CodeSenseiStack extends cdk.Stack {
 
     const appName = "CodeSensei";
     const storage = new StorageStack(this, "StorageStack", { stackName: `${appName}StorageStack` });
-    // const metrics = new MetricsStack(this, "MetricsStack", { stackName: `${appName}MetricsStack` });
+    const metrics = new MetricsStack(this, "MetricsStack", {
+      stackName: `${appName}MetricsStack`,
+      metricsTable: storage.metricsTable
+    });
   }
 }
