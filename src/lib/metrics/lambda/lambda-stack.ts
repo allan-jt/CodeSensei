@@ -3,6 +3,7 @@ import { Construct } from "constructs";
 import { Function, Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import { Queue } from "aws-cdk-lib/aws-sqs";
+import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import * as path from "path";
 
 interface MetricsLambdaStackProps extends cdk.StackProps {
@@ -23,7 +24,8 @@ export class MetricsLambdaStack extends cdk.Stack {
             functionName: lambdaName1,
             runtime: Runtime.PYTHON_3_13,
             code: Code.fromAsset(path.join(__dirname, "lf4_0")),
-            handler: "index.handler"
+            handler: "index.handler",
+            timeout: cdk.Duration.seconds(10)
         });
         
         const lf4_1 = new Function(this, "LF4_1", {
@@ -34,17 +36,26 @@ export class MetricsLambdaStack extends cdk.Stack {
             environment: {
                 REQUEST_URL: loadBalancer.loadBalancer.loadBalancerDnsName,
                 SQS_QUEUE_URL: sqsQueue.queueUrl,
-            }
+            },
+            timeout: cdk.Duration.seconds(10)
         });
         
         const lf4_2 = new Function(this, "LF4_2", {
             functionName: lambdaName3,
             runtime: Runtime.PYTHON_3_13,
             code: Code.fromAsset(path.join(__dirname, "lf4_2")),
-            handler: "index.handler"
+            handler: "index.handler",
+            environment: {
+                REQUEST_URL: loadBalancer.loadBalancer.loadBalancerDnsName
+            },
+            timeout: cdk.Duration.seconds(10)
         });
 
+        // Add queue as event source for lf4_2
+        lf4_2.addEventSource(new SqsEventSource(sqsQueue));
+        
         // Add permissions
         sqsQueue.grantSendMessages(lf4_1);
+        sqsQueue.grantConsumeMessages(lf4_2);
     }
 }
