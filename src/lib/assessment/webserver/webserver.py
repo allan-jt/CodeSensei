@@ -2,54 +2,73 @@ import os
 import json
 import logging
 import boto3
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from fastapi import FastAPI, HTTPException, Query
+import uvicorn
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-class HealthHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path in ('/', '/health'):
-            # 1) Base “hello world”
-            health_msg = "hello world"
-            logger.info("Responding to /health with base message: %s", health_msg)
+app = FastAPI()
 
-            # 2) Call Bedrock
-            model_id   = os.environ.get('MODEL_ID', 'mistral.mistral-7b-instruct-v0:2')
-            region     = os.environ.get('AWS_REGION', 'us-east-1')
-            payload    = {"inputText": "Health check"}  # simple prompt
-            try:
-                client = boto3.client('bedrock-runtime', region_name=region)
-                resp = client.invoke_model(
-                    modelId=model_id,
-                    contentType='application/json',
-                    accept='application/json',
-                    body=json.dumps(payload).encode('utf-8')
-                )
-                # read and decode the streaming body
-                llm_out = resp['body'].read().decode('utf-8')
-                logger.info("Bedrock responded: %s", llm_out)
-            except Exception as e:
-                logger.error("Bedrock call failed: %s", e, exc_info=True)
-                llm_out = f"Bedrock error: {e}"
+@app.get("/")
+async def root():
+    return {"status": "OK"}
 
-            # 3) Build a combined JSON response
-            response = {
-                "health": health_msg,
-                "bedrock": llm_out
-            }
+@app.get("/health")
+async def health(payload: str = Query(..., description="URL-encoded JSON payload")):
+    # 1) Parse incoming JSON
+    try:
+        data = json.loads(payload)
+    except json.JSONDecodeError:
+        logger.error("Invalid JSON payload: %s", payload)
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")
 
-            # 4) Send back
-            body = json.dumps(response)
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json; charset=utf-8')
-            self.end_headers()
-            self.wfile.write(body.encode('utf-8'))
-        else:
-            self.send_response(404)
-            self.end_headers()
+    # 2) Create a Mistral-style prompt with JSON data as string
+    json_str = json.dumps(data)
+    instruction = (
+        "You are a helpful AI. Process the following JSON data and provide a concise summary."
+    )
+    # Mistral requires the prompt in an instruction tag
+    formatted_prompt = f"<s>[INST] {instruction}\n{json_str} [/INST]"
+
+    # 3) Prepare Bedrock payload with Mistral parameters
+    model_id = os.getenv('MODEL_ID', 'mistral.mistral-7b-instruct-v0:2')
+    region   = os.getenv('AWS_REGION', 'us-east-1')
+    bedrock_payload = {
+        "prompt": formatted_prompt,
+        "max_tokens": 512,
+        "temperature": 0.7,
+    }
+
+    # 4) Invoke Bedrock model
+    try:
+        client = boto3.client('bedrock-runtime', region_name=region)
+        resp = client.invoke_model(
+            modelId=model_id,
+            contentType='application/json',
+            accept='application/json',
+            body=json.dumps(bedrock_payload).encode('utf-8')
+        )
+        raw_body = resp['body'].read().decode('utf-8')
+        logger.info("Bedrock raw response: %s", raw_body)
+        # Parse out the Mistral-specific output structure
+        parsed = json.loads(raw_body)
+        # For Mistral text completion, results are in 'outputs'[0]['text']
+        llm_out = parsed.get('outputs', [{}])[0].get('text', raw_body)
+    except Exception as e:
+        logger.error("Bedrock call failed", exc_info=True)
+        llm_out = f"Bedrock error: {e}"
+
+    # 5) Return both the original request and the LLM’s response
+    return {
+        "request": data,
+        "formatted_prompt": formatted_prompt,
+        "bedrock": llm_out
+    }
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', '80'))
-    logger.info("Starting server on port %d…", port)
-    HTTPServer(('0.0.0.0', port), HealthHandler).serve_forever()
+    port = int(os.getenv('PORT', '80'))
+    logger.info("Starting FastAPI server on port %d", port)
+    uvicorn.run(app, host='0.0.0.0', port=port)
+
