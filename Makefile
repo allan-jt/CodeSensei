@@ -1,26 +1,31 @@
-SRC = ./src
-BIN = ${SRC}/bin
-LIB = ${SRC}/lib
-DYNAMO_DATA = ${LIB}/storage/dynamo-stack/scripts
+INFRA = ./src
+FRONTEND = ./frontend
 
-CMD = cd ${SRC} && cdk
+REACT_APP = ${FRONTEND}/lib/react-app
+DYNAMO_DATA = ${INFRA}/lib/storage/dynamo-stack/scripts
 
-run_all:
-	${CMD} deploy --all --require-approval never
+I_CMD = cd ${INFRA} && cdk
+F_CMD = cd ${FRONTEND} && cdk
 
-run:
-	${CMD} deploy $(filter-out $@,$(MAKECMDGOALS))
 
-prune:
-	docker system prune
+run_infra:
+	${I_CMD} deploy --all --require-approval never
 
-destroy_all:
-	${CMD} destroy --all
+run_frontend:
+	${F_CMD} deploy --all --require-approval never
+
+build_frontend:
+	cd ${REACT_APP} && npm run build
+
+destroy_infra:
+	${I_CMD} destroy --all --require-approval never
+
+destroy_frontend:
+	${F_CMD} destroy --all --require-approval never
+
+destroy_all: destroy_frontend destroy_infra
 
 destroy_all_prune: destroy_all prune
-
-destroy:
-	${CMD} destroy $(filter-out $@,$(MAKECMDGOALS))
 
 seed_dynamo:
 	cd ${DYNAMO_DATA} && npx ts-node seed-dynamo.ts $(filter-out $@,$(MAKECMDGOALS))
