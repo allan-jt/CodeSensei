@@ -7,10 +7,12 @@ sqs_client = boto3.client("sqs")
 def send_message(payload):
     SQS_QUEUE_URL = os.environ.get("SQS_QUEUE_URL")
 
-    sqs_client.send_message(
+    response = sqs_client.send_message(
         QueueUrl=SQS_QUEUE_URL,
         MessageBody=json.dumps(payload)
     )
+
+    return { "messageId": response.get("MessageId") }
 
 if __name__ == "__main__":
     payload = {
