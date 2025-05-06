@@ -4,6 +4,7 @@ import { Function, Code, Runtime } from "aws-cdk-lib/aws-lambda";
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 import * as path from "path";
 
 interface MetricsLambdaStackProps extends cdk.StackProps {
@@ -12,13 +13,14 @@ interface MetricsLambdaStackProps extends cdk.StackProps {
     lambdaName3: string;
     loadBalancer: ApplicationLoadBalancedFargateService;
     sqsQueue: Queue;
+    assessmentsTable: TableV2;
 }
 
 export class MetricsLambdaStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: MetricsLambdaStackProps) {
         super(scope, id, props);
         
-        const { lambdaName1, lambdaName2, lambdaName3, loadBalancer, sqsQueue } = props;
+        const { lambdaName1, lambdaName2, lambdaName3, loadBalancer, sqsQueue, assessmentsTable } = props;
 
         const lf4_0 = new Function(this, "LF4_0", {
             functionName: lambdaName1,
@@ -36,6 +38,7 @@ export class MetricsLambdaStack extends cdk.Stack {
             environment: {
                 REQUEST_URL: loadBalancer.loadBalancer.loadBalancerDnsName,
                 SQS_QUEUE_URL: sqsQueue.queueUrl,
+                ASSESSMENTS_TABLE_NAME: assessmentsTable.tableName
             },
             timeout: cdk.Duration.seconds(10)
         });
@@ -55,6 +58,7 @@ export class MetricsLambdaStack extends cdk.Stack {
         lf4_2.addEventSource(new SqsEventSource(sqsQueue));
         
         // Add permissions
+        assessmentsTable.grantReadData(lf4_1);
         sqsQueue.grantSendMessages(lf4_1);
         sqsQueue.grantConsumeMessages(lf4_2);
     }

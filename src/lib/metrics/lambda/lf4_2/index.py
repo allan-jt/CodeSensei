@@ -6,7 +6,8 @@ def handler(event, context):
         message_id = record.get("messageId")
         try:
             message = json.loads(record.get("body"))
-            response = send_request(message)
+            endpoint = "/metrics/update"
+            response = send_request(message, endpoint)
             print(f"Successfully processed message {message_id}")
         except Exception as e:
             print(f"Error processing message {message_id}: {e}")
