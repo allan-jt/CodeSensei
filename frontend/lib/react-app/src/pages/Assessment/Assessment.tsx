@@ -42,7 +42,7 @@ function AssessmentPage() {
       />
 
       <Tabs defaultValue="codeOutput">
-        <Tabs.List>
+        <Tabs.List grow>
           <Tabs.Tab value="codeOutput" leftSection={<IconTerminal size={12} />}>
             Code Output
           </Tabs.Tab>
@@ -53,10 +53,10 @@ function AssessmentPage() {
             Chat Bot
           </Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel value="codeOutput">
+        <Tabs.Panel value="codeOutput" pt="md">
           <CodeOutputComponent codeOutput={codeOutput} />
         </Tabs.Panel>
-        <Tabs.Panel value="messages">
+        <Tabs.Panel value="messages" pt="md">
           <ChatBotComponent />
         </Tabs.Panel>
       </Tabs>

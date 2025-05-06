@@ -50,7 +50,7 @@ function CodeEditorComponent({
         </Group>
 
         <Editor
-          height="50vh"
+          height="65vh"
           language={language}
           value={code}
           onChange={handleEditorChange}
