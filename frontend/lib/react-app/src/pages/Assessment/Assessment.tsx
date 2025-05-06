@@ -6,17 +6,10 @@ import ChatBotComponent from "./components/ChatBot";
 import CodeOutputComponent from "./components/CodeOutput";
 import { IconBrandSpeedtest, IconTerminal } from "@tabler/icons-react";
 import { BotMessageSquare } from "lucide-react";
-import MetricCardComponent from "./components/MetricCard";
+import AttemptCardComponent from "./components/AttemptCard";
+import type { Attempts } from "../../CustomTypes";
 
-interface AttemptMetric {
-  metric: string[];
-  current: number[];
-  best: number[];
-  unit: string[];
-  greaterIsBetter: boolean[];
-}
-
-const sampleAttempts: AttemptMetric[] = [
+const sampleAttempts: Attempts[] = [
   {
     metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
     current: [150, 200, 90],
@@ -71,7 +64,7 @@ function AssessmentPage() {
   const [language, setLanguage] = useState(languages[0]);
   const [code, setCode] = useState(languageSnippets[0]);
   const [codeOutput, setCodeOutput] = useState("Output will appear hdere");
-  const [attempts, setAttempts] = useState<AttemptMetric[]>(sampleAttempts);
+  const [attempts, setAttempts] = useState<Attempts[]>(sampleAttempts);
 
   const handleSubmit = () => {
     console.log(language);
@@ -109,10 +102,10 @@ function AssessmentPage() {
             Chat Bot
           </Tabs.Tab>
           <Tabs.Tab
-            value="metrics"
+            value="attempts"
             leftSection={<IconBrandSpeedtest size={12} />}
           >
-            Metrics
+            Attempts
           </Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="codeOutput" pt="md" h={600}>
@@ -121,8 +114,8 @@ function AssessmentPage() {
         <Tabs.Panel value="messages" pt="md" h={600}>
           <ChatBotComponent />
         </Tabs.Panel>
-        <Tabs.Panel value="metrics" pt="md" h={600}>
-          <MetricCardComponent attemptMetrics={attempts} />
+        <Tabs.Panel value="attempts" pt="md" h={600}>
+          <AttemptCardComponent attempts={attempts} />
         </Tabs.Panel>
       </Tabs>
     </Stack>
