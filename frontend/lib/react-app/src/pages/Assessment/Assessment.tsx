@@ -4,8 +4,62 @@ import { Stack, Tabs } from "@mantine/core";
 import QuestionInfoComponent from "./components/QuestionInfo";
 import ChatBotComponent from "./components/ChatBot";
 import CodeOutputComponent from "./components/CodeOutput";
-import { IconTerminal } from "@tabler/icons-react";
+import { IconBrandSpeedtest, IconTerminal } from "@tabler/icons-react";
 import { BotMessageSquare } from "lucide-react";
+import MetricCardComponent from "./components/MetricCard";
+
+interface AttemptMetric {
+  metric: string[];
+  current: number[];
+  best: number[];
+  unit: string[];
+  greaterIsBetter: boolean[];
+}
+
+const sampleAttempts: AttemptMetric[] = [
+  {
+    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
+    current: [150, 200, 90],
+    best: [120, 180, 95],
+    unit: ["ms", "KB", "%"],
+    greaterIsBetter: [false, false, true],
+  },
+  {
+    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
+    current: [200, 350, 95],
+    best: [180, 330, 85],
+    unit: ["ms", "KB", "%"],
+    greaterIsBetter: [false, false, true],
+  },
+  {
+    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
+    current: [90, 150, 80],
+    best: [100, 140, 100],
+    unit: ["ms", "KB", "%"],
+    greaterIsBetter: [false, false, true],
+  },
+  {
+    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
+    current: [90, 150, 80],
+    best: [100, 140, 100],
+    unit: ["ms", "KB", "%"],
+    greaterIsBetter: [false, false, true],
+  },
+  {
+    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
+    current: [90, 150, 80],
+    best: [100, 140, 100],
+    unit: ["ms", "KB", "%"],
+    greaterIsBetter: [false, false, true],
+  },
+  {
+    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
+    current: [90, 150, 80],
+    best: [100, 140, 100],
+    unit: ["ms", "KB", "%"],
+    greaterIsBetter: [false, false, true],
+  },
+];
 
 function AssessmentPage() {
   const languages = ["python", "javascript"];
@@ -17,6 +71,7 @@ function AssessmentPage() {
   const [language, setLanguage] = useState(languages[0]);
   const [code, setCode] = useState(languageSnippets[0]);
   const [codeOutput, setCodeOutput] = useState("Output will appear hdere");
+  const [attempts, setAttempts] = useState<AttemptMetric[]>(sampleAttempts);
 
   const handleSubmit = () => {
     console.log(language);
@@ -39,6 +94,7 @@ function AssessmentPage() {
         getLanguage={setLanguage}
         getCode={setCode}
         handleSubmit={handleSubmit}
+        handleNext={handleSubmit}
       />
 
       <Tabs defaultValue="codeOutput">
@@ -52,12 +108,21 @@ function AssessmentPage() {
           >
             Chat Bot
           </Tabs.Tab>
+          <Tabs.Tab
+            value="metrics"
+            leftSection={<IconBrandSpeedtest size={12} />}
+          >
+            Metrics
+          </Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel value="codeOutput" pt="md">
+        <Tabs.Panel value="codeOutput" pt="md" h={600}>
           <CodeOutputComponent codeOutput={codeOutput} />
         </Tabs.Panel>
-        <Tabs.Panel value="messages" pt="md">
+        <Tabs.Panel value="messages" pt="md" h={600}>
           <ChatBotComponent />
+        </Tabs.Panel>
+        <Tabs.Panel value="metrics" pt="md" h={600}>
+          <MetricCardComponent attemptMetrics={attempts} />
         </Tabs.Panel>
       </Tabs>
     </Stack>

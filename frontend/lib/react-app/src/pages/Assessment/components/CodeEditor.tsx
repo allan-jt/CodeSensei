@@ -8,6 +8,7 @@ interface CodeEditorProps {
   getLanguage: (code: any) => void;
   getCode: (language: any) => void;
   handleSubmit: () => void;
+  handleNext: () => void;
 }
 
 function CodeEditorComponent({
@@ -16,6 +17,7 @@ function CodeEditorComponent({
   getLanguage,
   getCode,
   handleSubmit,
+  handleNext,
 }: CodeEditorProps) {
   const [language, setLanguage] = useState(languages[0]);
   const [code, setCode] = useState(languageSnippets[0]);
@@ -46,7 +48,10 @@ function CodeEditorComponent({
             onChange={handleLanguageChange}
             data={languages}
           />
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Group>
+            <Button onClick={handleSubmit}>Submit</Button>
+            <Button onClick={handleNext}>Next</Button>
+          </Group>
         </Group>
 
         <Editor
