@@ -2,6 +2,7 @@ import { useState } from "react";
 import CodeEditorComponent from "./components/CodeEditor";
 import { Stack } from "@mantine/core";
 import QuestionInfoComponent from "./components/QuestionInfo";
+import ChatBotComponent from "./components/ChatBot";
 
 function AssessmentPage() {
   const languages = ["python", "javascript"];
@@ -36,6 +37,7 @@ function AssessmentPage() {
         getCode={setCode}
         handleSubmit={handleSubmit}
       />
+      <ChatBotComponent />
     </Stack>
   );
 }

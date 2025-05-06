@@ -2,7 +2,6 @@ import {
   Button,
   Card,
   Group,
-  Paper,
   ScrollArea,
   SegmentedControl,
   Stack,
