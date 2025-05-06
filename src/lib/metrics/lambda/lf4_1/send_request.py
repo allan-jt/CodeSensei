@@ -2,8 +2,8 @@ import os
 import json
 from urllib.request import Request, urlopen
 
-def send_request(payload):
-    URL = f"http://{os.environ.get("REQUEST_URL")}/update"
+def send_request(payload, endpoint):
+    URL = f"http://{os.environ.get("REQUEST_URL")}{endpoint}"
     headers = { "Content-Type": "application/json" }
     data = json.dumps(payload).encode("utf-8")
     
@@ -20,4 +20,5 @@ if __name__ == "__main__":
         "execution_time": 1.5,
         "execution_memory": 128
     }
-    send_request(payload)
+    endpoint = "/metrics/update"
+    send_request(payload, endpoint)

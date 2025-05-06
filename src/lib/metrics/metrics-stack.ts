@@ -7,14 +7,15 @@ import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 
 interface MetricsStackProps extends cdk.StackProps {
     appName: string;
-    metricsTable: TableV2
+    metricsTable: TableV2;
+    assessmentsTable: TableV2;
 }
 
 export class MetricsStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: MetricsStackProps) {
         super(scope, id, props);
 
-        const { appName, metricsTable } = props;
+        const { appName, metricsTable, assessmentsTable } = props;
         
         const ecsStack = new MetricsEcsStack(this, "MetricsEcsStack", {
             stackName: `${appName}MetricsEcsStack`,
@@ -23,7 +24,8 @@ export class MetricsStack extends cdk.Stack {
             containerName: `${appName}MetricsTaskDefinitionContainer`,
             streamPrefix: `${appName}Metrics`,
             loadBalancerName: `${appName}MetricsLoadBalancer`,
-            metricsTable: metricsTable
+            metricsTable: metricsTable,
+            assessmentsTable: assessmentsTable
         });
         
         const sqsStack = new MetricsSqsStack(this, "MetricsSqsStack", {
@@ -37,7 +39,8 @@ export class MetricsStack extends cdk.Stack {
             lambdaName2: `${appName}LF4_1`,
             lambdaName3: `${appName}LF4_2`,
             loadBalancer: ecsStack.loadBalancer,
-            sqsQueue: sqsStack.queue
+            sqsQueue: sqsStack.queue,
+            assessmentsTable: assessmentsTable
         });  
     }
 }

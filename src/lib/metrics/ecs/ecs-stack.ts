@@ -12,7 +12,8 @@ interface MetricsEcsStackProps extends cdk.StackProps {
     containerName: string;
     streamPrefix: string;
     loadBalancerName: string;
-    metricsTable: TableV2
+    metricsTable: TableV2;
+    assessmentsTable: TableV2;
 }
 
 export class MetricsEcsStack extends cdk.Stack {
@@ -21,7 +22,7 @@ export class MetricsEcsStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: MetricsEcsStackProps) {
         super(scope, id, props);
 
-        const { clusterName, taskDefinitionName, containerName, streamPrefix, loadBalancerName, metricsTable } = props;
+        const { clusterName, taskDefinitionName, containerName, streamPrefix, loadBalancerName, metricsTable, assessmentsTable } = props;
 
         // Create an ECS cluster
         const cluster = new Cluster(this, "MetricsCluster", {
@@ -42,7 +43,10 @@ export class MetricsEcsStack extends cdk.Stack {
             }),
             logging: LogDriver.awsLogs({ streamPrefix: streamPrefix }),
             portMappings: [{ containerPort: 80 }],
-            environment: { METRICS_TABLE_NAME: metricsTable.tableName }
+            environment: {
+                METRICS_TABLE_NAME: metricsTable.tableName,
+                ASSESSMENTS_TABLE_NAME: assessmentsTable.tableName
+            }
         });
 
         // Create a load-balanced Fargate service
@@ -56,5 +60,6 @@ export class MetricsEcsStack extends cdk.Stack {
 
         // Add permissions
         metricsTable.grantReadWriteData(taskDefinition.taskRole);
+        assessmentsTable.grantReadWriteData(taskDefinition.taskRole);
     }
 }
