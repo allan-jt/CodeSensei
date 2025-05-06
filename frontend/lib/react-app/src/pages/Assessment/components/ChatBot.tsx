@@ -40,9 +40,8 @@ function ChatBotComponent() {
     };
     const newMessages: MessageType[] = [...messages, newMessage];
     setMessages(newMessages);
-    const newUserMessage = userMessage
-    setUserMessage("")
-
+    const newUserMessage = userMessage;
+    setUserMessage("");
 
     setTimeout(() => {
       setMessages([
@@ -58,7 +57,13 @@ function ChatBotComponent() {
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder h={500}>
-      <ScrollArea h="90%" w="100%" offsetScrollbars scrollHideDelay={500} p="md">
+      <ScrollArea
+        h="90%"
+        w="100%"
+        offsetScrollbars
+        scrollHideDelay={500}
+        p="md"
+      >
         {messages.map((msg, index) => (
           <Group
             key={index}
@@ -85,6 +90,7 @@ function ChatBotComponent() {
         <TextInput
           placeholder="Type a message..."
           value={userMessage}
+          variant="filled"
           onChange={(e) => setUserMessage(e.currentTarget.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSend();

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import CodeEditorComponent from "./components/CodeEditor";
-import { Stack } from "@mantine/core";
+import { Stack, Tabs } from "@mantine/core";
 import QuestionInfoComponent from "./components/QuestionInfo";
 import ChatBotComponent from "./components/ChatBot";
+import CodeOutputComponent from "./components/CodeOutput";
+import { IconTerminal } from "@tabler/icons-react";
+import { BotMessageSquare } from "lucide-react";
 
 function AssessmentPage() {
   const languages = ["python", "javascript"];
@@ -29,15 +32,34 @@ function AssessmentPage() {
         topic={["Array", "Two Pointers"]}
         difficulty="easy"
       />
+
       <CodeEditorComponent
         languages={languages}
         languageSnippets={languageSnippets}
-        codeOutput={codeOutput}
         getLanguage={setLanguage}
         getCode={setCode}
         handleSubmit={handleSubmit}
       />
-      <ChatBotComponent />
+
+      <Tabs defaultValue="codeOutput">
+        <Tabs.List>
+          <Tabs.Tab value="codeOutput" leftSection={<IconTerminal size={12} />}>
+            Code Output
+          </Tabs.Tab>
+          <Tabs.Tab
+            value="messages"
+            leftSection={<BotMessageSquare size={12} />}
+          >
+            Chat Bot
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="codeOutput">
+          <CodeOutputComponent codeOutput={codeOutput} />
+        </Tabs.Panel>
+        <Tabs.Panel value="messages">
+          <ChatBotComponent />
+        </Tabs.Panel>
+      </Tabs>
     </Stack>
   );
 }
