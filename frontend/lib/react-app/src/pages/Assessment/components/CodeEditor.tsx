@@ -1,19 +1,10 @@
-import {
-  Button,
-  Card,
-  Group,
-  ScrollArea,
-  SegmentedControl,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Button, Card, Group, SegmentedControl, Stack } from "@mantine/core";
 import Editor from "@monaco-editor/react";
 import { useState } from "react";
 
 interface CodeEditorProps {
   languages: string[];
   languageSnippets: string[];
-  codeOutput: string;
   getLanguage: (code: any) => void;
   getCode: (language: any) => void;
   handleSubmit: () => void;
@@ -22,7 +13,6 @@ interface CodeEditorProps {
 function CodeEditorComponent({
   languages,
   languageSnippets,
-  codeOutput,
   getLanguage,
   getCode,
   handleSubmit,
@@ -66,21 +56,6 @@ function CodeEditorComponent({
           onChange={handleEditorChange}
           theme="vs-dark"
         />
-
-        <ScrollArea
-          h={250}
-          w="100%"
-          bg="#1e1e1e"
-          c="#d4d4d4"
-          ff="monospace"
-          p="md"
-          offsetScrollbars
-          scrollHideDelay={500}
-        >
-          <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
-            {codeOutput}
-          </Text>
-        </ScrollArea>
       </Stack>
     </Card>
   );

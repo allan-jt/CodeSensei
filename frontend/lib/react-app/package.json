@@ -17,10 +17,12 @@
     "@mantine/notifications": "^8.0.0",
     "@mantine/nprogress": "^8.0.0",
     "@mantine/tiptap": "^8.0.0",
+    "@tabler/icons-react": "^3.31.0",
     "@tiptap/extension-link": "^2.11.9",
     "@tiptap/pm": "^2.11.9",
     "@tiptap/react": "^2.11.9",
     "@tiptap/starter-kit": "^2.11.9",
+    "lucide-react": "^0.507.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
