@@ -7,7 +7,8 @@ import CodeOutputComponent from "./components/CodeOutput";
 import { IconBrandSpeedtest, IconTerminal } from "@tabler/icons-react";
 import { BotMessageSquare } from "lucide-react";
 import AttemptCardComponent from "./components/AttemptCard";
-import type { Attempts } from "../../CustomTypes";
+import type { Attempts, Metric } from "../../CustomTypes";
+import ScopeCardComponent from "./components/ScopeCard";
 
 const sampleAttempts: Attempts[] = [
   {
@@ -51,6 +52,60 @@ const sampleAttempts: Attempts[] = [
     best: [100, 140, 100],
     unit: ["ms", "KB", "%"],
     greaterIsBetter: [false, false, true],
+  },
+];
+
+const sampleMetrics: Metric[] = [
+  {
+    metricName: "execution time",
+    scopes: [
+      { scopeName: "array#easy", count: 120, value: 45.3, unit: "ms" },
+      { scopeName: "dp#medium", count: 85, value: 102.7, unit: "ms" },
+      { scopeName: "graph#difficult", count: 60, value: 230.1, unit: "ms" },
+    ],
+  },
+  {
+    metricName: "memory usage",
+    scopes: [
+      { scopeName: "graph#difficult", count: 140, value: 15.2, unit: "MB" },
+      { scopeName: "dp#medium", count: 90, value: 28.6, unit: "MB" },
+      { scopeName: "array#easy", count: 45, value: 64.9, unit: "MB" },
+    ],
+  },
+  {
+    metricName: "time taken",
+    scopes: [
+      { scopeName: "graph#difficult", count: 78, value: 320.4, unit: "s" },
+      { scopeName: "array#easy", count: 52, value: 198.2, unit: "s" },
+      { scopeName: "dp#medium", count: 100, value: 88.5, unit: "s" },
+    ],
+  },
+];
+
+const sampleOverallMetrics: Metric[] = [
+  {
+    metricName: "execution time",
+    scopes: [
+      { scopeName: "graph#difficult", count: 95, value: 67.2, unit: "ms" },
+      { scopeName: "dp#medium", count: 50, value: 210.3, unit: "ms" },
+      { scopeName: "array#easy", count: 110, value: 38.9, unit: "ms" },
+    ],
+  },
+  {
+    metricName: "memory usage",
+    scopes: [
+      { scopeName: "array#easy", count: 60, value: 72.1, unit: "MB" },
+      { scopeName: "dp#medium", count: 95, value: 30.3, unit: "MB" },
+      { scopeName: "graph#difficult", count: 100, value: 18.7, unit: "MB" },
+    ],
+  },
+  {
+    metricName: "time taken",
+    scopes: [
+      { scopeName: "dp#medium", count: 88, value: 92.4, unit: "s" },
+      { scopeName: "graph#difficult", count: 70, value: 310.0, unit: "s" },
+      { scopeName: "array#easy", count: 55, value: 180.5, unit: "s" },
+    ],
   },
 ];
 
@@ -107,7 +162,14 @@ function AssessmentPage() {
           >
             Attempts
           </Tabs.Tab>
+          <Tabs.Tab
+            value="scopes"
+            leftSection={<IconBrandSpeedtest size={12} />}
+          >
+            Scopes
+          </Tabs.Tab>
         </Tabs.List>
+
         <Tabs.Panel value="codeOutput" pt="md" h={600}>
           <CodeOutputComponent codeOutput={codeOutput} />
         </Tabs.Panel>
@@ -116,6 +178,12 @@ function AssessmentPage() {
         </Tabs.Panel>
         <Tabs.Panel value="attempts" pt="md" h={600}>
           <AttemptCardComponent attempts={attempts} />
+        </Tabs.Panel>
+        <Tabs.Panel value="scopes" pt="md" h={600}>
+          <ScopeCardComponent
+            metrics={sampleMetrics}
+            overallMetrics={sampleOverallMetrics}
+          />
         </Tabs.Panel>
       </Tabs>
     </Stack>
