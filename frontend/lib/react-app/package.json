@@ -23,8 +23,10 @@
     "@tiptap/react": "^2.11.9",
     "@tiptap/starter-kit": "^2.11.9",
     "lucide-react": "^0.507.0",
+    "oidc-client-ts": "^3.2.1",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-oidc-context": "^3.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

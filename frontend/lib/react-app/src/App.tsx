@@ -8,9 +8,11 @@ import {
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardPage from "./pages/Dashboard/Dashboard";
 import AssessmentPage from "./pages/Assessment/Assessment";
+import { useAuth } from "react-oidc-context";
+import LoginPage from "./pages/LogIn/Login";
 
 const assessmentMetrics = [
   // Overall metrics
@@ -154,10 +156,27 @@ const assessmentMetrics = [
   },
 ];
 
-function App() {
+interface AppProps {
+  cognitoDomain: string;
+  redirectUri: string;
+  clientId: string;
+}
+
+function App({ cognitoDomain, redirectUri, clientId }: AppProps) {
+  const auth = useAuth();
+  const signOutRedirect = () => {
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
+      redirectUri
+    )}`;
+  };
+
   // const socketURL = (window as any).env.SOCKET_API_URL;
 
   const pages = [
+    {
+      name: "login",
+      component: <LoginPage onClick={() => auth.signinRedirect()} />,
+    },
     {
       name: "dashboard",
       component: <DashboardPage assessmentMetrics={assessmentMetrics} />,
@@ -169,7 +188,17 @@ function App() {
   ];
 
   const [opened, { toggle }] = useDisclosure(true);
-  const [currentPage, setCurrentPage] = useState(pages[0].name);
+  const [currentPage, setCurrentPage] = useState(
+    auth.isAuthenticated ? pages[1].name : pages[0].name
+  );
+
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      setCurrentPage(pages[1].name);
+    } else {
+      setCurrentPage(pages[0].name);
+    }
+  }, [auth.isAuthenticated]);
 
   const currentPageComponent = pages.find(
     (page) => page.name === currentPage
@@ -194,11 +223,12 @@ function App() {
       <AppShell.Navbar p="md">
         <Title order={4}>Navigation</Title>
         <Stack p="lg">
-          {pages.map((page) => (
+          {pages.slice(1).map((page) => (
             <Button
               key={page.name}
               variant={currentPage === page.name ? "filled" : "light"}
               onClick={() => setCurrentPage(page.name)}
+              disabled={!auth.isAuthenticated}
             >
               {page.name.charAt(0).toUpperCase() + page.name.slice(1)}
             </Button>
