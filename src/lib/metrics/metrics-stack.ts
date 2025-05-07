@@ -32,7 +32,7 @@ export class MetricsStack extends cdk.Stack {
             stackName: `${appName}MetricsSqsStack`,
             queueName: `${appName}MetricsQueue`
         });
-
+        
         const lambdaStack = new MetricsLambdaStack(this, "MetricsLambdaStack", {
             stackName: `${appName}MetricsLambdaStack`,
             lambdaName1: `${appName}LF4_0`,
@@ -40,6 +40,7 @@ export class MetricsStack extends cdk.Stack {
             lambdaName3: `${appName}LF4_2`,
             loadBalancer: ecsStack.loadBalancer,
             sqsQueue: sqsStack.queue,
+            metricsTable: metricsTable,
             assessmentsTable: assessmentsTable
         });  
     }

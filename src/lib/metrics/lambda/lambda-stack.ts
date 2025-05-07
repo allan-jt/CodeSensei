@@ -13,6 +13,7 @@ interface MetricsLambdaStackProps extends cdk.StackProps {
     lambdaName3: string;
     loadBalancer: ApplicationLoadBalancedFargateService;
     sqsQueue: Queue;
+    metricsTable: TableV2;
     assessmentsTable: TableV2;
 }
 
@@ -20,13 +21,17 @@ export class MetricsLambdaStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: MetricsLambdaStackProps) {
         super(scope, id, props);
         
-        const { lambdaName1, lambdaName2, lambdaName3, loadBalancer, sqsQueue, assessmentsTable } = props;
+        const { lambdaName1, lambdaName2, lambdaName3, loadBalancer, sqsQueue, metricsTable, assessmentsTable } = props;
 
         const lf4_0 = new Function(this, "LF4_0", {
             functionName: lambdaName1,
             runtime: Runtime.PYTHON_3_13,
             code: Code.fromAsset(path.join(__dirname, "lf4_0")),
             handler: "index.handler",
+            environment: {
+                METRICS_TABLE_NAME: metricsTable.tableName,
+                ASSESSMENTS_TABLE_NAME: assessmentsTable.tableName
+            },
             timeout: cdk.Duration.seconds(10)
         });
         
@@ -58,6 +63,8 @@ export class MetricsLambdaStack extends cdk.Stack {
         lf4_2.addEventSource(new SqsEventSource(sqsQueue));
         
         // Add permissions
+        metricsTable.grantReadData(lf4_0);
+        assessmentsTable.grantReadData(lf4_0);
         assessmentsTable.grantReadData(lf4_1);
         sqsQueue.grantSendMessages(lf4_1);
         sqsQueue.grantConsumeMessages(lf4_2);
