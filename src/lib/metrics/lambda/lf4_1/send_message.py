@@ -17,6 +17,7 @@ def send_message(payload):
 if __name__ == "__main__":
     payload = {
         "user_id": "u001",
+        "timestamp": "2025-05-01T00:00:00Z",
         "scopes": ["array#all", "all#easy", "all#all"],
         "time_spent": 300,
         "execution_time": 1.5,

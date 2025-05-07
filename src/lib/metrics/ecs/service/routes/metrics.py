@@ -30,7 +30,7 @@ def update_metrics():
         update_metrics = {
             metric: decimal.Decimal(str(value))
             for metric, value in payload.items()
-            if metric not in ["user_id", "scopes"]
+            if metric not in ["user_id", "scopes", "timestamp"]
         }
 
         # Fetch the metric record for the given user

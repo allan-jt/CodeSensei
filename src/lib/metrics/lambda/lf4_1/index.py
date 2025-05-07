@@ -77,10 +77,9 @@ def handler(event, context):
         ecs_assessments_response = send_request(payload, endpoint="/assessments/update")
 
         # Send request to update overall metrics for primary scopes (real-time)
-        payload.pop("timestamp")
         ecs_metrics_response = send_request(payload, endpoint="/metrics/update")
 
-        # Send message to SQS to update overall metrics for other related scopes (asynchronous)
+        # Send message to SQS to update metrics for related scopes (asynchronous)
         related_scopes = get_related_scopes(scopes)
         payload["scopes"] = related_scopes
         sqs_response = send_message(payload)
