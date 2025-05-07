@@ -31,7 +31,10 @@ export class FrontendStack extends cdk.Stack {
     const reactDist = path.join(__dirname, "react-app/dist");
     const envFilePath = path.join(reactDist, "env.js");
     const envContent = `window.env = {
-      SOCKET_API_URL: "${process.env.SOCKET_API_URL}",
+      CLIENT_ID: "${process.env.CLIENT_ID}",
+      AUTHORITY: "${process.env.AUTHORITY}",
+      COGNITO_DOMAIN: "${process.env.COGNITO_DOMAIN}",
+      REDIRECT_URL: "${bucket.bucketWebsiteUrl}",
     };`;
     writeFileSync(envFilePath, envContent);
 
