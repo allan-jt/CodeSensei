@@ -120,7 +120,8 @@ function AssessmentPage() {
   const [language, setLanguage] = useState(languages[0]);
   const [code, setCode] = useState(languageSnippets[0]);
   const [codeOutput, setCodeOutput] = useState("Output will appear hdere");
-  const [attempts, setAttempts] = useState<Attempts[]>(sampleAttempts);
+  // const [attempts, setAttempts] = useState<Attempts[]>(sampleAttempts);
+  const attempts = sampleAttempts;
 
   const handleSubmit = () => {
     console.log(language);

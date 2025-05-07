@@ -164,11 +164,14 @@ interface AppProps {
 
 function App({ cognitoDomain, redirectUri, clientId }: AppProps) {
   const auth = useAuth();
-  const signOutRedirect = () => {
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      redirectUri
-    )}`;
-  };
+  // const signOutRedirect = () => {
+  //   window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
+  //     redirectUri
+  //   )}`;
+  // };
+  console.log(cognitoDomain);
+  console.log(redirectUri);
+  console.log(clientId);
 
   // const socketURL = (window as any).env.SOCKET_API_URL;
 
