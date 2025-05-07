@@ -17,3 +17,17 @@ export interface Attempts {
   unit: string[];
   greaterIsBetter: boolean[];
 }
+
+export interface newMetric {
+  metricName: string;
+  count: number;
+  value: number;
+  unit: string;
+  greaterIsBetter: boolean;
+}
+
+export interface Scope {
+  scopeName: string;
+  metrics: newMetric[];
+  overall: newMetric[];
+}

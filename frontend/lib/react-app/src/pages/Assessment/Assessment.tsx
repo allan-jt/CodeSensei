@@ -7,7 +7,7 @@ import CodeOutputComponent from "./components/CodeOutput";
 import { IconBrandSpeedtest, IconTerminal } from "@tabler/icons-react";
 import { BotMessageSquare } from "lucide-react";
 import AttemptCardComponent from "./components/AttemptCard";
-import type { Attempts, Metric } from "../../CustomTypes";
+import type { Attempts, Metric } from "../../common/CustomTypes";
 import ScopeCardComponent from "./components/ScopeCard";
 
 const sampleAttempts: Attempts[] = [
@@ -110,6 +110,7 @@ const sampleOverallMetrics: Metric[] = [
 ];
 
 function AssessmentPage() {
+  const tabSize = 24;
   const languages = ["python", "javascript"];
   const languageSnippets = [
     "def solution(nums, target):\n    # Your code here\n    pass",
@@ -147,24 +148,27 @@ function AssessmentPage() {
 
       <Tabs defaultValue="codeOutput">
         <Tabs.List grow>
-          <Tabs.Tab value="codeOutput" leftSection={<IconTerminal size={12} />}>
+          <Tabs.Tab
+            value="codeOutput"
+            leftSection={<IconTerminal size={tabSize} />}
+          >
             Code Output
           </Tabs.Tab>
           <Tabs.Tab
             value="messages"
-            leftSection={<BotMessageSquare size={12} />}
+            leftSection={<BotMessageSquare size={tabSize} />}
           >
             Chat Bot
           </Tabs.Tab>
           <Tabs.Tab
             value="attempts"
-            leftSection={<IconBrandSpeedtest size={12} />}
+            leftSection={<IconBrandSpeedtest size={tabSize} />}
           >
             Attempts
           </Tabs.Tab>
           <Tabs.Tab
             value="scopes"
-            leftSection={<IconBrandSpeedtest size={12} />}
+            leftSection={<IconBrandSpeedtest size={tabSize} />}
           >
             Scopes
           </Tabs.Tab>
