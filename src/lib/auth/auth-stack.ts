@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import {
+  CfnManagedLoginBranding,
   ManagedLoginVersion,
   OAuthScope,
   UserPool,
@@ -33,7 +34,7 @@ export class AuthStack extends cdk.Stack {
       oAuth: {
         callbackUrls: ["http://localhost:5173/"],
         logoutUrls: ["http://localhost:5173/"],
-        flows: { authorizationCodeGrant: true },
+        flows: { authorizationCodeGrant: true, implicitCodeGrant: true },
         scopes: [OAuthScope.EMAIL, OAuthScope.OPENID, OAuthScope.PROFILE],
       },
       supportedIdentityProviders: [UserPoolClientIdentityProvider.COGNITO],
@@ -43,6 +44,12 @@ export class AuthStack extends cdk.Stack {
       userPool: this.userPool,
       cognitoDomain: { domainPrefix: "codesensei-app" },
       managedLoginVersion: ManagedLoginVersion.NEWER_MANAGED_LOGIN,
+    });
+
+    new CfnManagedLoginBranding(this, "CognitoUIPage", {
+      userPoolId: this.userPool.userPoolId,
+      clientId: this.userPoolClient.userPoolClientId,
+      useCognitoProvidedValues: true,
     });
   }
 }
