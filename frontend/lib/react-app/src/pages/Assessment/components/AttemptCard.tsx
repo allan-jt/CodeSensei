@@ -33,7 +33,8 @@ function AttemptCardComponent({ attempts }: AttemptCardProps) {
                     key={i}
                     label={label}
                     current={metric.current[i]}
-                    best={metric.best[i]}
+                    overall={metric.best[i]}
+                    overall_label="Best"
                     unit={metric.unit[i]}
                     greaterIsBetter={metric.greaterIsBetter[i]}
                   />
