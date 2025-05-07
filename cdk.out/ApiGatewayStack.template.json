@@ -16,7 +16,7 @@
     "aws:cdk:path": "ApiGatewayStack/AssessmentRestApi/Resource"
    }
   },
-  "AssessmentRestApiDeployment12B9D8913470539d05fd716d5d9b4f5ac299fda8": {
+  "AssessmentRestApiDeployment12B9D891b4856098d8ca8b48951f0b4696ec99f7": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "Assessment API with simplified structure",
@@ -43,7 +43,7 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "AssessmentRestApiDeployment12B9D8913470539d05fd716d5d9b4f5ac299fda8"
+     "Ref": "AssessmentRestApiDeployment12B9D891b4856098d8ca8b48951f0b4696ec99f7"
     },
     "MethodSettings": [
      {
@@ -185,7 +185,7 @@
    "Properties": {
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
-     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E"
     },
     "Principal": "apigateway.amazonaws.com",
     "SourceArn": {
@@ -218,7 +218,7 @@
    "Properties": {
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
-     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E"
     },
     "Principal": "apigateway.amazonaws.com",
     "SourceArn": {
@@ -256,7 +256,7 @@
        [
         "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
         {
-         "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+         "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E"
         },
         "/invocations"
        ]
@@ -402,7 +402,7 @@
    "Properties": {
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
-     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E"
     },
     "Principal": "apigateway.amazonaws.com",
     "SourceArn": {
@@ -435,7 +435,7 @@
    "Properties": {
     "Action": "lambda:InvokeFunction",
     "FunctionName": {
-     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+     "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E"
     },
     "Principal": "apigateway.amazonaws.com",
     "SourceArn": {
@@ -473,7 +473,7 @@
        [
         "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
         {
-         "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+         "Fn::ImportValue": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E"
         },
         "/invocations"
        ]

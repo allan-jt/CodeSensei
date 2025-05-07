@@ -7,6 +7,7 @@ import { AssessmentStack } from "../lib/assessment/assessment-stack";
 import { ApiGatewayStack } from "../lib/api/api-gateway-stack";
 import { FrontendStack } from "../lib/frontend/frontend-stack";
 import { StorageStack } from "../lib/storage/storage-stack";
+import { OpenSearchStack } from "../lib/storage/opensearch-stack/opensearch-stack";
 
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
@@ -20,19 +21,22 @@ new CodeSenseiStack(app, "CodeSenseiStack", {
   },
 });
 
-// ✅ Assessment stack with ECS + Lambda 
+// In code_sensei.ts
+const storageStack = new StorageStack(app, "StorageStack");
+
+// Assessment stack with ECS + Lambda - now with OpenSearch integration
 const assessmentStack = new AssessmentStack(app, "AssessmentStack", {
   env: {
     region: "us-east-1",
   },
+  // Pass the OpenSearch Lambda from storage stack
+  openSearchLambda: storageStack.opensearchLamba
 });
-
-const storageStack = new StorageStack(app, "StorageStack");
 
 // Use the bucket from storage stack
-new FrontendStack(app, "FrontendStack", {
-  bucket: storageStack.frontendBucket,
-});
+// new FrontendStack(app, "FrontendStack", {
+//   bucket: storageStack.frontendBucket,
+// });
 
 // ✅ API Gateway stack connected to Lambda
 new ApiGatewayStack(app, "ApiGatewayStack", {

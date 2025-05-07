@@ -29,9 +29,9 @@ export class StorageStack extends cdk.Stack {
     const frontend = new FrontendBucket(this, "FrontendStorage");
     this.frontendBucket = frontend.bucket;  
 
-    // Comment out if you don't want to create OpenSearch
-    // this.opensearchLamba = new OpenSearchStack(this, "OpenSearchStack", {
-    //   dynamoTable: this.questionBankTable,
-    // }).opensearchLamba;
+  
+    this.opensearchLamba = new OpenSearchStack(this, "OpenSearchStack", {
+      dynamoTable: this.questionBankTable,
+    }).opensearchLamba;
   }
 }

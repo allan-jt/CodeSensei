@@ -89,7 +89,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/561e395733c6dd21d00de04794c67b865a81a022a48091b364f614fd9983f1e5.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/69b57b849673e0f8bc60866907c016d359896fe9743b3b8af636daf839645b8a.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -522,14 +522,6 @@
                 {}
               ]
             }
-          },
-          {
-            "type": "aws:cdk:analytics:method",
-            "data": {
-              "addToPrincipalPolicy": [
-                {}
-              ]
-            }
           }
         ],
         "/AssessmentStack/EcsFargate/TaskRole/ImportTaskRole": [
@@ -562,14 +554,6 @@
             "data": {
               "attachToRole": [
                 "*"
-              ]
-            }
-          },
-          {
-            "type": "aws:cdk:analytics:method",
-            "data": {
-              "addStatements": [
-                {}
               ]
             }
           },
@@ -875,8 +859,8 @@
               "new FargateService (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/node_modules/aws-cdk-lib/aws-ecs/lib/fargate/fargate-service.js:1:3551)",
               "new ApplicationLoadBalancedFargateService (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/node_modules/aws-cdk-lib/aws-ecs-patterns/lib/fargate/application-load-balanced-fargate-service.js:1:3340)",
               "new EcsFargateConstruct (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/lib/assessment/custom-constructs/ecs_fargate.ts:74:20)",
-              "new AssessmentStack (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/lib/assessment/assessment-stack.ts:22:23)",
-              "Object.<anonymous> (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/bin/code_sensei.ts:24:25)",
+              "new AssessmentStack (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/lib/assessment/assessment-stack.ts:24:23)",
+              "Object.<anonymous> (/Users/janardhanareddyms/Documents/Tandon/courses/cloud/project/untitled folder/opensearchtest/CodeSensei/src/bin/code_sensei.ts:25:25)",
               "Module._compile (node:internal/modules/cjs/loader:1469:14)",
               "Module.m._compile (/Users/janardhanareddyms/.npm/_npx/1bf7c3c15bf47d04/node_modules/ts-node/src/index.ts:1618:23)",
               "Module._extensions..js (node:internal/modules/cjs/loader:1548:10)",
@@ -962,7 +946,7 @@
             "data": "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E"
           }
         ],
-        "/AssessmentStack/LambdaForEcsFargate/LambdaExecutionRole": [
+        "/AssessmentStack/LambdaForECS/LambdaExecutionRole": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
@@ -1010,19 +994,19 @@
             }
           }
         ],
-        "/AssessmentStack/LambdaForEcsFargate/LambdaExecutionRole/ImportLambdaExecutionRole": [
+        "/AssessmentStack/LambdaForECS/LambdaExecutionRole/ImportLambdaExecutionRole": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": "*"
           }
         ],
-        "/AssessmentStack/LambdaForEcsFargate/LambdaExecutionRole/Resource": [
+        "/AssessmentStack/LambdaForECS/LambdaExecutionRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "LambdaForEcsFargateLambdaExecutionRole6C4B567B"
+            "data": "LambdaForECSLambdaExecutionRole7CB67705"
           }
         ],
-        "/AssessmentStack/LambdaForEcsFargate/LambdaExecutionRole/DefaultPolicy": [
+        "/AssessmentStack/LambdaForECS/LambdaExecutionRole/DefaultPolicy": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": "*"
@@ -1052,13 +1036,13 @@
             }
           }
         ],
-        "/AssessmentStack/LambdaForEcsFargate/LambdaExecutionRole/DefaultPolicy/Resource": [
+        "/AssessmentStack/LambdaForECS/LambdaExecutionRole/DefaultPolicy/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "LambdaForEcsFargateLambdaExecutionRoleDefaultPolicyAF094B84"
+            "data": "LambdaForECSLambdaExecutionRoleDefaultPolicy470B0F24"
           }
         ],
-        "/AssessmentStack/LambdaForEcsFargate/LambdaForEcsFargate": [
+        "/AssessmentStack/LambdaForECS/LambdaForEcsFargate": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
@@ -1107,10 +1091,10 @@
             }
           }
         ],
-        "/AssessmentStack/LambdaForEcsFargate/LambdaForEcsFargate/Resource": [
+        "/AssessmentStack/LambdaForECS/LambdaForEcsFargate/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "LambdaForEcsFargateD03EED46"
+            "data": "LambdaForEcsFargate"
           }
         ],
         "/AssessmentStack/Bedrock/BedrockInvokeRole": [
@@ -1209,22 +1193,10 @@
             "data": "BedrockBedrockInvokeRoleDefaultPolicy863CDED5"
           }
         ],
-        "/AssessmentStack/EcsTaskRoleArn": [
+        "/AssessmentStack/ApiEndpoint": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "EcsTaskRoleArn"
-          }
-        ],
-        "/AssessmentStack/LoadBalancerDNS": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "LoadBalancerDNS"
-          }
-        ],
-        "/AssessmentStack/LambdaInvokeArn": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "LambdaInvokeArn"
+            "data": "ApiEndpoint"
           }
         ],
         "/AssessmentStack/CDKMetadata/Default": [
@@ -1233,10 +1205,10 @@
             "data": "CDKMetadata"
           }
         ],
-        "/AssessmentStack/Exports/Output{\"Fn::GetAtt\":[\"LambdaForEcsFargateD03EED46\",\"Arn\"]}": [
+        "/AssessmentStack/Exports/Output{\"Fn::GetAtt\":[\"LambdaForEcsFargate\",\"Arn\"]}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+            "data": "ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E"
           }
         ],
         "/AssessmentStack/BootstrapVersion": [
@@ -1274,7 +1246,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/bc0fdb98ac5c434117611962cb69a93e93a9b78319b7cd66945f620f10345f1e.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/20df2ddebfd88f92699007e7aa64314992e923a5ba911f0e6b2983e8222f0caa.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -1446,6 +1418,18 @@
             "data": "CDKMetadataAvailable"
           }
         ],
+        "/StorageStack/DynamoStack/Exports/Output{\"Fn::GetAtt\":[\"QuestionBankTable708CA732\",\"Arn\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttQuestionBankTable708CA732ArnE4803DA6"
+          }
+        ],
+        "/StorageStack/DynamoStack/Exports/Output{\"Ref\":\"QuestionBankTable708CA732\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefQuestionBankTable708CA732B9859790"
+          }
+        ],
         "/StorageStack/DynamoStack/BootstrapVersion": [
           {
             "type": "aws:cdk:logicalId",
@@ -1460,6 +1444,302 @@
         ]
       },
       "displayName": "StorageStack/DynamoStack"
+    },
+    "StorageStackOpenSearchStack3D5425A0.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "StorageStackOpenSearchStack3D5425A0.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "StorageStackOpenSearchStack3D5425A0": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "StorageStackOpenSearchStack3D5425A0.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "awsApplication": "undefined"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/33bcc0d40175df515d5b48a524e9c9e66e22cee4bf25bd666471c9e7d68f79cc.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "StorageStackOpenSearchStack3D5425A0.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "StorageStackDynamoStack80C6126E",
+        "StorageStackOpenSearchStack3D5425A0.assets"
+      ],
+      "metadata": {
+        "/StorageStack/OpenSearchStack": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "awsApplication",
+                "Value": "undefined"
+              }
+            ]
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/QuestionsCollection": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomQuestionsCollection05A8C49E"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/EncryptionPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomEncryptionPolicy5E70C363"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/NetworkPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomNetworkPolicy20F23603"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addManagedPolicy": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole/ImportLambdaExecutionRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomLambdaExecutionRole71649BF6"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomLambdaExecutionRoleDefaultPolicy89ABEF88"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/OpenSearchCustom/AccessPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomAccessPolicyB9F64193"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/LambdaForOpenSearchCustom/LambdaForOpenSearchService": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "runtime": "*",
+              "code": "*",
+              "handler": "*",
+              "environment": "*",
+              "role": "*",
+              "timeout": "*",
+              "functionName": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "/StorageStack/OpenSearchStack/LambdaForOpenSearchCustom/LambdaForOpenSearchService/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LambdaForOpenSearchCustomLambdaForOpenSearchService4FDA90D5"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/StorageStack/OpenSearchStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "StorageStack/OpenSearchStack"
     },
     "StorageStack.assets": {
       "type": "cdk:asset-manifest",
@@ -1608,6 +1888,295 @@
         ]
       },
       "displayName": "StorageStack"
+    },
+    "OpenSearchStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "OpenSearchStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "OpenSearchStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/us-east-1",
+      "properties": {
+        "templateFile": "OpenSearchStack.template.json",
+        "terminationProtection": false,
+        "tags": {
+          "awsApplication": "undefined"
+        },
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/a5396db8e1a6eaeb102c29e99562a0ccb323061180888eff6a41f782cb29f191.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "OpenSearchStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "OpenSearchStack.assets"
+      ],
+      "metadata": {
+        "/OpenSearchStack": [
+          {
+            "type": "aws:cdk:stack-tags",
+            "data": [
+              {
+                "Key": "awsApplication",
+                "Value": "undefined"
+              }
+            ]
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/QuestionsCollection": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomQuestionsCollection05A8C49E"
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/EncryptionPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomEncryptionPolicy5E70C363"
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/NetworkPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomNetworkPolicy20F23603"
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addManagedPolicy": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole/ImportLambdaExecutionRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomLambdaExecutionRole71649BF6"
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/LambdaExecutionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomLambdaExecutionRoleDefaultPolicy89ABEF88"
+          }
+        ],
+        "/OpenSearchStack/OpenSearchCustom/AccessPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenSearchCustomAccessPolicyB9F64193"
+          }
+        ],
+        "/OpenSearchStack/LambdaForOpenSearchCustom/LambdaForOpenSearchService": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "runtime": "*",
+              "code": "*",
+              "handler": "*",
+              "environment": "*",
+              "role": "*",
+              "timeout": "*",
+              "functionName": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "/OpenSearchStack/LambdaForOpenSearchCustom/LambdaForOpenSearchService/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LambdaForOpenSearchCustomLambdaForOpenSearchService4FDA90D5"
+          }
+        ],
+        "/OpenSearchStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/OpenSearchStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/OpenSearchStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "OpenSearchStack"
     },
     "FrontendStack.assets": {
       "type": "cdk:asset-manifest",
@@ -1927,7 +2496,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/af4467bd61f1212c51740f7de8987ea5482ff3ad173fb2c7de4cf2f284dba235.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/f8d42bc894a99999c584b72f6876538471de7dd2d5fd131d10710d0a2d0ec3d0.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -2065,7 +2634,7 @@
         "/ApiGatewayStack/AssessmentRestApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AssessmentRestApiDeployment12B9D8913470539d05fd716d5d9b4f5ac299fda8"
+            "data": "AssessmentRestApiDeployment12B9D891b4856098d8ca8b48951f0b4696ec99f7"
           }
         ],
         "/ApiGatewayStack/AssessmentRestApi/DeploymentStage.prod": [

@@ -1,7 +1,7 @@
 {
   "version": "41.0.0",
   "files": {
-    "bc0fdb98ac5c434117611962cb69a93e93a9b78319b7cd66945f620f10345f1e": {
+    "20df2ddebfd88f92699007e7aa64314992e923a5ba911f0e6b2983e8222f0caa": {
       "displayName": "StorageStackDynamoStack80C6126E Template",
       "source": {
         "path": "StorageStackDynamoStack80C6126E.template.json",
@@ -10,7 +10,7 @@
       "destinations": {
         "current_account-current_region": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "bc0fdb98ac5c434117611962cb69a93e93a9b78319b7cd66945f620f10345f1e.json",
+          "objectKey": "20df2ddebfd88f92699007e7aa64314992e923a5ba911f0e6b2983e8222f0caa.json",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
         }
       }

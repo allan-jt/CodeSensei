@@ -1,0 +1,36 @@
+{
+  "version": "41.0.0",
+  "files": {
+    "e4f63e2c7ca9b2da5cd9cd6d0ceaa3e551c4692eba27b9ebc3982437a9dc001b": {
+      "displayName": "LambdaForOpenSearchCustom/LambdaForOpenSearchService/Code",
+      "source": {
+        "path": "asset.e4f63e2c7ca9b2da5cd9cd6d0ceaa3e551c4692eba27b9ebc3982437a9dc001b",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
+          "objectKey": "e4f63e2c7ca9b2da5cd9cd6d0ceaa3e551c4692eba27b9ebc3982437a9dc001b.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
+        }
+      }
+    },
+    "a5396db8e1a6eaeb102c29e99562a0ccb323061180888eff6a41f782cb29f191": {
+      "displayName": "OpenSearchStack Template",
+      "source": {
+        "path": "OpenSearchStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
+          "objectKey": "a5396db8e1a6eaeb102c29e99562a0ccb323061180888eff6a41f782cb29f191.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

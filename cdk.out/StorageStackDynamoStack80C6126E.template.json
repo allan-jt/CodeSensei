@@ -478,6 +478,27 @@
    ]
   }
  },
+ "Outputs": {
+  "ExportsOutputFnGetAttQuestionBankTable708CA732ArnE4803DA6": {
+   "Value": {
+    "Fn::GetAtt": [
+     "QuestionBankTable708CA732",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "StorageStackDynamoStack80C6126E:ExportsOutputFnGetAttQuestionBankTable708CA732ArnE4803DA6"
+   }
+  },
+  "ExportsOutputRefQuestionBankTable708CA732B9859790": {
+   "Value": {
+    "Ref": "QuestionBankTable708CA732"
+   },
+   "Export": {
+    "Name": "StorageStackDynamoStack80C6126E:ExportsOutputRefQuestionBankTable708CA732B9859790"
+   }
+  }
+ },
  "Parameters": {
   "BootstrapVersion": {
    "Type": "AWS::SSM::Parameter::Value<String>",

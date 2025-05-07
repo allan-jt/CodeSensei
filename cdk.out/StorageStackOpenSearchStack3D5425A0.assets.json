@@ -1,0 +1,34 @@
+{
+  "version": "41.0.0",
+  "files": {
+    "e4f63e2c7ca9b2da5cd9cd6d0ceaa3e551c4692eba27b9ebc3982437a9dc001b": {
+      "displayName": "LambdaForOpenSearchCustom/LambdaForOpenSearchService/Code",
+      "source": {
+        "path": "asset.e4f63e2c7ca9b2da5cd9cd6d0ceaa3e551c4692eba27b9ebc3982437a9dc001b",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "e4f63e2c7ca9b2da5cd9cd6d0ceaa3e551c4692eba27b9ebc3982437a9dc001b.zip",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "33bcc0d40175df515d5b48a524e9c9e66e22cee4bf25bd666471c9e7d68f79cc": {
+      "displayName": "StorageStackOpenSearchStack3D5425A0 Template",
+      "source": {
+        "path": "StorageStackOpenSearchStack3D5425A0.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "33bcc0d40175df515d5b48a524e9c9e66e22cee4bf25bd666471c9e7d68f79cc.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

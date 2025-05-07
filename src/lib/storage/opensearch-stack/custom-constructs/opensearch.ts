@@ -12,6 +12,7 @@ import {
   CfnSecurityPolicy,
 } from "aws-cdk-lib/aws-opensearchserverless";
 import { Construct } from "constructs";
+import { v4 as uuidv4 } from 'uuid';
 
 export class OpenSearchCustom extends Construct {
   public readonly domainEndpoint: string;
@@ -26,37 +27,54 @@ export class OpenSearchCustom extends Construct {
       type: "SEARCH",
     });
 
-    const encryptionPolicy = new CfnSecurityPolicy(this, "EncryptionPolicy", {
-      name: "encryption-policy",
-      type: "encryption",
-      policy: JSON.stringify({
-        Rules: [
-          {
-            ResourceType: "collection",
-            Resource: [`collection/${this.collectionName}`],
-          },
-        ],
-        AWSOwnedKey: true,
-      }),
-    });
-    collection.addDependency(encryptionPolicy);
+   // Generate a UUID for truly unique names
 
-    const networkPolicy = new CfnSecurityPolicy(this, "NetworkPolicy", {
-      name: "public-access",
-      type: "network",
-      policy: JSON.stringify([
+// Generate a shorter unique suffix
+// Generate a unique suffix
+const suffix = Math.random().toString(36).substring(2, 10);
+
+// Create a new collection with unique name
+this.collectionName = `questions-${suffix}`;
+
+
+// Create encryption policy
+const encryptionPolicy = new CfnSecurityPolicy(this, "EncryptionPolicy", {
+  name: `enc-${suffix}`,
+  type: "encryption",
+  policy: JSON.stringify({
+    Rules: [
+      {
+        ResourceType: "collection",
+        Resource: [`collection/${this.collectionName}`],
+      },
+    ],
+    AWSOwnedKey: true,
+  }),
+});
+
+// Create network policy
+const networkPolicy = new CfnSecurityPolicy(this, "NetworkPolicy", {
+  name: `net-${suffix}`,
+  type: "network",
+  policy: JSON.stringify([
+    {
+      Rules: [
         {
-          Rules: [
-            {
-              ResourceType: "collection",
-              Resource: [`collection/${this.collectionName}`],
-            },
-          ],
-          AllowFromPublic: true,
+          ResourceType: "collection",
+          Resource: [`collection/${this.collectionName}`],
         },
-      ]),
-    });
-    collection.addDependency(networkPolicy);
+      ],
+      AllowFromPublic: true,
+    },
+  ]),
+});
+
+
+
+// Set up dependencies
+collection.addDependency(encryptionPolicy);
+collection.addDependency(networkPolicy);
+
 
     this.lambdaRole = new Role(this, "LambdaExecutionRole", {
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
@@ -96,39 +114,39 @@ export class OpenSearchCustom extends Construct {
       )
     );
 
-    const accessPolicy = new CfnAccessPolicy(this, "AccessPolicy", {
-      name: "lambda-access",
-      type: "data",
-      policy: JSON.stringify([
+const accessPolicy = new CfnAccessPolicy(this, "AccessPolicy", {
+  name: `access-${suffix}`,
+  type: "data",
+  policy: JSON.stringify([
+    {
+      Rules: [
         {
-          Rules: [
-            {
-              ResourceType: "collection",
-              Resource: [`collection/${this.collectionName}`],
-              Permission: [
-                "aoss:DescribeCollectionItems",
-                "aoss:UpdateCollectionItems",
-                "aoss:CreateCollectionItems",
-              ],
-            },
-            {
-              ResourceType: "index",
-              Resource: [`index/${this.collectionName}/*`],
-              Permission: [
-                "aoss:CreateIndex",
-                "aoss:UpdateIndex",
-                "aoss:DeleteIndex",
-                "aoss:ReadDocument",
-                "aoss:WriteDocument",
-                "aoss:DescribeIndex",
-              ],
-            },
+          ResourceType: "collection",
+          Resource: [`collection/${this.collectionName}`],
+          Permission: [
+            "aoss:DescribeCollectionItems",
+            "aoss:UpdateCollectionItems",
+            "aoss:CreateCollectionItems",
           ],
-          Principal: [this.lambdaRole.roleArn],
         },
-      ]),
-    });
-
+        {
+          ResourceType: "index",
+          Resource: [`index/${this.collectionName}/*`],
+          Permission: [
+            "aoss:CreateIndex",
+            "aoss:UpdateIndex",
+            "aoss:DeleteIndex",
+            "aoss:ReadDocument",
+            "aoss:WriteDocument",
+            "aoss:DescribeIndex",
+          ],
+        },
+      ],
+      Principal: [this.lambdaRole.roleArn],
+    },
+  ]),
+});
+collection.addDependency(accessPolicy);
     this.domainEndpoint = collection.attrCollectionEndpoint;
   }
 }

@@ -127,50 +127,54 @@ async def process_assessment_action(action: dict):
             # Initialize variables for question finding
             matching_questions = []
             question = {}
-            
             # Query for a question based on selected topic and difficulty
             if action.get("selectedTopics") and action.get("selectedDifficulty"):
                 try:
                     # Get the first topic and difficulty for querying
-                    requested_topic = action["selectedTopics"][0].lower()
-                    requested_difficulty = action["selectedDifficulty"][0].lower()
+                    requested_topic = action["selectedTopics"][0]
+                    requested_difficulty = action["selectedDifficulty"][0]
                     
-                    # Scan the table for all questions
-                    response = question_bank_table.scan()
-                    all_questions = response.get("Items", [])
+                    # Call the OpenSearch Lambda to get matching question IDs
+                    lambda_client = boto3.client('lambda')
+                    payload = {
+                        "topic": requested_topic,
+                        "difficulty": requested_difficulty
+                    }
                     
-                    # Filter questions that match topic and difficulty
-                    for q in all_questions:
-                        q_topics = [t.lower() for t in q.get("topics", [])]
-                        q_difficulty = q.get("difficulty", "").lower()
-                        
-                        # Check if the requested topic matches any question topic
-                        topic_match = any(
-                            requested_topic in topic or 
-                            requested_topic.rstrip('s') in topic or
-                            topic in requested_topic
-                            for topic in q_topics
-                        )
-                        difficulty_match = requested_difficulty == q_difficulty
-                        
-                        if topic_match and difficulty_match:
-                            matching_questions.append(q)
+                    # Get the OpenSearch Lambda ARN from environment variables
+                    opensearch_lambda_arn = os.environ.get("OPENSEARCH_LAMBDA_ARN")
                     
-                    # If no exact matches, try matching just by topic
-                    if len(matching_questions) == 0:
-                        logger.warning(f"No questions found for topic: {requested_topic}, difficulty: {requested_difficulty}")
+                    logger.info(f"Calling OpenSearch Lambda with payload: {payload}")
+                    
+                    # Invoke the OpenSearch Lambda
+                    response = lambda_client.invoke(
+                        FunctionName=opensearch_lambda_arn,
+                        InvocationType='RequestResponse',
+                        Payload=json.dumps(payload)
+                    )
+                    
+                    # Parse the response
+                    result = json.loads(response['Payload'].read().decode('utf-8'))
+                    if result.get("statusCode") != 200:
+                        logger.error(f"Error from OpenSearch Lambda: {result}")
+                        raise Exception(f"Error from OpenSearch Lambda: {result}")
                         
-                        for q in all_questions:
-                            q_topics = [t.lower() for t in q.get("topics", [])]
-                            topic_match = any(
-                                requested_topic in topic or 
-                                requested_topic.rstrip('s') in topic or
-                                topic in requested_topic
-                                for topic in q_topics
+                    # Get the question IDs from the response
+                    body = json.loads(result.get('body', '{}'))
+                    question_ids = body.get('questionIds', [])
+                    
+                    logger.info(f"Got {len(question_ids)} matching question IDs from OpenSearch")
+                    
+                    # If we have matching IDs, fetch them from DynamoDB
+                    matching_questions = []
+                    if question_ids:
+                        for qid in question_ids:
+                            question_response = question_bank_table.get_item(
+                                Key={"questionId": qid}
                             )
-                            
-                            if topic_match:
-                                matching_questions.append(q)
+                            question_item = question_response.get('Item')
+                            if question_item:
+                                matching_questions.append(question_item)
                     
                     # If we found matching questions, select one randomly
                     if len(matching_questions) > 0:
@@ -181,7 +185,7 @@ async def process_assessment_action(action: dict):
                         question_record = {
                             "questionId": question.get("questionId", ""),
                             "topic": str(question.get("topics", [action["selectedTopics"][0]])[0]),  # Include topic of question
-                            "difficulty":str(question.get("difficulty", action["selectedDifficulty"][0])),  # Include difficulty
+                            "difficulty": str(question.get("difficulty", action["selectedDifficulty"][0])),  # Include difficulty
                             "attempts": [],
                             "timeStarted": datetime.now().isoformat(),
                             "timeEnded": "",
@@ -227,12 +231,6 @@ async def process_assessment_action(action: dict):
                         "questionTopics": action["selectedTopics"],
                         "questionDifficulty": action["selectedDifficulty"][0]
                     }
-            else:
-                # If no topics or difficulties selected, return a generic response
-                return {
-                    "assessmentId": f"{user_id}#{timestamp}",
-                    "message": "Assessment created successfully, but no topics or difficulty specified."
-                }
                     
         elif action["type"] == "ongoing":
             user_id = action["userId"]
@@ -320,6 +318,118 @@ async def process_assessment_action(action: dict):
                 model_response = json.loads(text)
                 next_topic = model_response["topic"]
                 next_difficulty = model_response["difficulty"]
+
+
+                next_topic = assessment_response["nextRecommendation"]["topic"]
+                next_difficulty = assessment_response["nextRecommendation"]["difficulty"]
+                
+                # Now query QuestionBankTable for a matching question
+                requested_topic = next_topic.lower()
+                requested_difficulty = next_difficulty.lower()
+                
+                # Initialize matching_questions list
+                # matching_questions = []
+
+                # # Scan the table for all questions
+                # response = question_bank_table.scan()
+                # all_questions = response.get("Items", [])
+
+                # # Filter questions that match topic and difficulty
+                # for q in all_questions:
+                #     q_topics = [t.lower() for t in q.get("topics", [])]
+                #     q_difficulty = q.get("difficulty", "").lower()
+                    
+                #     # Check if the requested topic matches any question topic
+                #     topic_match = any(
+                #         requested_topic in topic or 
+                #         requested_topic.rstrip('s') in topic or
+                #         topic in requested_topic
+                #         for topic in q_topics
+                #     )
+                #     difficulty_match = requested_difficulty == q_difficulty
+                    
+                #     if topic_match and difficulty_match:
+                #         matching_questions.append(q)
+
+                # # If no exact matches, try matching just by topic
+                # if len(matching_questions) == 0:
+                #     logger.warning(f"No questions found for topic: {requested_topic}, difficulty: {requested_difficulty}")
+                    
+                #     for q in all_questions:
+                #         q_topics = [t.lower() for t in q.get("topics", [])]
+                #         topic_match = any(
+                #             requested_topic in topic or 
+                #             requested_topic.rstrip('s') in topic or
+                #             topic in requested_topic
+                #             for topic in q_topics
+                #         )
+                        
+                #         if topic_match:
+                #             matching_questions.append(q)
+
+                # # If we found matching questions, select one randomly
+                # if len(matching_questions) > 0:
+                #     import random
+                #     question = random.choice(matching_questions)
+                    
+                #     # Create question record
+                #     question_record = QuestionsDone(
+                #         questionId=question.get("questionId", ""),
+                #         topic=next_topic,
+                #         difficulty=next_difficulty,
+                #         attempts=[],
+                #         timeStarted=datetime.now().isoformat(),
+                #         timeEnded="",
+                #         bestExecTime=float('inf'),
+                #         bestExecMem=float('inf'),
+                #         testCasesPassed=0,
+                #         status=QuestionStatus.INCOMPLETE
+                #     )
+                    
+                #     # Add question to assessment record
+                #     assessment_record.questions.append(question_record)
+                    
+                #     # Increment the counter
+                #     assessment_record.selectedNumberOfQuestions += 1
+                    
+                #     # Save back to DynamoDB
+                #     assessments_table.put_item(Item=serialize(assessment_record))
+                    
+                #     # Return response with question details
+                #     return {
+                #         "assessmentId": assessment_id,
+                #         "selectedTopics": assessment_record.selectedTopics,
+                #         "selectedDifficulty": assessment_record.selectedDifficulty,
+                #         "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
+                #         "questions": [serialize(q) for q in assessment_record.questions],
+                #         "nextRecommendation": {
+                #             "topic": next_topic,
+                #             "difficulty": next_difficulty
+                #         },
+                #         "question": {
+                #             "questionId": question.get("questionId", ""),
+                #             "questionTitle": question.get("title", "Sample Question"),
+                #             "questionDescription": question.get("description", "This is a placeholder question"),
+                #             "starterCode": question.get("starterCode", "# Your code here"),
+                #             "questionTopics": question.get("topics", [next_topic]),
+                #             "questionDifficulty": question.get("difficulty", next_difficulty),
+                #             "testCases": question.get("testCases", [])
+                #         }
+                #     }
+                # else:
+                #     # No matching questions found
+                #     return {
+                #         "assessmentId": assessment_id,
+                #         "selectedTopics": assessment_record.selectedTopics,
+                #         "selectedDifficulty": assessment_record.selectedDifficulty,
+                #         "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
+                #         "questions": [serialize(q) for q in assessment_record.questions],
+                #         "nextRecommendation": {
+                #             "topic": next_topic,
+                #             "difficulty": next_difficulty
+                #         },
+                #         "message": f"No questions found for topic: {next_topic}, difficulty: {next_difficulty}"
+                #     }
 
                 return {
                     "assessmentId": assessment_id,

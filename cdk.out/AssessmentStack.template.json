@@ -1268,7 +1268,7 @@
     "aws:asset:property": "Code"
    }
   },
-  "LambdaForEcsFargateLambdaExecutionRole6C4B567B": {
+  "LambdaForECSLambdaExecutionRole7CB67705": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -1305,10 +1305,10 @@
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "AssessmentStack/LambdaForEcsFargate/LambdaExecutionRole/Resource"
+    "aws:cdk:path": "AssessmentStack/LambdaForECS/LambdaExecutionRole/Resource"
    }
   },
-  "LambdaForEcsFargateLambdaExecutionRoleDefaultPolicyAF094B84": {
+  "LambdaForECSLambdaExecutionRoleDefaultPolicy470B0F24": {
    "Type": "AWS::IAM::Policy",
    "Properties": {
     "PolicyDocument": {
@@ -1336,18 +1336,18 @@
      ],
      "Version": "2012-10-17"
     },
-    "PolicyName": "LambdaForEcsFargateLambdaExecutionRoleDefaultPolicyAF094B84",
+    "PolicyName": "LambdaForECSLambdaExecutionRoleDefaultPolicy470B0F24",
     "Roles": [
      {
-      "Ref": "LambdaForEcsFargateLambdaExecutionRole6C4B567B"
+      "Ref": "LambdaForECSLambdaExecutionRole7CB67705"
      }
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "AssessmentStack/LambdaForEcsFargate/LambdaExecutionRole/DefaultPolicy/Resource"
+    "aws:cdk:path": "AssessmentStack/LambdaForECS/LambdaExecutionRole/DefaultPolicy/Resource"
    }
   },
-  "LambdaForEcsFargateD03EED46": {
+  "LambdaForEcsFargate": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
@@ -1386,7 +1386,7 @@
     "Handler": "preprocess.handler",
     "Role": {
      "Fn::GetAtt": [
-      "LambdaForEcsFargateLambdaExecutionRole6C4B567B",
+      "LambdaForECSLambdaExecutionRole7CB67705",
       "Arn"
      ]
     },
@@ -1400,11 +1400,11 @@
     "Timeout": 60
    },
    "DependsOn": [
-    "LambdaForEcsFargateLambdaExecutionRoleDefaultPolicyAF094B84",
-    "LambdaForEcsFargateLambdaExecutionRole6C4B567B"
+    "LambdaForECSLambdaExecutionRoleDefaultPolicy470B0F24",
+    "LambdaForECSLambdaExecutionRole7CB67705"
    ],
    "Metadata": {
-    "aws:cdk:path": "AssessmentStack/LambdaForEcsFargate/LambdaForEcsFargate/Resource",
+    "aws:cdk:path": "AssessmentStack/LambdaForECS/LambdaForEcsFargate/Resource",
     "aws:asset:path": "asset.e833c6f3fcbf6d12602a01a4112e521cf37948899faf3a0e5b9b380fdde6bd54",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
@@ -1481,7 +1481,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/91WWW8bNxD+LdnHgN7GDhCkfpNlJxBgxIJk+KGCYIzI0ZoxNdzyWFdd6L8HPFZaW24QOHGh9mGx5JzfcA7ypDz++Hv57g082CMu7o+UXJTt1AG/Z/Bgb1vkJ2V7U/NZW6zgr8Hftjgt3habORsu6WY8ZGO/UJJP/YLQzdoCGpAKFlJJt/5DE0ZpVjQ1H4m85lKYM6X5fd6voE5GRvUVXYInflecOuORFbJuPgyfiIO1sqJR3XwYCGHQ2isaGgQnNSVo7EBQRCBCfAH3GRw+wLo4nRVvi/nBADwMFP94TLHEUmGF1UR7h9ewULij72gDazWX0fBWOCwuRuPw21lnYyMbcPjLK3YJyh5ALn4OxuEgORAYqQpH5NAQbmsozb68GzgH/G6F5FiUWwLHm5pfkKi1pFBiTc2zR4umkRyL07aoUx2ekz3HJXjltlAJVl20tTYuQ+kpXFAoeZEabzNnU+TeSLf+bLSve/5ya42oCsFNvMLidNYWHGhEShImSuperomQh9Bt9u1J/ukxH3asjUCOGOMM20Ul0HIj6+25sQKU0g8Dpa68W2hPIsf2uoBAiIu+4cDNQsHkI9DPIukpZKtpBvWPN+e+y+4ePyHYI2dHG4bclu1QeevQ9FMVPWU6+wSmgjDZ7P05LiXJcAwR3jNf1HwsyoaaHEhC06Nlo9NUgrNOM+83TMKqbCdaYRiK1voVirN1rlTisgY14Fx7crvu8SsMCgO+a5l8sNd6rJXkYZi3m/mO2Jna48YmSlWw5W1vy+8yX+Ds+9wXx84KoxV+6dr39aP+9wNcAUGFIpqUaGP79mnrgcmyL07Oy8/k/xjXPD1nFLJET0MqK1zrwNmzs08WYurAYbik7CPAP0z+r7v9VYZiPlIqwjA35QRrbaXTZn0GFmfzMOFva3DhxWDLQV0ryeOT4lKDOAMFxFE8nsUMFVgnudIgFlFCUtWclO3z2mbWn/x9BusrSOuQdsKProuO2Ve4BlOh215yve2GKV3Zsr3UVffEMOiQdg2UkVSdOKwWAsr2k6fYZUHBk5Pbdw3XolveAQmFJu9MzEBcBnHtu8ZFaqTRFFLRH64XffL2XF6LGcPsgtow+/4WrEVny0H4Mfu+PPP8Hl2qhA2boNXepMv2SQ68dXrV56dGz4SwvvKu9u6J5NjoRgo0wQOLXqcOKknVhpEWWH61vzUn78rjj+Xxm69WyqN87uUk/b8B1VvKd+8PAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/91WS2/bOBD+LdWxYLRNChTd3BzHLQwEjWEHOaxhBGNyorChhyofynoF//cFH7KVON1DtgaMHgSR8/xmODPkWXn6+c/ywzt4sidcPJ4ouSzbmQP+yODJ3rXIz8r2tubztljB34N/bHFevC82Cza8p9vJkE38Ukk+80tCN28LaEAqWEol3fovTRilWdHUfCzymkthLpTmj3m/gjoZGdfXdAWe+ENx7oxHVsi6+TR8IQ7WyorGdfNpIIRBa69paBCc1JSgsSNBEYEI8Q3cV3D4BOvifF68LxZHA/A4UPw0TbHEUmGF1VR7hzewVLij72gDazWX0fBWOCxG40n47ayziZENOPzlFXsPyh7BWfw/GMeD5EhgpCock0NDuK2hNPvybuAc8IcVkmNR7h443tZ8RKLWkkKJNTXPHi2aRnIsztuiTnV4SfYS78Ert4VKsOqirbVxGUpPYUSh5EVqvM2CzZB7I936q9G+7vnLrTWmKgQ39QqL83lbcKAxKUmYKKl7uSZCHkK32bcn+cNjTnasjUCOGOMM20Ul0HIj623eWAFK6aeBUtfeLbUnkWM7LCAQYtQ3HLhZKJh8BvpVJD2FbDXNoH5689l3p7vHTwj2yNnRhiG3ZTtU3jo0/aOKnjKdfQFTQZhs9vES7yXJkIYI75Uvaj4XZUNNDiSh6dGy0VkqwXmnmfcbJmFVtlOtMAxFa/0KxcU6VypxWYMacK49uV33+BUGhQHftUxO7I2eaCV5GObtZrEjdqb2uLGJUhVsedvb8j+Zb3D25uhYYbTCb12DHj6un9o9WIArIKhQRJMSbWzQPm09MFn2zel/e05+x7gW6cGikCV6GkNZ4UYHzp6dfbIQMwcOwzVknwHeJx/a/qHd/ipDMfEp52Eum3KKtbbSabO+AIvzRRjWdzW4cPnbclDXSvL4OrjSIC5AAXEUz8cqQwXWSa40iGWUkFQ1Z2X7uraZ94d4n8H6CtI6pJ3ws8nfMfsKN2AqdNv7qrfdMKUrW7ZXuupeCwYd0q5TMpKqE4fVUkDZfvEU2ykoeHJy+0ThWnTLByCh0OSdiScQl0Fc+65DkRppNIWj6E/RUZ+8zcuhmDHMLqgNsx/vwFp0thyEH7MfywvPH9GlStiwKVrtTbo3X5yBt06v+vzU0ZkQ1tfe1d69kJwY3UiBJnhg0evMQSWp2jDSAsvv9o/m7EN5+rk8fffdSnmS815O0/9fwxe1LroPAAA="
    },
    "Metadata": {
     "aws:cdk:path": "AssessmentStack/CDKMetadata/Default"
@@ -1522,42 +1522,21 @@
     ]
    }
   },
-  "EcsTaskRoleArn": {
-   "Description": "IAM Role that your Fargate tasks assume",
+  "ApiEndpoint": {
+   "Description": "Lambda function name that processes API requests",
    "Value": {
-    "Fn::GetAtt": [
-     "EcsFargateTaskRoleFD2BF397",
-     "Arn"
-    ]
+    "Ref": "LambdaForEcsFargate"
    }
   },
-  "LoadBalancerDNS": {
-   "Description": "Public DNS name of the Fargate service ALB",
+  "ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E": {
    "Value": {
     "Fn::GetAtt": [
-     "EcsFargateFargateServiceLB4117BB23",
-     "DNSName"
-    ]
-   }
-  },
-  "LambdaInvokeArn": {
-   "Description": "Invoke ARN for the ECS-triggering Lambda",
-   "Value": {
-    "Fn::GetAtt": [
-     "LambdaForEcsFargateD03EED46",
-     "Arn"
-    ]
-   }
-  },
-  "ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4": {
-   "Value": {
-    "Fn::GetAtt": [
-     "LambdaForEcsFargateD03EED46",
+     "LambdaForEcsFargate",
      "Arn"
     ]
    },
    "Export": {
-    "Name": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateD03EED46ArnB41FCEF4"
+    "Name": "AssessmentStack:ExportsOutputFnGetAttLambdaForEcsFargateArn4C55AD0E"
    }
   }
  },

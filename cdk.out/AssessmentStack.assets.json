@@ -17,7 +17,7 @@
       }
     },
     "e833c6f3fcbf6d12602a01a4112e521cf37948899faf3a0e5b9b380fdde6bd54": {
-      "displayName": "LambdaForEcsFargate/LambdaForEcsFargate/Code",
+      "displayName": "LambdaForECS/LambdaForEcsFargate/Code",
       "source": {
         "path": "asset.e833c6f3fcbf6d12602a01a4112e521cf37948899faf3a0e5b9b380fdde6bd54",
         "packaging": "zip"
@@ -31,7 +31,7 @@
         }
       }
     },
-    "561e395733c6dd21d00de04794c67b865a81a022a48091b364f614fd9983f1e5": {
+    "69b57b849673e0f8bc60866907c016d359896fe9743b3b8af636daf839645b8a": {
       "displayName": "AssessmentStack Template",
       "source": {
         "path": "AssessmentStack.template.json",
@@ -40,7 +40,7 @@
       "destinations": {
         "current_account-us-east-1": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
-          "objectKey": "561e395733c6dd21d00de04794c67b865a81a022a48091b364f614fd9983f1e5.json",
+          "objectKey": "69b57b849673e0f8bc60866907c016d359896fe9743b3b8af636daf839645b8a.json",
           "region": "us-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
         }
