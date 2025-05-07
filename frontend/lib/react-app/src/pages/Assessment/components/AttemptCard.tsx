@@ -1,6 +1,6 @@
 import { Card, Group, Text, Title, ScrollArea, Divider } from "@mantine/core";
-import MetricSection from "./MetricSection";
-import type { Attempts } from "../../../CustomTypes";
+import MetricSection from "../../../common/MetricSection";
+import type { Attempts } from "../../../common/CustomTypes";
 
 interface AttemptCardProps {
   attempts: Attempts[];

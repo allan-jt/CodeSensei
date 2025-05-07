@@ -1,77 +1,15 @@
 import { Card, Divider, Group, ScrollArea, Text, Title } from "@mantine/core";
-import type { Metric } from "../../../CustomTypes";
-import MetricSection from "./MetricSection";
+import type { Metric, Scope } from "../../../common/CustomTypes";
+import MetricSection from "../../../common/MetricSection";
+import {
+  getInvertedMetrics,
+  mergeMetrics,
+  roundToTwoDecimals,
+} from "../../../common/Utils";
 
 interface ScopeCardProps {
   metrics: Metric[];
   overallMetrics: Metric[];
-}
-
-interface newMetric {
-  metricName: string;
-  count: number;
-  value: number;
-  unit: string;
-  greaterIsBetter: boolean;
-}
-
-interface Scope {
-  scopeName: string;
-  metrics: newMetric[];
-  overall: newMetric[];
-}
-
-function getInvertedMetrics(metrics: Metric[]): Scope[] {
-  if (metrics.length === 0) return [];
-  const scopeMap: Record<string, Scope> = {};
-
-  for (const metric of metrics) {
-    for (const scopeMetric of metric.scopes) {
-      if (!scopeMap[scopeMetric.scopeName]) {
-        scopeMap[scopeMetric.scopeName] = {
-          scopeName: scopeMetric.scopeName,
-          metrics: [],
-          overall: [],
-        };
-      }
-
-      scopeMap[scopeMetric.scopeName].metrics.push({
-        metricName: metric.metricName,
-        count: scopeMetric.count,
-        value: scopeMetric.value,
-        unit: scopeMetric.unit,
-        greaterIsBetter: false,
-      });
-    }
-  }
-
-  return Object.values(scopeMap);
-}
-
-function mergeMetrics(metrics: Scope[], overallMetrics: Scope[]): Scope[] {
-  if (metrics.length === 0) return [];
-  const mergedMetrics: Scope[] = [];
-
-  for (const metric of metrics) {
-    const overallMetric = overallMetrics.find(
-      (m) => m.scopeName === metric.scopeName
-    );
-
-    if (overallMetric) {
-      mergedMetrics.push({
-        ...metric,
-        overall: overallMetric.metrics,
-      });
-    } else {
-      mergedMetrics.push(metric);
-    }
-  }
-
-  return mergedMetrics;
-}
-
-function roundToTwoD(num: number): number {
-  return Math.round((num + Number.EPSILON) * 100) / 100;
 }
 
 function ScopeCardComponent({ metrics, overallMetrics }: ScopeCardProps) {
@@ -106,8 +44,8 @@ function ScopeCardComponent({ metrics, overallMetrics }: ScopeCardProps) {
                   <MetricSection
                     key={i}
                     label={metric.metricName}
-                    current={roundToTwoD(metric.value / metric.count)}
-                    overall={roundToTwoD(
+                    current={roundToTwoDecimals(metric.value / metric.count)}
+                    overall={roundToTwoDecimals(
                       refinedMetrics[attemptIndex].overall[i].value /
                         refinedMetrics[attemptIndex].overall[i].count
                     )}
