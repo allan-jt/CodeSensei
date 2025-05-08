@@ -4,6 +4,7 @@ import { QueueStack } from "./queue-stack/queue-stack";
 import { CodeExecStack } from "./code-exec-stack/code-exec-stack";
 import { ResultManagerStack } from "./result-manager-stack/result-manager-stack";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
+import { Function } from "aws-cdk-lib/aws-lambda";
 
 interface ExecutorStackProps extends cdk.StackProps {
   userTable: TableV2;
@@ -13,6 +14,8 @@ interface ExecutorStackProps extends cdk.StackProps {
 }
 
 export class ExecutorStack extends cdk.Stack {
+  public readonly executorLambda: Function;
+
   constructor(scope: Construct, id: string, props: ExecutorStackProps) {
     super(scope, id, props);
 
@@ -34,5 +37,7 @@ export class ExecutorStack extends cdk.Stack {
       languages: codeExecStack.languages,
       fargateService: codeExecStack.fargateService,
     });
+
+    this.executorLambda = queueStack.producerLambda;
   }
 }
