@@ -46,6 +46,27 @@ function AssessmentPage({
   const [codeOutput, setCodeOutput] = useState("Output will appear here");
   const [attempts, setAttempts] = useState<Attempts[]>([]);
 
+  const handleSocketExecuteCode = (response: any) => {
+    setCodeOutput(response.codeOutput);
+
+    const newAttempt: Attempts = {
+      metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
+      current: [
+        response.executionTime,
+        response.memoryUsage,
+        response.testCasesPassed,
+      ],
+      best: [
+        response.bestExecutionTime,
+        response.bestMemoryUsage,
+        response.bestTestCasesPassed,
+      ],
+      unit: ["ms", "KB", "%"],
+      greaterIsBetter: [false, false, true],
+    };
+    setAttempts((prevAttempts) => [...prevAttempts, newAttempt]);
+  };
+
   useEffect(() => {
     const socket = new WebSocket(socketURL);
     socketRef.current = socket;
@@ -56,10 +77,8 @@ function AssessmentPage({
 
     socket.onmessage = (event) => {
       const response = JSON.parse(event.data);
-      console.log("Received message:", response);
-
       if (response.action === "executeCode") {
-        console.log("Execution results:", response);
+        handleSocketExecuteCode(response);
       }
     };
 
