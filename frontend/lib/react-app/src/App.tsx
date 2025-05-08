@@ -14,166 +14,12 @@ import AssessmentPage from "./pages/Assessment/Assessment";
 import { useAuth } from "react-oidc-context";
 import LoginPage from "./pages/LogIn/Login";
 
-const assessmentMetrics = [
-  // Overall metrics
-  {
-    timestamp: "overall",
-    metrics: [
-      {
-        metricName: "execution time",
-        scopes: [
-          { scopeName: "array#easy", count: 320, value: 120.4, unit: "ms" },
-          { scopeName: "dp#medium", count: 210, value: 405.9, unit: "ms" },
-          {
-            scopeName: "graph#difficult",
-            count: 180,
-            value: 690.7,
-            unit: "ms",
-          },
-        ],
-      },
-      {
-        metricName: "memory usage",
-        scopes: [
-          { scopeName: "array#easy", count: 190, value: 225.5, unit: "MB" },
-          { scopeName: "dp#medium", count: 175, value: 410.6, unit: "MB" },
-          {
-            scopeName: "graph#difficult",
-            count: 160,
-            value: 290.1,
-            unit: "MB",
-          },
-        ],
-      },
-      {
-        metricName: "time taken",
-        scopes: [
-          { scopeName: "array#easy", count: 250, value: 540.2, unit: "ms" },
-          { scopeName: "dp#medium", count: 200, value: 460.0, unit: "ms" },
-          {
-            scopeName: "graph#difficult",
-            count: 190,
-            value: 870.9,
-            unit: "ms",
-          },
-        ],
-      },
-    ],
-  },
-
-  // Assessment 1
-  {
-    timestamp: "2025-05-02T14:30:00Z",
-    metrics: [
-      {
-        metricName: "execution time",
-        scopes: [
-          { scopeName: "array#easy", count: 100, value: 40.2, unit: "ms" },
-          { scopeName: "dp#medium", count: 60, value: 130.5, unit: "ms" },
-        ],
-      },
-      {
-        metricName: "memory usage",
-        scopes: [
-          { scopeName: "array#easy", count: 90, value: 110.2, unit: "MB" },
-          { scopeName: "dp#medium", count: 70, value: 160.3, unit: "MB" },
-        ],
-      },
-      {
-        metricName: "time taken",
-        scopes: [
-          { scopeName: "array#easy", count: 80, value: 160.1, unit: "ms" },
-          { scopeName: "dp#medium", count: 65, value: 140.6, unit: "ms" },
-        ],
-      },
-    ],
-  },
-
-  // Assessment 2
-  {
-    timestamp: "2025-05-03T10:15:00Z",
-    metrics: [
-      {
-        metricName: "execution time",
-        scopes: [
-          { scopeName: "graph#difficult", count: 80, value: 310.4, unit: "ms" },
-          { scopeName: "dp#medium", count: 80, value: 150.6, unit: "ms" },
-        ],
-      },
-      {
-        metricName: "memory usage",
-        scopes: [
-          { scopeName: "graph#difficult", count: 75, value: 130.7, unit: "MB" },
-          { scopeName: "dp#medium", count: 60, value: 130.3, unit: "MB" },
-        ],
-      },
-      {
-        metricName: "time taken",
-        scopes: [
-          { scopeName: "graph#difficult", count: 90, value: 400.8, unit: "ms" },
-          { scopeName: "dp#medium", count: 70, value: 160.0, unit: "ms" },
-        ],
-      },
-    ],
-  },
-
-  // Assessment 3
-  {
-    timestamp: "2025-05-04T18:45:00Z",
-    metrics: [
-      {
-        metricName: "execution time",
-        scopes: [
-          { scopeName: "array#easy", count: 120, value: 40.0, unit: "ms" },
-          {
-            scopeName: "graph#difficult",
-            count: 100,
-            value: 380.3,
-            unit: "ms",
-          },
-        ],
-      },
-      {
-        metricName: "memory usage",
-        scopes: [
-          { scopeName: "array#easy", count: 100, value: 115.1, unit: "MB" },
-          { scopeName: "graph#difficult", count: 85, value: 159.4, unit: "MB" },
-        ],
-      },
-      {
-        metricName: "time taken",
-        scopes: [
-          { scopeName: "array#easy", count: 90, value: 220.0, unit: "ms" },
-          {
-            scopeName: "graph#difficult",
-            count: 100,
-            value: 310.0,
-            unit: "ms",
-          },
-        ],
-      },
-    ],
-  },
-];
-
 interface AppProps {
-  cognitoDomain: string;
-  redirectUri: string;
-  clientId: string;
+  socketURL: string;
 }
 
-function App({ cognitoDomain, redirectUri, clientId }: AppProps) {
+function App({ socketURL }: AppProps) {
   const auth = useAuth();
-  // const signOutRedirect = () => {
-  //   window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-  //     redirectUri
-  //   )}`;
-  // };
-  console.log(cognitoDomain);
-  console.log(redirectUri);
-  console.log(clientId);
-
-  // const socketURL = (window as any).env.SOCKET_API_URL;
 
   const pages = [
     {
@@ -182,11 +28,29 @@ function App({ cognitoDomain, redirectUri, clientId }: AppProps) {
     },
     {
       name: "dashboard",
-      component: <DashboardPage assessmentMetrics={assessmentMetrics} />,
+      component: <DashboardPage assessmentMetrics={[]} />,
     },
     {
       name: "assessment",
-      component: <AssessmentPage />,
+      component: (
+        <AssessmentPage
+          userId="user-123"
+          assessmentId="assess-001"
+          questionId="4"
+          questionTitle="Print String"
+          questionDescription="Write a function that takes a string as input and prints it."
+          questionTopics={["String"]}
+          questionDifficulty="easy"
+          starterCode={{
+            python: `def solution(input_str):\n    # Your code here\n    pass`,
+            javascript: `function solution(inputStr) {\n  // Your code here\n}`,
+          }}
+          socketURL={socketURL}
+          nextQuestionHandler={(data) => {
+            console.log("Next question data:", data);
+          }}
+        />
+      ),
     },
   ];
 
