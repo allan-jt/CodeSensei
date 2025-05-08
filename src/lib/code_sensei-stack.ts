@@ -10,13 +10,15 @@ export class CodeSenseiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // const storage = new StorageStack(this, "StorageStack");
+    const storage = new StorageStack(this, "StorageStack");
     // const executor = new ExecutorStack(this, "ExecutorStack", {
     //   userTable: storage.userTable,
     //   questionBankTable: storage.questionBankTable,
     //   assessmentsTable: storage.assessmentsTable,
     //   assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
     // });
-    const auth = new AuthStack(this, "AuthStack");
+    const auth = new AuthStack(this, "AuthStack", {
+      userTable: storage.userTable,
+    });
   }
 }
