@@ -39,7 +39,7 @@ def getAttemptObject(results):
     
     attempt.execTimeTaken = Decimal(str(attempt.execTimeTaken))
     attempt.execMemoryTaken = Decimal(str(attempt.execMemoryTaken))
-    return attempt, int(test_cases_passed // total_test_cases) * 100, codeOutput
+    return attempt, int(test_cases_passed * 100 / total_test_cases), codeOutput
 
 def get_assessment(table, user_id, timestamp):
     if not table or not user_id or not timestamp:
@@ -86,16 +86,10 @@ def handler(event, context):
     if assessment is None:
         print("Error: assessment is None")
         return {"statusCode": 500, "body": f"Error"}
+    
 
     cur_question: QuestionsDone = assessment.questions[-1]
     cur_question.attempts.append(attempt)
-    cur_question.bestExecMem = min(cur_question.bestExecMem, attempt.execMemoryTaken)
-    cur_question.bestExecTime = min(cur_question.bestExecTime, attempt.execTimeTaken)
-    cur_question.testCasesPassed = max(cur_question.testCasesPassed, casesPassed)
-    if attempt.status == AttemptStatus.SUCCESS:
-        cur_question.status = QuestionStatus.PASS
-
-    assessments.put_item(Item=serialize(assessment))
 
     frontend_data = {
         "action": event.get("action"),
@@ -103,10 +97,25 @@ def handler(event, context):
         "assessmentID": assessmentID,
         "status": attempt.status.value,
         "codeOutput": codeOutput,
-        "executionTime": float(cur_question.bestExecTime),
-        "executionMemory": float(cur_question.bestExecMem),
-        "testCasesPassed": float(cur_question.testCasesPassed)
+        "bestExecutionTime": float(cur_question.bestExecTime),
+        "bestMemoryUsage": float(cur_question.bestExecMem),
+        "bestTestCasesPassed": float(cur_question.testCasesPassed),
+        "executionTime": "N/A",
+        "memoryUsage": "N/A",
+        "testCasesPassed": float(casesPassed)
     }
+
+    cur_question.bestExecMem = min(cur_question.bestExecMem, attempt.execMemoryTaken)
+    cur_question.bestExecTime = min(cur_question.bestExecTime, attempt.execTimeTaken)
+    cur_question.testCasesPassed = max(cur_question.testCasesPassed, casesPassed)
+    if attempt.status == AttemptStatus.SUCCESS:
+        cur_question.status = QuestionStatus.PASS
+        frontend_data["executionTime"] = float(attempt.execTimeTaken)
+        frontend_data["memoryUsage"] = float(attempt.execMemoryTaken)
+
+    assessments.put_item(Item=serialize(assessment))
+
+
     socket = event.get("socket")
     if socket:
         send_socket_message(
