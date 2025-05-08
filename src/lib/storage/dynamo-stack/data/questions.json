@@ -40,5 +40,19 @@
       "Use dynamic programming to track max loot at each step.",
       "At each house, choose to rob it or skip it based on previous results."
     ]
+  },
+  {
+    "questionId": "4",
+    "topics": ["String"],
+    "difficulty": "easy",
+    "title": "Reverse String",
+    "description": "Write a function that takes a string `s` and returns the string reversed.",
+    "testCases": ["\"hello\"", "\"World\"", "\"abcd\""],
+    "testAnswers": ["\"olleh\"", "\"dlroW\"", "\"dcba\""],
+    "starterCode": "function reverseString(s) {\n  // Your code here\n}",
+    "hints": [
+      "You can swap characters in place using two pointers.",
+      "Remember to handle empty strings."
+    ]
   }
 ]
