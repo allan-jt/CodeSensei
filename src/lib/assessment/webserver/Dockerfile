@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 80
 
-CMD ["uvicorn", "webserver_jani:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "webserver:app", "--host", "0.0.0.0", "--port", "80"]
