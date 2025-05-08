@@ -6,8 +6,8 @@ WORKDIR /app
 RUN pip install --no-cache-dir fastapi uvicorn boto3
 
 # Copy the FastAPI server
-COPY webserver.py .
+COPY . .
 
 EXPOSE 80
 
-CMD ["uvicorn", "webserver:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "webserver_jani:app", "--host", "0.0.0.0", "--port", "80"]
