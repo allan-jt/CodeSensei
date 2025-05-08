@@ -21,7 +21,7 @@ export class CodeSenseiStack extends cdk.Stack {
       userTable: storage.userTable,
     });
     const api = new ApiGatewayStack(this, "APIGatewayStack", {
-      codeExecutionLambda: executor.executorLambda,
+      executionEntryLambda: executor.executorEntryLambda,
     });
   }
 }
