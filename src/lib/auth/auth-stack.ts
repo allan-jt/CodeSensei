@@ -1,55 +1,42 @@
 import * as cdk from "aws-cdk-lib";
 import {
-  CfnManagedLoginBranding,
-  ManagedLoginVersion,
-  OAuthScope,
   UserPool,
   UserPoolClient,
-  UserPoolClientIdentityProvider,
   UserPoolDomain,
+  UserPoolOperation,
 } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
+import { CognitoCustom } from "./custom-constructs/cognito";
+import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
+import { LambdaCustom } from "./custom-constructs/lambda";
+
+interface AuthStackProps extends cdk.StackProps {
+  userTable: TableV2;
+}
 
 export class AuthStack extends cdk.Stack {
   public readonly userPool: UserPool;
   public readonly userPoolClient: UserPoolClient;
   public readonly userPoolDomain: UserPoolDomain;
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: AuthStackProps) {
     super(scope, id, props);
 
-    this.userPool = new UserPool(this, "UserPool", {
-      userPoolName: "CodeSenseiUserPool",
-      selfSignUpEnabled: true,
-      signInAliases: { email: true },
-      autoVerify: { email: true },
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    const cognito = new CognitoCustom(this, "CognitoService", {
+      callBackUrl: "http://localhost:5173/",
+      logoutUrl: "http://localhost:5173/",
     });
+    this.userPool = cognito.userPool;
+    this.userPoolClient = cognito.userPoolClient;
+    this.userPoolDomain = cognito.userPoolDomain;
 
-    this.userPoolClient = new UserPoolClient(this, "UserPoolClient", {
-      userPool: this.userPool,
-      generateSecret: false,
-      authFlows: { userPassword: true },
-      disableOAuth: false,
-      oAuth: {
-        callbackUrls: ["http://localhost:5173/"],
-        logoutUrls: ["http://localhost:5173/"],
-        flows: { authorizationCodeGrant: true, implicitCodeGrant: true },
-        scopes: [OAuthScope.EMAIL, OAuthScope.OPENID, OAuthScope.PROFILE],
-      },
-      supportedIdentityProviders: [UserPoolClientIdentityProvider.COGNITO],
-    });
+    const lambda = new LambdaCustom(this, "LambdaCognitoService", {
+      userTable: props.userTable
+    })
 
-    this.userPoolDomain = new UserPoolDomain(this, "UserPoolDomain", {
-      userPool: this.userPool,
-      cognitoDomain: { domainPrefix: "codesensei-app" },
-      managedLoginVersion: ManagedLoginVersion.NEWER_MANAGED_LOGIN,
-    });
-
-    new CfnManagedLoginBranding(this, "CognitoUIPage", {
-      userPoolId: this.userPool.userPoolId,
-      clientId: this.userPoolClient.userPoolClientId,
-      useCognitoProvidedValues: true,
-    });
+    this.userPool.addTrigger(
+      UserPoolOperation.POST_CONFIRMATION,
+      lambda.fn
+    )
   }
 }
