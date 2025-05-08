@@ -5,10 +5,16 @@ import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { AuthProvider } from "react-oidc-context";
 
-const redirectUri = (window as any).env.REDIRECT_URL;
-const clientId = (window as any).env.CLIENT_ID;
-const authority = (window as any).env.AUTHORITY;
-const cognitoDomain = (window as any).env.COGNITO_DOMAIN;
+// const redirectUri = (window as any).env.REDIRECT_URL;
+// const clientId = (window as any).env.CLIENT_ID;
+// const authority = (window as any).env.AUTHORITY;
+// const cognitoDomain = (window as any).env.COGNITO_DOMAIN;
+
+const redirectUri = "http://localhost:5173/";
+const clientId = import.meta.env.VITE_CLIENT_ID;
+const authority = import.meta.env.VITE_AUTHORITY;
+const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
+const socketURL = import.meta.env.VITE_SOCKET_API_URL;
 
 const cognitoAuthConfig = {
   authority: authority,
@@ -23,11 +29,7 @@ createRoot(document.getElementById("root")!).render(
     <ColorSchemeScript forceColorScheme="dark" />
     <MantineProvider forceColorScheme="dark">
       <AuthProvider {...cognitoAuthConfig}>
-        <App
-          redirectUri={redirectUri}
-          cognitoDomain={cognitoDomain}
-          clientId={clientId}
-        />
+        <App socketURL={socketURL} />
       </AuthProvider>
     </MantineProvider>
   </StrictMode>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CodeEditorComponent from "./components/CodeEditor";
 import { Stack, Tabs } from "@mantine/core";
 import QuestionInfoComponent from "./components/QuestionInfo";
@@ -10,132 +10,104 @@ import AttemptCardComponent from "./components/AttemptCard";
 import type { Attempts, Metric } from "../../common/CustomTypes";
 import ScopeCardComponent from "./components/ScopeCard";
 
-const sampleAttempts: Attempts[] = [
-  {
-    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
-    current: [150, 200, 90],
-    best: [120, 180, 95],
-    unit: ["ms", "KB", "%"],
-    greaterIsBetter: [false, false, true],
-  },
-  {
-    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
-    current: [200, 350, 95],
-    best: [180, 330, 85],
-    unit: ["ms", "KB", "%"],
-    greaterIsBetter: [false, false, true],
-  },
-  {
-    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
-    current: [90, 150, 80],
-    best: [100, 140, 100],
-    unit: ["ms", "KB", "%"],
-    greaterIsBetter: [false, false, true],
-  },
-  {
-    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
-    current: [90, 150, 80],
-    best: [100, 140, 100],
-    unit: ["ms", "KB", "%"],
-    greaterIsBetter: [false, false, true],
-  },
-  {
-    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
-    current: [90, 150, 80],
-    best: [100, 140, 100],
-    unit: ["ms", "KB", "%"],
-    greaterIsBetter: [false, false, true],
-  },
-  {
-    metric: ["Execution Time", "Memory Usage", "Test Cases Passed"],
-    current: [90, 150, 80],
-    best: [100, 140, 100],
-    unit: ["ms", "KB", "%"],
-    greaterIsBetter: [false, false, true],
-  },
-];
+interface AssessmentProps {
+  userId: string;
+  assessmentId: string;
+  questionId: string;
+  questionTitle: string;
+  questionDescription: string;
+  questionTopics: string[];
+  questionDifficulty: "easy" | "medium" | "hard";
+  starterCode: Record<string, string>;
 
-const sampleMetrics: Metric[] = [
-  {
-    metricName: "execution time",
-    scopes: [
-      { scopeName: "array#easy", count: 120, value: 45.3, unit: "ms" },
-      { scopeName: "dp#medium", count: 85, value: 102.7, unit: "ms" },
-      { scopeName: "graph#difficult", count: 60, value: 230.1, unit: "ms" },
-    ],
-  },
-  {
-    metricName: "memory usage",
-    scopes: [
-      { scopeName: "graph#difficult", count: 140, value: 15.2, unit: "MB" },
-      { scopeName: "dp#medium", count: 90, value: 28.6, unit: "MB" },
-      { scopeName: "array#easy", count: 45, value: 64.9, unit: "MB" },
-    ],
-  },
-  {
-    metricName: "time taken",
-    scopes: [
-      { scopeName: "graph#difficult", count: 78, value: 320.4, unit: "s" },
-      { scopeName: "array#easy", count: 52, value: 198.2, unit: "s" },
-      { scopeName: "dp#medium", count: 100, value: 88.5, unit: "s" },
-    ],
-  },
-];
+  socketURL: string;
+  nextQuestionHandler: (data: any) => void;
+}
 
-const sampleOverallMetrics: Metric[] = [
-  {
-    metricName: "execution time",
-    scopes: [
-      { scopeName: "graph#difficult", count: 95, value: 67.2, unit: "ms" },
-      { scopeName: "dp#medium", count: 50, value: 210.3, unit: "ms" },
-      { scopeName: "array#easy", count: 110, value: 38.9, unit: "ms" },
-    ],
-  },
-  {
-    metricName: "memory usage",
-    scopes: [
-      { scopeName: "array#easy", count: 60, value: 72.1, unit: "MB" },
-      { scopeName: "dp#medium", count: 95, value: 30.3, unit: "MB" },
-      { scopeName: "graph#difficult", count: 100, value: 18.7, unit: "MB" },
-    ],
-  },
-  {
-    metricName: "time taken",
-    scopes: [
-      { scopeName: "dp#medium", count: 88, value: 92.4, unit: "s" },
-      { scopeName: "graph#difficult", count: 70, value: 310.0, unit: "s" },
-      { scopeName: "array#easy", count: 55, value: 180.5, unit: "s" },
-    ],
-  },
-];
-
-function AssessmentPage() {
+function AssessmentPage({
+  userId,
+  assessmentId,
+  questionId,
+  questionTitle,
+  questionDescription,
+  questionTopics,
+  questionDifficulty,
+  starterCode,
+  socketURL,
+  nextQuestionHandler,
+}: AssessmentProps) {
   const tabSize = 24;
-  const languages = ["python", "javascript"];
-  const languageSnippets = [
-    "def solution(nums, target):\n    # Your code here\n    pass",
-    "function solution(nums, target) {\n  // Your code here\n}",
-  ];
+  const languages = Object.keys(starterCode);
+  const languageSnippets = Object.values(starterCode);
+  const socketRef = useRef<WebSocket | null>(null);
 
   const [language, setLanguage] = useState(languages[0]);
   const [code, setCode] = useState(languageSnippets[0]);
-  const [codeOutput, setCodeOutput] = useState("Output will appear hdere");
-  // const [attempts, setAttempts] = useState<Attempts[]>(sampleAttempts);
-  const attempts = sampleAttempts;
+  const [codeOutput, setCodeOutput] = useState("Output will appear here");
+  const [attempts, setAttempts] = useState<Attempts[]>([]);
+
+  useEffect(() => {
+    const socket = new WebSocket(socketURL);
+    socketRef.current = socket;
+
+    socket.onopen = () => {
+      console.log("WebSocket connection opened");
+    };
+
+    socket.onmessage = (event) => {
+      const response = JSON.parse(event.data);
+      console.log("Received message:", response);
+
+      if (response.action === "executionResults") {
+        console.log("Execution results:", response);
+      }
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   const handleSubmit = () => {
-    console.log(language);
-    console.log(code);
-    setCodeOutput(`Used ${language}:\n${code}`);
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket is not initialized");
+      return;
+    }
+
+    const payload = {
+      action: "executeCode",
+      data: {
+        userId: userId,
+        questionId: questionId,
+        assessmentId: assessmentId,
+        userCode: code,
+        userSelectedLanguage: language,
+      },
+    };
+    socket.send(JSON.stringify(payload));
+    console.log("Message sent:", payload);
+  };
+
+  const handleNext = () => {
+    nextQuestionHandler({ userId, assessmentId, code });
   };
 
   return (
     <Stack align="stretch" justify="center" gap="md">
       <QuestionInfoComponent
-        title="Two Sum"
-        description="Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target."
-        topic={["Array", "Two Pointers"]}
-        difficulty="easy"
+        title={questionTitle}
+        description={questionDescription}
+        topic={questionTopics}
+        difficulty={questionDifficulty}
       />
 
       <CodeEditorComponent
@@ -144,7 +116,7 @@ function AssessmentPage() {
         getLanguage={setLanguage}
         getCode={setCode}
         handleSubmit={handleSubmit}
-        handleNext={handleSubmit}
+        handleNext={handleNext}
       />
 
       <Tabs defaultValue="codeOutput">
@@ -185,10 +157,7 @@ function AssessmentPage() {
           <AttemptCardComponent attempts={attempts} />
         </Tabs.Panel>
         <Tabs.Panel value="scopes" pt="md" h={600}>
-          <ScopeCardComponent
-            metrics={sampleMetrics}
-            overallMetrics={sampleOverallMetrics}
-          />
+          <ScopeCardComponent metrics={[]} overallMetrics={[]} />
         </Tabs.Panel>
       </Tabs>
     </Stack>

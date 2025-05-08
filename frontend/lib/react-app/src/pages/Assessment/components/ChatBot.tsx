@@ -6,28 +6,8 @@ interface MessageType {
   text: string;
 }
 
-const sampleMessages: MessageType[] = [
-  { sender: "bot", text: "Hello! How can I help you today?" },
-  { sender: "user", text: "What are your hours of operation?" },
-  {
-    sender: "bot",
-    text: "We’re open from 9 AM to 5 PM, Monday through Friday.",
-  },
-  { sender: "user", text: "Thanks!" },
-  {
-    sender: "bot",
-    text: "You’re welcome! Let me know if you have any other questions.",
-  },
-  { sender: "bot", text: "Hello! How can I help you today?" },
-  { sender: "user", text: "What are your hours of operation?" },
-  { sender: "bot", text: "Hello! How can I help you today?" },
-  { sender: "user", text: "What are your hours of operation?" },
-  { sender: "bot", text: "Hello! How can I help you today?" },
-  { sender: "user", text: "What are your hours of operation?" },
-];
-
 function ChatBotComponent() {
-  const [messages, setMessages] = useState<MessageType[]>(sampleMessages);
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [userMessage, setUserMessage] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
