@@ -4,7 +4,7 @@ import { Construct } from "constructs";
 import { SocketApiCustom } from "./custom-constructs/socket-api";
 
 interface ApiGatewayProps extends cdk.StackProps {
-  codeExecutionLambda: Function;
+  executionEntryLambda: Function;
 }
 
 export class ApiGatewayStack extends cdk.Stack {
@@ -12,7 +12,7 @@ export class ApiGatewayStack extends cdk.Stack {
     super(scope, id, props);
 
     const socketApi = new SocketApiCustom(this, "SocketAPI", {
-      codeExecutionLambda: props.codeExecutionLambda,
+      executionEntryLambda: props.executionEntryLambda,
     });
   }
 }

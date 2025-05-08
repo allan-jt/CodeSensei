@@ -14,7 +14,8 @@ interface ExecutorStackProps extends cdk.StackProps {
 }
 
 export class ExecutorStack extends cdk.Stack {
-  public readonly executorLambda: Function;
+  public readonly executorEntryLambda: Function;
+  public readonly executorEndLambda: Function;
 
   constructor(scope: Construct, id: string, props: ExecutorStackProps) {
     super(scope, id, props);
@@ -38,6 +39,7 @@ export class ExecutorStack extends cdk.Stack {
       fargateService: codeExecStack.fargateService,
     });
 
-    this.executorLambda = queueStack.producerLambda;
+    this.executorEntryLambda = queueStack.producerLambda;
+    this.executorEndLambda = resultManagerStack.resultManagerLambda;
   }
 }

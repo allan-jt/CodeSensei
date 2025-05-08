@@ -8,6 +8,7 @@ REQUIRED_FIELDS = [
     "assessmentID",
     "userCode",
     "userSelectedLanguage",
+    "action"
 ]
 
 
@@ -28,6 +29,12 @@ def handler(event, context):
     if not valid_body(body):
         print(f"Invalid body: {body}")
         return "400 Bad Request"
+
+    body["socket"] = {
+        "connectionId": event.get("requestContext").get("connectionId"),
+        "domainName": event.get("requestContext").get("domainName"),
+        "stage": event.get("requestContext").get("stage"),
+    }
 
     try:
         sqs = boto3.client("sqs")

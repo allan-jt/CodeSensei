@@ -4,7 +4,8 @@ import { Function } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 
 interface SocketApiCustomProps {
-  codeExecutionLambda: Function;
+  executionEntryLambda: Function;
+  // executionEndLambda: Function;
 }
 
 export class SocketApiCustom extends Construct {
@@ -15,9 +16,10 @@ export class SocketApiCustom extends Construct {
     api.addRoute("executeCode", {
       integration: new WebSocketLambdaIntegration(
         "SocketExecutionLambdaIntegration",
-        props.codeExecutionLambda
+        props.executionEntryLambda
       ),
     });
+    // api.grantManageConnections(props.executionEndLambda);
 
     new WebSocketStage(this, "SocketDevDeployStage", {
       webSocketApi: api,

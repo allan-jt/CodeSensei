@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
+import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 import { join } from "path";
@@ -27,6 +28,13 @@ export class ResultManagerStack extends cdk.Stack {
           ASSESSMENTS_TABLE_NAME: props.assessmentsTable.tableName,
         },
       }
+    );
+
+    this.resultManagerLambda.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["execute-api:ManageConnections"],
+        resources: ["arn:aws:execute-api:*:*:*/*/POST/@connections/*"],
+      })
     );
 
     props.userTable.grantReadData(this.resultManagerLambda);
