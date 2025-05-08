@@ -34,8 +34,8 @@ function App({ socketURL }: AppProps) {
       name: "assessment",
       component: (
         <AssessmentPage
-          userId="user-123"
-          assessmentId="assess-001"
+          userId="u001"
+          assessmentId="2025-04-09T12:00:00Z"
           questionId="4"
           questionTitle="Print String"
           questionDescription="Write a function that takes a string as input and prints it."

@@ -58,7 +58,7 @@ function AssessmentPage({
       const response = JSON.parse(event.data);
       console.log("Received message:", response);
 
-      if (response.action === "executionResults") {
+      if (response.action === "executeCode") {
         console.log("Execution results:", response);
       }
     };
@@ -85,13 +85,11 @@ function AssessmentPage({
 
     const payload = {
       action: "executeCode",
-      data: {
-        userId: userId,
-        questionId: questionId,
-        assessmentId: assessmentId,
-        userCode: code,
-        userSelectedLanguage: language,
-      },
+      userID: userId,
+      questionID: questionId,
+      assessmentID: assessmentId,
+      userCode: code,
+      userSelectedLanguage: language,
     };
     socket.send(JSON.stringify(payload));
     console.log("Message sent:", payload);
