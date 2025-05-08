@@ -12,6 +12,7 @@ export class CodeSenseiStack extends cdk.Stack {
 
     const assessment = new AssessmentStack(this, "AssessmentStack",{
       env: props?.env,
+      opensearchLamba: storage.opensearchLambda,
     });
   }
 }
