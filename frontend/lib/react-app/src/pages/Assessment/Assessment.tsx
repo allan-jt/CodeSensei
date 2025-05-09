@@ -7,7 +7,7 @@ import CodeOutputComponent from "./components/CodeOutput";
 import { IconBrandSpeedtest, IconTerminal } from "@tabler/icons-react";
 import { BotMessageSquare } from "lucide-react";
 import AttemptCardComponent from "./components/AttemptCard";
-import type { Attempts, Metric } from "../../common/CustomTypes";
+import type { Attempts, MessageType, Metric } from "../../common/CustomTypes";
 import ScopeCardComponent from "./components/ScopeCard";
 
 interface AssessmentProps {
@@ -45,6 +45,42 @@ function AssessmentPage({
   const [code, setCode] = useState(languageSnippets[0]);
   const [codeOutput, setCodeOutput] = useState("Output will appear here");
   const [attempts, setAttempts] = useState<Attempts[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [userMessage, setUserMessage] = useState("");
+
+  const handleMessageSend = () => {
+    if (userMessage.trim() === "") return;
+
+    const newMessage: MessageType = {
+      sender: "user",
+      text: userMessage,
+    };
+    const newMessages: MessageType[] = [...messages, newMessage];
+    setMessages(newMessages);
+    const newUserMessage = userMessage;
+    setUserMessage("");
+
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket is not initialized");
+      return;
+    }
+    const payload = {
+      action: "chatbot",
+      questionId: questionId,
+      prompt: newUserMessage,
+    };
+    socket.send(JSON.stringify(payload));
+    console.log("Chat message sent:", payload);
+  };
+
+  const handleSocketChatBot = (response: any) => {
+    const newMessage: MessageType = {
+      sender: "bot",
+      text: response.message,
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  };
 
   const handleSocketExecuteCode = (response: any) => {
     setCodeOutput(response.codeOutput);
@@ -79,6 +115,8 @@ function AssessmentPage({
       const response = JSON.parse(event.data);
       if (response.action === "executeCode") {
         handleSocketExecuteCode(response);
+      } else if (response.action === "chatbot") {
+        handleSocketChatBot(response);
       }
     };
 
@@ -168,7 +206,12 @@ function AssessmentPage({
           <CodeOutputComponent codeOutput={codeOutput} />
         </Tabs.Panel>
         <Tabs.Panel value="messages" pt="md" h={600}>
-          <ChatBotComponent />
+          <ChatBotComponent
+            messages={messages}
+            userMessage={userMessage}
+            setUserMessage={setUserMessage}
+            handleSend={handleMessageSend}
+          />
         </Tabs.Panel>
         <Tabs.Panel value="attempts" pt="md" h={600}>
           <AttemptCardComponent attempts={attempts} />

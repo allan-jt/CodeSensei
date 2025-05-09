@@ -36,14 +36,16 @@ function App({ socketURL }: AppProps) {
         <AssessmentPage
           userId="u001"
           assessmentId="2025-04-09T12:00:00Z"
-          questionId="4"
-          questionTitle="Print String"
-          questionDescription="Write a function that takes a string as input and prints it."
-          questionTopics={["String"]}
+          questionId="1"
+          questionTitle="Two Sum"
+          questionDescription="Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target."
+          questionTopics={["Array", "Two Pointers"]}
           questionDifficulty="easy"
           starterCode={{
-            python: `def solution(input_str):\n    # Your code here\n    pass`,
-            javascript: `function solution(inputStr) {\n  // Your code here\n}`,
+            python:
+              "def solution(nums, target):\n    # Your code here\n    pass",
+            javascript:
+              "function solution(nums, target) {\n  // Your code here\n}",
           }}
           socketURL={socketURL}
           nextQuestionHandler={(data) => {

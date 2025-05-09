@@ -31,3 +31,8 @@ export interface Scope {
   metrics: newMetric[];
   overall: newMetric[];
 }
+
+export interface MessageType {
+  sender: "user" | "bot";
+  text: string;
+}

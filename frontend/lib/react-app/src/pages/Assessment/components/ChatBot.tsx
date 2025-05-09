@@ -1,35 +1,21 @@
 import { Card, Group, Paper, ScrollArea, Text, TextInput } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
+import type { MessageType } from "../../../common/CustomTypes";
 
-interface MessageType {
-  sender: "user" | "bot";
-  text: string;
+interface ChatBotProps {
+  messages: MessageType[];
+  userMessage: string;
+  setUserMessage: (data: any) => void;
+  handleSend: () => void;
 }
 
-function ChatBotComponent() {
-  const [messages, setMessages] = useState<MessageType[]>([]);
-  const [userMessage, setUserMessage] = useState("");
+function ChatBotComponent({
+  messages,
+  userMessage,
+  setUserMessage,
+  handleSend,
+}: ChatBotProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  const handleSend = () => {
-    if (userMessage.trim() === "") return;
-
-    const newMessage: MessageType = {
-      sender: "user",
-      text: userMessage,
-    };
-    const newMessages: MessageType[] = [...messages, newMessage];
-    setMessages(newMessages);
-    const newUserMessage = userMessage;
-    setUserMessage("");
-
-    setTimeout(() => {
-      setMessages([
-        ...newMessages,
-        { sender: "bot", text: `Received ${newUserMessage}` },
-      ]);
-    }, 500);
-  };
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
