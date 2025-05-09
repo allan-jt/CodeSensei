@@ -16,12 +16,12 @@ export class InterviewAiCombinedStack extends cdk.Stack {
     super(scope, id, props);
 
     // -------------------- VPC & ECS Setup --------------------
-    const vpc = new ec2.Vpc(this, "InterviewerVPC", {
-      maxAzs: 2,
-    });
+    // const vpc = new ec2.Vpc(this, "InterviewerVPC", {
+    //   maxAzs: 2,
+    // });
 
     const cluster = new ecs.Cluster(this, "InterviewerCluster", {
-      vpc: vpc,
+      // vpc: vpc,
     });
 
     const repository = ecr.Repository.fromRepositoryName(
@@ -38,26 +38,27 @@ export class InterviewAiCombinedStack extends cdk.Stack {
       iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess")
     );
 
-    const fargateService = new ecs_patterns.ApplicationLoadBalancedFargateService(
-      this,
-      "InterviewerFargateService",
-      {
-        cluster,
-        cpu: 256,
-        memoryLimitMiB: 512,
-        desiredCount: 1,
-        publicLoadBalancer: true,
-        taskSubnets: { subnetType: ec2.SubnetType.PUBLIC },
-        assignPublicIp: true,
-        taskImageOptions: {
-          image: ecs.ContainerImage.fromAsset(
-            path.join(__dirname, "../interviewerimage")
-          ),
-          containerPort: 4567,
-          taskRole: taskRole,
-        },
-      }
-    );
+    const fargateService =
+      new ecs_patterns.ApplicationLoadBalancedFargateService(
+        this,
+        "InterviewerFargateService",
+        {
+          cluster,
+          cpu: 256,
+          memoryLimitMiB: 512,
+          desiredCount: 1,
+          publicLoadBalancer: true,
+          taskSubnets: { subnetType: ec2.SubnetType.PUBLIC },
+          assignPublicIp: true,
+          taskImageOptions: {
+            image: ecs.ContainerImage.fromAsset(
+              path.join(__dirname, "interviewerimage")
+            ),
+            containerPort: 4567,
+            taskRole: taskRole,
+          },
+        }
+      );
 
     const ecsEndpoint =
       "http://" + fargateService.loadBalancer.loadBalancerDnsName + "/hint";
@@ -78,37 +79,40 @@ export class InterviewAiCombinedStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(120),
     });
 
-// -------------------- Lambda 3-1 --------------------
-const lambda3_1 = new lambda.Function(this, "Lambda3_1_SendToSQS", {
-functionName: "Lambda3-1-SendToSQS",
-  runtime: lambda.Runtime.PYTHON_3_13,
-  handler: "lambda3_1.lambda_handler",
-  code: lambda.Code.fromAsset("lambda"),
-  environment: {
-    QUEUE_URL: queue.queueUrl,
-  },
-});
-queue.grantSendMessages(lambda3_1);
-lambda3_1.role?.addManagedPolicy(
-  iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
-);
+    // -------------------- Lambda 3-1 --------------------
+    const lambda3_1 = new lambda.Function(this, "Lambda3_1_SendToSQS", {
+      functionName: "Lambda3-1-SendToSQS",
+      runtime: lambda.Runtime.PYTHON_3_13,
+      handler: "lambda3_1.lambda_handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "lambda")),
+      environment: {
+        QUEUE_URL: queue.queueUrl,
+      },
+    });
+    queue.grantSendMessages(lambda3_1);
+    lambda3_1.role?.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "service-role/AWSLambdaBasicExecutionRole"
+      )
+    );
 
-// -------------------- Lambda 3-2 --------------------
-const lambda3_2 = new lambda.Function(this, "Lambda3_2_ReadFromSQS", {
-functionName: "Lambda3-2-ReadFromSQS",
-  runtime: lambda.Runtime.PYTHON_3_13,
-  handler: "lambda3_2.lambda_handler",
-  code: lambda.Code.fromAsset("lambda/lambda3_2.zip"),
-  timeout: cdk.Duration.seconds(100),
-  environment: {
-    ECS_API_ENDPOINT: ecsEndpoint,
-  },
-});
-queue.grantConsumeMessages(lambda3_2);
-lambda3_2.addEventSource(new lambdaEventSources.SqsEventSource(queue));
-lambda3_2.role?.addManagedPolicy(
-  iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
-);
+    // -------------------- Lambda 3-2 --------------------
+    const lambda3_2 = new lambda.Function(this, "Lambda3_2_ReadFromSQS", {
+      functionName: "Lambda3-2-ReadFromSQS",
+      runtime: lambda.Runtime.PYTHON_3_13,
+      handler: "lambda3_2.lambda_handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "lambda/lambda3_2.zip")),
+      timeout: cdk.Duration.seconds(100),
+      environment: {
+        ECS_API_ENDPOINT: ecsEndpoint,
+      },
+    });
+    queue.grantConsumeMessages(lambda3_2);
+    lambda3_2.addEventSource(new lambdaEventSources.SqsEventSource(queue));
+    lambda3_2.role?.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "service-role/AWSLambdaBasicExecutionRole"
+      )
+    );
   }
-
 }
