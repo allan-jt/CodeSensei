@@ -119,6 +119,8 @@ export type Attempt = {
 
 export type QuestionsDone = {
   questionId: string;
+  topics: Topic[];
+  difficulty: Difficulty;
   attempts: Attempt[];
   timeStarted: string;
   timeEnded: string;
