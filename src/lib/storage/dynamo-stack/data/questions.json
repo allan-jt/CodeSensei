@@ -54,5 +54,252 @@
       "You can swap characters in place using two pointers.",
       "Remember to handle empty strings."
     ]
+  },
+  {
+    "questionId": "5",
+    "topics": ["String", "Stack"],
+    "difficulty": "easy",
+    "title": "Valid Parentheses",
+    "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid. An input string is valid if open brackets are closed by the same type of brackets in the correct order.",
+    "testCases": ["\"()\"", "\"()[]{}\"", "\"(]\""],
+    "testAnswers": ["true", "true", "false"],
+    "starterCode": "function isValid(s) {\n  // Your code here\n}",
+    "hints": [
+      "Use a stack to track opening brackets.",
+      "When you see a closing bracket, check the top of the stack for a matching opening bracket."
+    ]
+  },
+  {
+    "questionId": "6",
+    "topics": ["Array", "Sorting"],
+    "difficulty": "medium",
+    "title": "Merge Intervals",
+    "description": "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
+    "testCases": ["[[1,3],[2,6],[8,10],[15,18]]", "[[1,4],[4,5]]"],
+    "testAnswers": ["[[1,6],[8,10],[15,18]]", "[[1,5]]"],
+    "starterCode": "function merge(intervals) {\n  // Your code here\n}",
+    "hints": [
+      "Sort intervals by their start time.",
+      "Iterate and merge current interval with the last one in your result list if they overlap."
+    ]
+  },
+  {
+    "questionId": "7",
+    "topics": ["Dynamic Programming", "String"],
+    "difficulty": "medium",
+    "title": "Word Break",
+    "description": "Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.",
+    "testCases": ["\"leetcode\", [\"leet\",\"code\"]", "\"applepenapple\", [\"apple\",\"pen\"]", "\"catsandog\", [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]"],
+    "testAnswers": ["true", "true", "false"],
+    "starterCode": "function wordBreak(s, wordDict) {\n  // Your code here\n}",
+    "hints": [
+      "Use a boolean DP array where dp[i] is true if s[0…i-1] can be segmented.",
+      "For each i, loop j from 0 to i and check dp[j] && s[j…i-1] in dictionary."
+    ]
+  },
+  {
+    "questionId": "8",
+    "topics": ["Graph", "DFS"],
+    "difficulty": "medium",
+    "title": "Number of Islands",
+    "description": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.",
+    "testCases": ["[[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]", "[[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]"],
+    "testAnswers": ["1", "3"],
+    "starterCode": "function numIslands(grid) {\n  // Your code here\n}",
+    "hints": [
+      "Use DFS/BFS to mark visited land cells.",
+      "Iterate over each cell; when you find '1', increment count and flood-fill its entire island."
+    ]
+  },
+  {
+    "questionId": "9",
+    "topics": ["Dynamic Programming"],
+    "difficulty": "hard",
+    "title": "Coin Change",
+    "description": "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money. Return the fewest number of coins needed to make up that amount. If that amount cannot be made up by any combination of the coins, return -1.",
+    "testCases": ["[1,2,5], 11", "[2], 3", "[1], 0"],
+    "testAnswers": ["3", "-1", "0"],
+    "starterCode": "function coinChange(coins, amount) {\n  // Your code here\n}",
+    "hints": [
+      "Use a DP array dp where dp[i] is the minimum coins to make amount i.",
+      "Initialize dp[0] = 0 and fill the rest with Infinity, then update using dp[i − coin] + 1."
+    ]
+  },
+  {
+    "questionId": "10",
+    "topics": ["String"],
+    "difficulty": "easy",
+    "title": "Valid Anagram",
+    "description": "Given two strings s and t, return true if t is an anagram of s, and false otherwise.",
+    "testCases": ["\"anagram\", \"nagaram\"", "\"rat\", \"car\""],
+    "testAnswers": ["true", "false"],
+    "starterCode": "function isAnagram(s, t) {\n  // Your code here\n}",
+    "hints": [
+      "You can sort both strings and compare them.",
+      "Or count character frequencies in one pass and compare counts."
+    ]
+  },
+  {
+    "questionId": "11",
+    "topics": ["String"],
+    "difficulty": "medium",
+    "title": "Longest Palindromic Substring",
+    "description": "Given a string s, return the longest palindromic substring in s.",
+    "testCases": ["\"babad\"", "\"cbbd\""],
+    "testAnswers": ["\"bab\" or \"aba\"", "\"bb\""],
+    "starterCode": "function longestPalindrome(s) {\n  // Your code here\n}",
+    "hints": [
+      "Expand around each possible center (odd and even).",
+      "Keep track of the longest palindrome seen so far."
+    ]
+  },
+  {
+    "questionId": "12",
+    "topics": ["Array"],
+    "difficulty": "easy",
+    "title": "Move Zeroes",
+    "description": "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements. Do this in-place.",
+    "testCases": ["[0,1,0,3,12]", "[1,0,2,0,1]"],
+    "testAnswers": ["[1,3,12,0,0]", "[1,2,1,0,0]"],
+    "starterCode": "function moveZeroes(nums) {\n  // Your code here\n}",
+    "hints": [
+      "Use two pointers: one for iterating and one for placing non-zeros.",
+      "After placing all non-zeros, fill the rest with zeros."
+    ]
+  },
+  {
+    "questionId": "13",
+    "topics": ["Array"],
+    "difficulty": "medium",
+    "title": "Product of Array Except Self",
+    "description": "Given an array nums of n integers where n > 1, return an array output such that output[i] is equal to the product of all the elements of nums except nums[i]. Solve without division in O(n).",
+    "testCases": ["[1,2,3,4]", "[-1,1,0,-3,3]"],
+    "testAnswers": ["[24,12,8,6]", "[0,0,9,0,0]"],
+    "starterCode": "function productExceptSelf(nums) {\n  // Your code here\n}",
+    "hints": [
+      "Compute prefix products and suffix products separately.",
+      "You can do it in O(1) extra space (excluding output array)."
+    ]
+  },
+  {
+    "questionId": "14",
+    "topics": ["Graph"],
+    "difficulty": "easy",
+    "title": "Path Exists in Graph",
+    "description": "There are n nodes in a graph labeled 0 to n-1. Given a list of undirected edges and two nodes start and end, return true if there is a valid path from start to end.",
+    "testCases": [
+      "4, [[0,1],[1,2],[2,3]], 0, 3",
+      "4, [[0,1],[2,3]], 0, 3"
+    ],
+    "testAnswers": [
+      "true",
+      "false"
+    ],
+    "starterCode": "function validPath(n, edges, start, end) {\n  // Your code here\n}",
+    "hints": [
+      "Build an adjacency list from the edges.",
+      "Use BFS or DFS starting from `start`, and mark visited nodes to avoid cycles."
+    ]
+  },
+  {
+    "questionId": "15",
+    "topics": ["Dynamic Programming"],
+    "difficulty": "easy",
+    "title": "Climbing Stairs",
+    "description": "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. How many distinct ways can you climb to the top?",
+    "testCases": [
+      "2",
+      "3",
+      "4"
+    ],
+    "testAnswers": [
+      "2",
+      "3",
+      "5"
+    ],
+    "starterCode": "function climbStairs(n) {\n  // Your code here\n}",
+    "hints": [
+      "Think of it as the Fibonacci sequence: ways[n] = ways[n-1] + ways[n-2].",
+      "Use iteration with two variables or simple memoization."
+    ]
+  },
+  {
+    "questionId": "16",
+    "topics": ["Graph"],
+    "difficulty": "easy",
+    "title": "Connected Components in Undirected Graph",
+    "description": "You have n nodes labeled from 0 to n-1 and a list of undirected edges. Count the number of connected components in the graph.",
+    "testCases": [
+      "5, [[0,1],[1,2],[3,4]]",
+      "4, [[0,1],[1,2],[2,3]]"
+    ],
+    "testAnswers": [
+      "2",
+      "1"
+    ],
+    "starterCode": "function countComponents(n, edges) {\n  // Your code here\n}",
+    "hints": [
+      "Build an adjacency list and use DFS/BFS to mark visited nodes.",
+      "Each time you start a new DFS/BFS from an unvisited node, increment your component count."
+    ]
+  },
+  {
+    "questionId": "17",
+    "topics": ["Dynamic Programming"],
+    "difficulty": "easy",
+    "title": "Maximum Subarray",
+    "description": "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
+    "testCases": [
+      "[-2,1,-3,4,-1,2,1,-5,4]",
+      "[5,4,-1,7,8]"
+    ],
+    "testAnswers": [
+      "6",
+      "23"
+    ],
+    "starterCode": "function maxSubArray(nums) {\n  // Your code here\n}",
+    "hints": [
+      "Use Kadane’s algorithm: track current sum and reset to 0 when it becomes negative.",
+      "Keep a variable for the maximum sum seen so far."
+    ]
+  },
+  {
+    "questionId": "18",
+    "topics": ["Stack"],
+    "difficulty": "easy",
+    "title": "Min Stack",
+    "description": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.",
+    "testCases": [
+      "[\"MinStack\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"top\",\"getMin\"], [[],[-2],[0],[-3],[],[],[],[]]"
+    ],
+    "testAnswers": [
+      "[null,null,null,-3,null,0,-2]"
+    ],
+    "starterCode": "class MinStack {\n  constructor() {\n    // Your code here\n  }\n  push(val) {}\n  pop() {}\n  top() {}\n  getMin() {}\n}",
+    "hints": [
+      "Use two stacks: one for all values, one to track the current minimum at each push.",
+      "On push, compare the new value with the top of the min-stack and push the smaller of the two."
+    ]
+  },
+  {
+    "questionId": "19",
+    "topics": ["Stack"],
+    "difficulty": "medium",
+    "title": "Evaluate Reverse Polish Notation",
+    "description": "Evaluate the value of an arithmetic expression in Reverse Polish Notation. Valid operators are +, -, *, and /. Each operand may be an integer or another expression.",
+    "testCases": [
+      "[\"2\",\"1\",\"+\",\"3\",\"*\"]",
+      "[\"4\",\"13\",\"5\",\"/\",\"+\"]"
+    ],
+    "testAnswers": [
+      "9",
+      "6"
+    ],
+    "starterCode": "function evalRPN(tokens) {\n  // Your code here\n}",
+    "hints": [
+      "Use a stack: push numbers, and on seeing an operator, pop the top two numbers, apply the operator, and push the result.",
+      "Be careful with operand order for non-commutative operations like subtraction and division."
+    ]
   }
+
 ]
