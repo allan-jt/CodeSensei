@@ -42,7 +42,7 @@ def lambda_handler(event, context):
             QueueUrl=QUEUE_URL,
             MessageBody=json.dumps(message),
             MessageGroupId="default",
-            MessageDeduplicationId=str(uuid.uuid4())  # 👈 添加唯一去重 ID
+            MessageDeduplicationId=str(uuid.uuid4()) 
         )
 
         return {
