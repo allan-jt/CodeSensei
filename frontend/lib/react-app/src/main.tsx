@@ -13,8 +13,9 @@ import { AuthProvider } from "react-oidc-context";
 const redirectUri = "http://localhost:5173/";
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const authority = import.meta.env.VITE_AUTHORITY;
-const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
+// const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
 const socketURL = import.meta.env.VITE_SOCKET_API_URL;
+const httpURL = import.meta.env.VITE_HTTP_API_URL;
 
 const cognitoAuthConfig = {
   authority: authority,
@@ -29,7 +30,7 @@ createRoot(document.getElementById("root")!).render(
     <ColorSchemeScript forceColorScheme="dark" />
     <MantineProvider forceColorScheme="dark">
       <AuthProvider {...cognitoAuthConfig}>
-        <App socketURL={socketURL} />
+        <App socketURL={socketURL} httpURL={httpURL} />
       </AuthProvider>
     </MantineProvider>
   </StrictMode>
