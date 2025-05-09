@@ -270,107 +270,99 @@ async def process_assessment_action(action: dict):
                 if assessment_record is None:
                     logger.error("Deserialization returned None")
                     raise HTTPException(status_code=500, detail="Failed to deserialize")
-
-                # 1. Determine served topic-difficulty pairs
-                served_pairs = {
-                    (q.currentTopic.lower(), q.difficulty.lower())
-                    for q in assessment_record.questions
-                }
-
-                # 2. Determine all requested combinations (use strings directly)
-                all_pairs = {
-                    (t.lower(), d.lower())
-                    for t in assessment_record.selectedTopics
-                    for d in assessment_record.selectedDifficulty
-                }
-                remaining_pairs = list(all_pairs - served_pairs)
-
-                if not remaining_pairs:
-                    #todo: update error handling
-                    return {
-                        "assessmentId": timestamp,
-                        "selectedTopics": assessment_record.selectedTopics,
-                        "selectedDifficulty": assessment_record.selectedDifficulty,
-                        "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
-                        "questions": [serialize(q) for q in assessment_record.questions],
-                        "nextRecommendation": None,
-                        "message": "All topic-difficulty pairs served."
-                    }
-
-                # 3. Ask Bedrock which to serve next
-                prompt = f"""
-                        You are a recommender.
-                        Selected topics: {assessment_record.selectedTopics}
-                        Selected difficulties: {assessment_record.selectedDifficulty}
-                        Already served: {list(served_pairs)}
-                        Pick ONE unserved (topic, difficulty) pair from the rest.
-                        Respond as JSON: {{ "topic": "<>", "difficulty": "<>" }}
-                        """
-                
-                payload_to_bedrock = {
-                    "anthropic_version": "bedrock-2023-05-31",
-                    "max_tokens": 50,
-                    "temperature": 0.7,
-                    "messages": [
-                        {"role": "user", "content": prompt}
-                    ]
-                }
-
-                logger.info(f"🧠 Calling Bedrock with payload:\n{json.dumps(payload_to_bedrock, indent=2)}")
-
-                bedrock_response = bedrock.invoke_model(
-                    modelId="us.anthropic.claude-3-5-sonnet-20241022-v2:0",  # Use inference profile ID
-                    contentType="application/json",
-                    accept="application/json",
-                    body=json.dumps(payload_to_bedrock)
-                )
                 
 
-                # Parse model output
-                raw_body = bedrock_response["body"].read()
-                completion = json.loads(raw_body)
+                
 
-                # Extract the actual text from the Claude v3 style response
-                text = completion["content"][0]["text"]
+                MAX_ATTEMPTS = 2  # first try + one retry
 
-                # Now parse the JSON inside that text
-                model_response = json.loads(text)
-                next_topic = model_response["topic"]
-                next_difficulty = model_response["difficulty"]
+                # 1) Extract the set of all already‐served question IDs
+                done_ids = { q.questionId for q in assessment_record.questions }
 
-                # Call the OpenSearch Lambda to get matching question IDs
-                lambda_client = boto3.client('lambda')
-                payload = {
-                        "topic": next_topic,
-                        "difficulty": next_difficulty
-                    }
+                for attempt in range(MAX_ATTEMPTS):
+
+
+                    # 2) Recompute previous pairing and performance
+                    if not assessment_record.questions:
+                        raise HTTPException(500, "No previous question to reference")
                     
-                # Get the OpenSearch Lambda ARN from environment variables
-                opensearch_lambda_arn = os.environ.get("OPENSEARCH_LAMBDA_ARN")
-                logger.info(f"Calling OpenSearch Lambda with payload: {payload}")
+                    prev_q    = assessment_record.questions[-1]
+                    prev_pair = (prev_q.currentTopic, prev_q.difficulty)
+                    prev_perf = {
+                        "bestExecTime":    prev_q.bestExecTime,
+                        "bestExecMem":     prev_q.bestExecMem,
+                        "attempts":        len(prev_q.attempts),
+                        "testCasesPassed": prev_q.testCasesPassed,
+                        "timeStarted":     prev_q.timeStarted,
+                        "timeEnded":       prev_q.timeEnded,
+                    }
 
-                response = lambda_client.invoke(
-                    FunctionName=opensearch_lambda_arn,
-                    InvocationType='RequestResponse',
-                    Payload=json.dumps(payload)
-                )
+                    # 3) Build the full set of possible topic–difficulty combos
+                    all_pairs = [
+                        (t, d)
+                        for t in assessment_record.selectedTopics
+                        for d in assessment_record.selectedDifficulty
+                    ]
 
-                result = json.loads(response['Payload'].read().decode('utf-8'))
-                if result.get("statusCode") != 200:
-                    logger.error(f"Error from OpenSearch Lambda: {result}")
-                    raise Exception(f"Error from OpenSearch Lambda: {result}")
-                
-                ids = json.loads(result["body"]).get("questionIds", [])
-                logger.info(f"Got {len(ids)} matching question IDs from OpenSearch")
+                    # 4) Prompt Bedrock (telling it to avoid prev_pair)
+                    prompt = f"""
+                            You are a recommender.
+                            Requested topics:       {assessment_record.selectedTopics}
+                            Requested difficulties: {assessment_record.selectedDifficulty}
+                            Previously served pair: {prev_pair}
+                            Previous performance:   {prev_perf}
+                            All possible combos:    {all_pairs}
 
-                if not ids:
+                            Pick one **different** pair at random (i.e. not the previously served pair).
+                            Use previous performance to inform your choices.
+                            Respond **only** in JSON: {{ "topic": "<topic>", "difficulty": "<difficulty>" }}
+                            """
+                    
+                    payload = {
+                        "anthropic_version": "bedrock-2023-05-31",
+                        "max_tokens":        50,
+                        "temperature":       0.7,
+                        "messages":          [{"role": "user", "content": prompt}]
+                    }
+
+                    bedrock_resp = bedrock.invoke_model(
+                        modelId="us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+                        contentType="application/json",
+                        accept="application/json",
+                        body=json.dumps(payload)
+                    )
+                    text = json.loads(bedrock_resp["body"].read())["content"][0]["text"]
+                    choice = json.loads(text)
+                    next_topic, next_difficulty = choice["topic"], choice["difficulty"]
+
+                    # 5) Call OpenSearch Lambda
+                    lambda_client = boto3.client('lambda')
+                    os_payload = {"queryData": {"topic": next_topic, "difficulty": next_difficulty}}
+                    fn_arn = os.environ["OPENSEARCH_LAMBDA_ARN"]
+                    os_resp = lambda_client.invoke(
+                        FunctionName = fn_arn,
+                        InvocationType = "RequestResponse",
+                        Payload = json.dumps(os_payload).encode("utf-8")
+                    )
+                    ids = json.loads(os_resp["Payload"].read())["body"]
+                    ids = json.loads(ids).get("questionIds", [])
+
+                    # 6) Filter out already‐served
+                    available_ids = [qid for qid in ids if qid not in done_ids]
+                    if available_ids:
+                        break  # success!
+
+                    # else: retry once more before giving up
+
+                # 3) If nothing left, bail out
+                if not available_ids:
                     return {
                         "assessmentId": timestamp,
-                        "message": f"No matching questions found for topic: {next_topic}, difficulty: {next_difficulty}"
+                        "message": f"No new questions left for topic {next_topic}, difficulty {next_difficulty}"
                     }
                 
                 import random
-                chosen_id = random.choice(ids)
+                chosen_id = random.choice(available_ids)
                 next_question = question_bank_table.get_item(Key={"questionId": chosen_id}).get("Item", {})
 
                 question_record = {
