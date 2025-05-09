@@ -1,13 +1,16 @@
 [
   {
     "questionId": "1",
-    "topics": ["Array", "Two Pointers"],
+    "topics": ["Array", "Two Pointers", "Hash Table"],
     "difficulty": "easy",
     "title": "Two Sum",
-    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
     "testCases": ["[2,7,11,15], 9", "[3,2,4], 6", "[3,3], 6"],
-    "testAnswers": ["[0,1]", "[1,2]", "[0,1]"],
-    "starterCode": "function twoSum(nums, target) {\n  // Your code here\n}",
+    "testAnswers": ["[0, 1]", "[1, 2]", "[0, 1]"],
+    "starterCode": {
+      "python": "def solution(nums, target):\n    # Your code here\n    pass",
+      "javascript": "function solution(nums, target) {\n  // Your code here\n}"
+    },
     "hints": [
       "Use a hash map to store value:index pairs.",
       "Check if (target - current) exists in the map."
@@ -18,10 +21,13 @@
     "topics": ["String", "Hash Table"],
     "difficulty": "medium",
     "title": "Longest Substring Without Repeating Characters",
-    "description": "Given a string s, find the length of the longest substring without repeating characters.",
+    "description": "Given a string s, find the length of the longest substring without duplicate characters.",
     "testCases": ["\"abcabcbb\"", "\"bbbbb\"", "\"pwwkew\""],
     "testAnswers": ["3", "1", "3"],
-    "starterCode": "function lengthOfLongestSubstring(s) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(s):\n    # Your code here\n    pass",
+      "javascript": "function solution(s) {\n  // Your code here\n}"
+    },
     "hints": [
       "Use a sliding window.",
       "Keep track of seen characters with a set or map."
@@ -32,24 +38,30 @@
     "topics": ["Dynamic Programming", "Array"],
     "difficulty": "medium",
     "title": "House Robber",
-    "description": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money. You cannot rob two adjacent houses.",
+    "description": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night.\n\nGiven an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.",
     "testCases": ["[1,2,3,1]", "[2,7,9,3,1]"],
     "testAnswers": ["4", "12"],
-    "starterCode": "function rob(nums) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(nums):\n    # Your code here\n    pass",
+      "javascript": "function solution(nums) {\n  // Your code here\n}"
+    },
     "hints": [
-      "Use dynamic programming to track max loot at each step.",
-      "At each house, choose to rob it or skip it based on previous results."
+      "Use dynamic programming: define dp[i][j] as the length of the longest palindromic subsequence in s[i..j], and fill the table for substrings of increasing length.",
+      "Alternatively, reduce it to a longest-common-subsequence problem by comparing s with its reverse; the LCS length equals the longest palindromic subsequence length."
     ]
   },
   {
     "questionId": "4",
-    "topics": ["String"],
+    "topics": ["String", "Two Pointers"],
     "difficulty": "easy",
     "title": "Reverse String",
-    "description": "Write a function that takes a string `s` and returns the string reversed.",
+    "description": "Write a function that reverses a string. The input string is given as an array of characters s.\n\nYou must do this by modifying the input array in-place with O(1) extra memory.",
     "testCases": ["\"hello\"", "\"World\"", "\"abcd\""],
     "testAnswers": ["\"olleh\"", "\"dlroW\"", "\"dcba\""],
-    "starterCode": "function reverseString(s) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(s):\n    # Your code here\n    return s[::-1]",
+      "javascript": "function solution(s) {\n  // Your code here\n}"
+    },
     "hints": [
       "You can swap characters in place using two pointers.",
       "Remember to handle empty strings."
@@ -60,10 +72,13 @@
     "topics": ["String", "Stack"],
     "difficulty": "easy",
     "title": "Valid Parentheses",
-    "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid. An input string is valid if open brackets are closed by the same type of brackets in the correct order.",
+    "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nAn input string is valid if:\n1) Open brackets must be closed by the same type of brackets.\n2) Open brackets must be closed in the correct order.\n3) Every close bracket has a corresponding open bracket of the same type.",
     "testCases": ["\"()\"", "\"()[]{}\"", "\"(]\""],
     "testAnswers": ["true", "true", "false"],
-    "starterCode": "function isValid(s) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(s):\n    # Your code here\n    pass",
+      "javascript": "function solution(s) {\n  // Your code here\n}"
+    },
     "hints": [
       "Use a stack to track opening brackets.",
       "When you see a closing bracket, check the top of the stack for a matching opening bracket."
@@ -74,24 +89,34 @@
     "topics": ["Array", "Sorting"],
     "difficulty": "medium",
     "title": "Merge Intervals",
-    "description": "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
+    "description": "Given an array of intervals where intervals[i] = [start_i, end_i], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
     "testCases": ["[[1,3],[2,6],[8,10],[15,18]]", "[[1,4],[4,5]]"],
     "testAnswers": ["[[1,6],[8,10],[15,18]]", "[[1,5]]"],
-    "starterCode": "function merge(intervals) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(intervals):\n    # Your code here\n    pass",
+      "javascript": "function solution(intervals) {\n  // Your code here\n}"
+    },
     "hints": [
       "Sort intervals by their start time.",
-      "Iterate and merge current interval with the last one in your result list if they overlap."
+      "Iterate and merge the current interval with the last one in your result list if they overlap."
     ]
   },
   {
     "questionId": "7",
-    "topics": ["Dynamic Programming", "String"],
+    "topics": ["Dynamic Programming", "String", "String", "Array"],
     "difficulty": "medium",
     "title": "Word Break",
-    "description": "Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.",
-    "testCases": ["\"leetcode\", [\"leet\",\"code\"]", "\"applepenapple\", [\"apple\",\"pen\"]", "\"catsandog\", [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]"],
+    "description": "Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.\n\nNote that the same word in the dictionary may be reused multiple times in the segmentation.",
+    "testCases": [
+      "\"leetcode\", [\"leet\",\"code\"]",
+      "\"applepenapple\", [\"apple\",\"pen\"]",
+      "\"catsandog\", [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]"
+    ],
     "testAnswers": ["true", "true", "false"],
-    "starterCode": "function wordBreak(s, wordDict) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(s, wordDict):\n    # Your code here\n    pass",
+      "javascript": "function solution(s, wordDict) {\n  // Your code here\n}"
+    },
     "hints": [
       "Use a boolean DP array where dp[i] is true if s[0…i-1] can be segmented.",
       "For each i, loop j from 0 to i and check dp[j] && s[j…i-1] in dictionary."
@@ -99,13 +124,19 @@
   },
   {
     "questionId": "8",
-    "topics": ["Graph", "DFS"],
+    "topics": ["Graph"],
     "difficulty": "medium",
     "title": "Number of Islands",
-    "description": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.",
-    "testCases": ["[[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]", "[[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]"],
+    "description": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.",
+    "testCases": [
+      "[[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]",
+      "[[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]"
+    ],
     "testAnswers": ["1", "3"],
-    "starterCode": "function numIslands(grid) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(grid):\n    # Your code here\n    pass",
+      "javascript": "function solution(grid) {\n  // Your code here\n}"
+    },
     "hints": [
       "Use DFS/BFS to mark visited land cells.",
       "Iterate over each cell; when you find '1', increment count and flood-fill its entire island."
@@ -113,27 +144,33 @@
   },
   {
     "questionId": "9",
-    "topics": ["Dynamic Programming"],
+    "topics": ["Dynamic Programming", "Array"],
     "difficulty": "hard",
     "title": "Coin Change",
-    "description": "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money. Return the fewest number of coins needed to make up that amount. If that amount cannot be made up by any combination of the coins, return -1.",
+    "description": "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.\n\nReturn the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.\n\nYou may assume that you have an infinite number of each kind of coin.",
     "testCases": ["[1,2,5], 11", "[2], 3", "[1], 0"],
     "testAnswers": ["3", "-1", "0"],
-    "starterCode": "function coinChange(coins, amount) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(coins, amount):\n    # Your code here\n    pass",
+      "javascript": "function solution(coins, amount) {\n  // Your code here\n}"
+    },
     "hints": [
       "Use a DP array dp where dp[i] is the minimum coins to make amount i.",
-      "Initialize dp[0] = 0 and fill the rest with Infinity, then update using dp[i − coin] + 1."
+      "Initialize dp[0] = 0 and fill the rest with Infinity, then update using dp[i – coin] + 1."
     ]
   },
   {
     "questionId": "10",
-    "topics": ["String"],
+    "topics": ["String", "Hash Table", "Sorting"],
     "difficulty": "easy",
     "title": "Valid Anagram",
     "description": "Given two strings s and t, return true if t is an anagram of s, and false otherwise.",
     "testCases": ["\"anagram\", \"nagaram\"", "\"rat\", \"car\""],
     "testAnswers": ["true", "false"],
-    "starterCode": "function isAnagram(s, t) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(s, t):\n    # Your code here\n    pass",
+      "javascript": "function solution(s, t) {\n  // Your code here\n}"
+    },
     "hints": [
       "You can sort both strings and compare them.",
       "Or count character frequencies in one pass and compare counts."
@@ -141,13 +178,16 @@
   },
   {
     "questionId": "11",
-    "topics": ["String"],
+    "topics": ["String", "Dynamic Programming"],
     "difficulty": "medium",
-    "title": "Longest Palindromic Substring",
-    "description": "Given a string s, return the longest palindromic substring in s.",
-    "testCases": ["\"babad\"", "\"cbbd\""],
-    "testAnswers": ["\"bab\" or \"aba\"", "\"bb\""],
-    "starterCode": "function longestPalindrome(s) {\n  // Your code here\n}",
+    "title": "Longest Palindromic Subsequence",
+    "description": "Given a string s, find the longest palindromic subsequence's length in s.\n\nA subsequence is a sequence that can be derived from another sequence by deleting some or no elements without changing the order of the remaining elements.",
+    "testCases": ["\"bbbab\"", "\"cbbd\""],
+    "testAnswers": ["4", "2"],
+    "starterCode": {
+      "python": "def solution(s):\n    # Your code here\n    pass",
+      "javascript": "function solution(s) {\n  // Your code here\n}"
+    },
     "hints": [
       "Expand around each possible center (odd and even).",
       "Keep track of the longest palindrome seen so far."
@@ -155,13 +195,16 @@
   },
   {
     "questionId": "12",
-    "topics": ["Array"],
+    "topics": ["Array", "Two Pointers"],
     "difficulty": "easy",
     "title": "Move Zeroes",
-    "description": "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements. Do this in-place.",
+    "description": "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements.\n\nNote that you must do this in-place without making a copy of the array.",
     "testCases": ["[0,1,0,3,12]", "[1,0,2,0,1]"],
     "testAnswers": ["[1,3,12,0,0]", "[1,2,1,0,0]"],
-    "starterCode": "function moveZeroes(nums) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(nums):\n    # Your code here\n    pass",
+      "javascript": "function solution(nums) {\n  // Your code here\n}"
+    },
     "hints": [
       "Use two pointers: one for iterating and one for placing non-zeros.",
       "After placing all non-zeros, fill the rest with zeros."
@@ -172,30 +215,36 @@
     "topics": ["Array"],
     "difficulty": "medium",
     "title": "Product of Array Except Self",
-    "description": "Given an array nums of n integers where n > 1, return an array output such that output[i] is equal to the product of all the elements of nums except nums[i]. Solve without division in O(n).",
+    "description": "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].\n\nThe product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.\n\nYou must write an algorithm that runs in O(n) time and without using the division operation.",
     "testCases": ["[1,2,3,4]", "[-1,1,0,-3,3]"],
     "testAnswers": ["[24,12,8,6]", "[0,0,9,0,0]"],
-    "starterCode": "function productExceptSelf(nums) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(nums):\n    # Your code here\n    pass",
+      "javascript": "function solution(nums) {\n  // Your code here\n}"
+    },
     "hints": [
       "Compute prefix products and suffix products separately.",
-      "You can do it in O(1) extra space (excluding output array)."
+      "You can do it in O(1) extra space (excluding the output array)."
     ]
   },
   {
     "questionId": "14",
     "topics": ["Graph"],
     "difficulty": "easy",
-    "title": "Path Exists in Graph",
-    "description": "There are n nodes in a graph labeled 0 to n-1. Given a list of undirected edges and two nodes start and end, return true if there is a valid path from start to end.",
+    "title": "Find if Path Exists in Graph",
+    "description": "There is a bi-directional graph with n vertices, where each vertex is labeled from 0 to n - 1 (inclusive). The edges in the graph are represented as a 2D integer array edges, where each edges[i] = [u_i, v_i] denotes a bi-directional edge between vertex u_i and vertex v_i. Every vertex pair is connected by at most one edge, and no vertex has an edge to itself.\n\nYou want to determine if there is a valid path that exists from vertex source to vertex destination.\n\nGiven edges and the integers n, source, and destination, return true if there is a valid path from source to destination, or false otherwise.",
     "testCases": [
-      "4, [[0,1],[1,2],[2,3]], 0, 3",
-      "4, [[0,1],[2,3]], 0, 3"
+      "3, [[0,1],[1,2],[2,0]], 0, 2",
+      "6, [[0,1],[0,2],[3,5],[5,4],[4,3]], 0, 5"
     ],
     "testAnswers": [
       "true",
       "false"
     ],
-    "starterCode": "function validPath(n, edges, start, end) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(n, edges, start, end):\n    # Your code here\n    pass",
+      "javascript": "function solution(n, edges, start, end) {\n  // Your code here\n}"
+    },
     "hints": [
       "Build an adjacency list from the edges.",
       "Use BFS or DFS starting from `start`, and mark visited nodes to avoid cycles."
@@ -206,18 +255,19 @@
     "topics": ["Dynamic Programming"],
     "difficulty": "easy",
     "title": "Climbing Stairs",
-    "description": "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. How many distinct ways can you climb to the top?",
+    "description": "You are climbing a staircase. It takes n steps to reach the top.\n\nEach time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
     "testCases": [
       "2",
-      "3",
-      "4"
+      "3"
     ],
     "testAnswers": [
       "2",
-      "3",
-      "5"
+      "3"
     ],
-    "starterCode": "function climbStairs(n) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(n):\n    # Your code here\n    pass",
+      "javascript": "function solution(n) {\n  // Your code here\n}"
+    },
     "hints": [
       "Think of it as the Fibonacci sequence: ways[n] = ways[n-1] + ways[n-2].",
       "Use iteration with two variables or simple memoization."
@@ -227,17 +277,20 @@
     "questionId": "16",
     "topics": ["Graph"],
     "difficulty": "easy",
-    "title": "Connected Components in Undirected Graph",
-    "description": "You have n nodes labeled from 0 to n-1 and a list of undirected edges. Count the number of connected components in the graph.",
+    "title": "Number of Connected Components in an Undirected Graph",
+    "description": "There is an undirected graph with n nodes. There is also an edges array, where edges[i] = [a, b] means that there is an edge between node a and node b in the graph.\n\nThe nodes are numbered from 0 to n - 1.\n\nReturn the total number of connected components in that graph.",
     "testCases": [
-      "5, [[0,1],[1,2],[3,4]]",
-      "4, [[0,1],[1,2],[2,3]]"
+      "3, [[0,1],[0,2]]",
+      "6, [[0,1],[1,2],[2,3],[4,5]]"
     ],
     "testAnswers": [
-      "2",
-      "1"
+      "1",
+      "2"
     ],
-    "starterCode": "function countComponents(n, edges) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(n, edges):\n    # Your code here\n    pass",
+      "javascript": "function solution(n, edges) {\n  // Your code here\n}"
+    },
     "hints": [
       "Build an adjacency list and use DFS/BFS to mark visited nodes.",
       "Each time you start a new DFS/BFS from an unvisited node, increment your component count."
@@ -245,21 +298,24 @@
   },
   {
     "questionId": "17",
-    "topics": ["Dynamic Programming"],
+    "topics": ["Dynamic Programming", "Array"],
     "difficulty": "easy",
     "title": "Maximum Subarray",
     "description": "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
     "testCases": [
-      "[-2,1,-3,4,-1,2,1,-5,4]",
+      "[1]",
       "[5,4,-1,7,8]"
     ],
     "testAnswers": [
-      "6",
+      "1",
       "23"
     ],
-    "starterCode": "function maxSubArray(nums) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(nums):\n    # Your code here\n    pass",
+      "javascript": "function solution(nums) {\n  // Your code here\n}"
+    },
     "hints": [
-      "Use Kadane’s algorithm: track current sum and reset to 0 when it becomes negative.",
+      "Use Kadane's algorithm: track current sum and reset to 0 when it becomes negative.",
       "Keep a variable for the maximum sum seen so far."
     ]
   },
@@ -268,14 +324,17 @@
     "topics": ["Stack"],
     "difficulty": "easy",
     "title": "Min Stack",
-    "description": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.",
+    "description": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.\n\nImplement the MinStack class:\nMinStack(): initializes the stack object.\nvoid push(int val): pushes the element val onto the stack.\nvoid pop(): removes the element on the top of the stack.\nint top(): gets the top element of the stack.\nint getMin(): retrieves the minimum element in the stack.\n\nYou must implement a solution with O(1) time complexity for each function.",
     "testCases": [
       "[\"MinStack\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"top\",\"getMin\"], [[],[-2],[0],[-3],[],[],[],[]]"
     ],
     "testAnswers": [
-      "[null,null,null,-3,null,0,-2]"
+      "[null,null,null,null,-3,null,0,-2]"
     ],
-    "starterCode": "class MinStack {\n  constructor() {\n    // Your code here\n  }\n  push(val) {}\n  pop() {}\n  top() {}\n  getMin() {}\n}",
+    "starterCode": {
+      "python": "class MinStack:\n    def __init__(self):\n        # Your code here\n        pass\n    def push(self, val: int) -> None:\n        pass\n    def pop(self) -> None:\n        pass\n    def top(self) -> int:\n        pass\n    def getMin(self) -> int:\n        pass",
+      "javascript": "class MinStack {\n  constructor() {\n    // Your code here\n  }\n  push(val) {}\n  pop() {}\n  top() {}\n  getMin() {}\n}"
+    },
     "hints": [
       "Use two stacks: one for all values, one to track the current minimum at each push.",
       "On push, compare the new value with the top of the min-stack and push the smaller of the two."
@@ -283,10 +342,10 @@
   },
   {
     "questionId": "19",
-    "topics": ["Stack"],
+    "topics": ["Stack", "Array"],
     "difficulty": "medium",
     "title": "Evaluate Reverse Polish Notation",
-    "description": "Evaluate the value of an arithmetic expression in Reverse Polish Notation. Valid operators are +, -, *, and /. Each operand may be an integer or another expression.",
+    "description": "You are given an array of strings tokens that represents an arithmetic expression in a Reverse Polish Notation.\n\nEvaluate the expression. Return an integer that represents the value of the expression.\n\nNote that:\n- The valid operators are '+', '-', '*', and '/'.\n- Each operand may be an integer or another expression.\n- The division between two integers always truncates toward zero.\n- There will not be any division by zero.\n- The input represents a valid arithmetic expression in a reverse polish notation.\n- The answer and all the intermediate calculations can be represented in a 32-bit integer.",
     "testCases": [
       "[\"2\",\"1\",\"+\",\"3\",\"*\"]",
       "[\"4\",\"13\",\"5\",\"/\",\"+\"]"
@@ -295,7 +354,10 @@
       "9",
       "6"
     ],
-    "starterCode": "function evalRPN(tokens) {\n  // Your code here\n}",
+    "starterCode": {
+      "python": "def solution(tokens):\n    # Your code here\n    pass",
+      "javascript": "function solution(tokens) {\n  // Your code here\n}"
+    },
     "hints": [
       "Use a stack: push numbers, and on seeing an operator, pop the top two numbers, apply the operator, and push the result.",
       "Be careful with operand order for non-commutative operations like subtraction and division."
