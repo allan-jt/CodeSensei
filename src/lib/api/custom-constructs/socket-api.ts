@@ -5,7 +5,7 @@ import { Construct } from "constructs";
 
 interface SocketApiCustomProps {
   executionEntryLambda: Function;
-  // executionEndLambda: Function;
+  chatbotEntryLambda: Function;
 }
 
 export class SocketApiCustom extends Construct {
@@ -19,7 +19,12 @@ export class SocketApiCustom extends Construct {
         props.executionEntryLambda
       ),
     });
-    // api.grantManageConnections(props.executionEndLambda);
+    api.addRoute("chatbot", {
+      integration: new WebSocketLambdaIntegration(
+        "SocketChatbotLambdaIntegration",
+        props.chatbotEntryLambda
+      ),
+    });
 
     new WebSocketStage(this, "SocketDevDeployStage", {
       webSocketApi: api,

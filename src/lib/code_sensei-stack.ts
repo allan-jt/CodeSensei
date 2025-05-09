@@ -12,18 +12,20 @@ export class CodeSenseiStack extends cdk.Stack {
     super(scope, id, props);
 
     const storage = new StorageStack(this, "StorageStack");
-    // const executor = new ExecutorStack(this, "ExecutorStack", {
-    //   userTable: storage.userTable,
-    //   questionBankTable: storage.questionBankTable,
-    //   assessmentsTable: storage.assessmentsTable,
-    //   assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
-    // });
-    // const auth = new AuthStack(this, "AuthStack", {
-    //   userTable: storage.userTable,
-    // });
-    // const api = new ApiGatewayStack(this, "APIGatewayStack", {
-    //   executionEntryLambda: executor.executorEntryLambda,
-    // });
-    // const ai_interviewer = new InterviewAiCombinedStack(this, "AIChatBot");
+    const executor = new ExecutorStack(this, "ExecutorStack", {
+      userTable: storage.userTable,
+      questionBankTable: storage.questionBankTable,
+      assessmentsTable: storage.assessmentsTable,
+      assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
+    });
+    const chatbot = new InterviewAiCombinedStack(this, "AIChatBot");
+
+    const auth = new AuthStack(this, "AuthStack", {
+      userTable: storage.userTable,
+    });
+    const api = new ApiGatewayStack(this, "APIGatewayStack", {
+      executionEntryLambda: executor.executorEntryLambda,
+      chatbotEntryLambda: chatbot.chatbotEntryLambda,
+    });
   }
 }
