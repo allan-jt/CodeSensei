@@ -136,6 +136,8 @@ class Attempt:
 @dataclass
 class QuestionsDone:
     questionId: str
+    topics: List[Topic]
+    difficulty: Difficulty
     attempts: List[Attempt]
     timeStarted: str
     timeEnded: str
