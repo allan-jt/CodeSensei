@@ -1,11 +1,8 @@
-# assesments/lambda-code/preprocess.py
-
 import os
 import json
 import logging
 import urllib.request
 import urllib.error
-import urllib.parse
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -13,21 +10,31 @@ logger.setLevel(logging.INFO)
 def handler(event, context):
     """
     1) Read SERVICE_URL from the environment
-    2) URL-encode the incoming event JSON as a 'payload' query param
-    3) Perform a GET to SERVICE_URL/health?payload=...
-    4) Return the ECS service’s JSON response unmodified
+    2) Issue a POST to SERVICE_URL/assessments/action with the incoming event as JSON
+    3) Return the ECS service’s JSON response (statusCode, headers, body)
     """
     logger.info("Received event: %s", json.dumps(event))
 
-    # Build the target URL with a 'payload' param
     service_url = os.environ['SERVICE_URL'].rstrip('/')
-    payload_str = json.dumps(event)
-    query       = urllib.parse.urlencode({'payload': payload_str})
-    health_url  = f"{service_url}/health?{query}"
-    logger.info("Calling ECS GET %s", health_url)
+    url = f"{service_url}/assessments/action"
+
+    # Prepare JSON payload
+    payload_bytes = json.dumps(event).encode('utf-8')
+    headers = {
+        'Content-Type': 'application/json',
+        'Content-Length': str(len(payload_bytes))
+    }
+
+    # Build a POST request
+    req = urllib.request.Request(
+        url=url,
+        data=payload_bytes,
+        headers=headers,
+        method='POST'
+    )
 
     try:
-        with urllib.request.urlopen(health_url, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=10) as resp:
             body   = resp.read().decode('utf-8')
             status = resp.getcode()
             logger.info("ECS responded %d: %s", status, body)
@@ -36,17 +43,20 @@ def handler(event, context):
         logger.error("ECS returned HTTP %d: %s", e.code, err_body)
         return {
             "statusCode": e.code,
+            "headers": {"Content-Type": "application/json"},
             "body": json.dumps({"error": err_body})
         }
     except urllib.error.URLError as e:
         logger.error("Request to ECS failed: %s", e)
         return {
             "statusCode": 502,
+            "headers": {"Content-Type": "application/json"},
             "body": json.dumps({"error": str(e)})
         }
 
-    # Return the raw JSON from the webserver
+    # Return the raw JSON from the webserver 
     return {
         "statusCode": status,
+        "headers": {"Content-Type": "application/json"},
         "body": body
     }
