@@ -5,6 +5,7 @@ import { SocketApiCustom } from "./custom-constructs/socket-api";
 
 interface ApiGatewayProps extends cdk.StackProps {
   executionEntryLambda: Function;
+  chatbotEntryLambda: Function;
 }
 
 export class ApiGatewayStack extends cdk.Stack {
@@ -13,6 +14,7 @@ export class ApiGatewayStack extends cdk.Stack {
 
     const socketApi = new SocketApiCustom(this, "SocketAPI", {
       executionEntryLambda: props.executionEntryLambda,
+      chatbotEntryLambda: props.chatbotEntryLambda
     });
   }
 }

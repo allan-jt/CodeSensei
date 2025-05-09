@@ -1,7 +1,7 @@
 import json
 import boto3
 import os
-import uuid  # ✅ 用于生成 MessageDeduplicationId
+import uuid
 
 sqs = boto3.client('sqs')
 QUEUE_URL = os.environ.get('QUEUE_URL', 'https://sqs.us-east-1.amazonaws.com/050451376687/PromptQueue.fifo')
@@ -10,7 +10,14 @@ def lambda_handler(event, context):
     try:
         print("Received event:", json.dumps(event))
 
-        body = json.loads(event.get("body", "{}"))
+        try:
+            raw_body = event.get("body", "{}")
+            body = raw_body if isinstance(raw_body, dict) else json.loads(raw_body)
+        except json.JSONDecodeError:
+            print("Invalid JSON body")
+            return "400 Bad Request"
+
+        # body = json.loads(event.get("body", "{}"))
         prompt = body.get("prompt")
         question_id = body.get("questionId")
 
@@ -22,7 +29,12 @@ def lambda_handler(event, context):
 
         message = {
             "prompt": prompt,
-            "questionId": question_id
+            "questionId": question_id,
+            "socket": {
+                "connectionId": event.get("requestContext").get("connectionId"),
+                "domainName": event.get("requestContext").get("domainName"),
+                "stage": event.get("requestContext").get("stage"),
+            }
         }
 
         # ✅ 添加 MessageDeduplicationId 以支持 FIFO 队列

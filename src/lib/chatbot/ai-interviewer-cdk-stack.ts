@@ -12,6 +12,8 @@ import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 
 export class InterviewAiCombinedStack extends cdk.Stack {
+  public readonly chatbotEntryLambda: lambda.Function;
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -24,11 +26,11 @@ export class InterviewAiCombinedStack extends cdk.Stack {
       // vpc: vpc,
     });
 
-    const repository = ecr.Repository.fromRepositoryName(
-      this,
-      "InterviewerRepo",
-      "ai_interviewer"
-    );
+    // const repository = ecr.Repository.fromRepositoryName(
+    //   this,
+    //   "InterviewerRepo",
+    //   "ai_interviewer"
+    // );
 
     const taskRole = new iam.Role(this, "FargateTaskRole", {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
@@ -96,12 +98,14 @@ export class InterviewAiCombinedStack extends cdk.Stack {
       )
     );
 
+    this.chatbotEntryLambda = lambda3_1;
+
     // -------------------- Lambda 3-2 --------------------
     const lambda3_2 = new lambda.Function(this, "Lambda3_2_ReadFromSQS", {
       functionName: "Lambda3-2-ReadFromSQS",
       runtime: lambda.Runtime.PYTHON_3_13,
       handler: "lambda3_2.lambda_handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "lambda/lambda3_2.zip")),
+      code: lambda.Code.fromAsset(path.join(__dirname, "lambda3_2")),
       timeout: cdk.Duration.seconds(100),
       environment: {
         ECS_API_ENDPOINT: ecsEndpoint,
@@ -113,6 +117,13 @@ export class InterviewAiCombinedStack extends cdk.Stack {
       iam.ManagedPolicy.fromAwsManagedPolicyName(
         "service-role/AWSLambdaBasicExecutionRole"
       )
+    );
+
+    lambda3_2.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["execute-api:ManageConnections"],
+        resources: ["arn:aws:execute-api:*:*:*/*/POST/@connections/*"],
+      })
     );
   }
 }
