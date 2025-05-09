@@ -11,7 +11,7 @@ export class StorageStack extends cdk.Stack {
   public readonly assessmentsTable: TableV2;
   public readonly assessmentQuestionLocatorTable: TableV2;
   public readonly metricsTable: TableV2;
-  public readonly opensearchLamba?: Function;
+  public readonly opensearchLambda: Function;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -24,8 +24,16 @@ export class StorageStack extends cdk.Stack {
     this.metricsTable = dynamo.metricsTable;
 
     // Comment out if you don't want to create OpenSearch
-    // this.opensearchLamba = new OpenSearchStack(this, "OpenSearchStack", {
-    //   dynamoTable: this.questionBankTable,
-    // }).opensearchLamba;
+
+    const openSearchStack = new OpenSearchStack(this, 'OpenSearchStack', {
+      dynamoTable: this.questionBankTable,
+    });
+    this.opensearchLambda = openSearchStack.opensearchLamba;
+    
+    // Export the opensearchLambda ARN for downstream consumption
+    new cdk.CfnOutput(this, 'OpenSearchLambdaArn', {
+      value:       this.opensearchLambda.functionArn,
+      description: 'ARN of the OpenSearch init/query Lambda',
+    });
   }
 }

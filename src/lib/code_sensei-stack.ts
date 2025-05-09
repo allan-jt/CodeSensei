@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { StorageStack } from "./storage/storage-stack";
+import { AssessmentStack } from './assessment/assessment-stack';
 import { MetricsStack } from "./metrics/metrics-stack";
 import { ExecutorStack } from "./executor/executor-stack";
 import { ApiGatewayStack } from "./api/api-gateway-stack";
@@ -15,6 +16,12 @@ export class CodeSenseiStack extends cdk.Stack {
     const appName = "CodeSensei";
 
     const storage = new StorageStack(this, "StorageStack");
+
+
+    const assessment = new AssessmentStack(this, "AssessmentStack",{
+      env: props?.env,
+      opensearchLamba: storage.opensearchLambda,
+    });
 
     const metrics = new MetricsStack(this, "MetricsStack", {
       appName: appName,
@@ -42,3 +49,4 @@ export class CodeSenseiStack extends cdk.Stack {
     });
   }
 }
+
