@@ -9,13 +9,22 @@
     "status": "complete",
     "metrics": {
       "time_spent": {
-        "Array#easy": { "count": 1, "total": 60 }
+        "Array#easy": { "count": 1, "total": 60 },
+        "Array#all": { "count": 1, "total": 60 },
+        "all#easy": { "count": 1, "total": 60 },
+        "all#all": { "count": 1, "total": 60 }
       },
       "execution_time": {
-        "Array#easy": { "count": 1, "total": 1.2 }
+        "Array#easy": { "count": 1, "total": 1.2 },
+        "Array#all": { "count": 1, "total": 1.2 },
+        "all#easy": { "count": 1, "total": 1.2 },
+        "all#all": { "count": 1, "total": 1.2 }
       },
       "execution_memory": {
-        "Array#easy": { "count": 1, "total": 512 }
+        "Array#easy": { "count": 1, "total": 512 },
+        "Array#all": { "count": 1, "total": 512 },
+        "all#easy": { "count": 1, "total": 512 },
+        "all#all": { "count": 1, "total": 512 }
       }
     },
     "questions": [
@@ -33,7 +42,9 @@
         "bestExecTime": 1.2,
         "bestExecMem": 512,
         "testCasesPassed": 100,
-        "status": "pass"
+        "status": "pass",
+        "topics": ["Array"],
+        "difficulty": "easy"
       }
     ]
   },
@@ -55,7 +66,9 @@
         "bestExecTime": 0,
         "bestExecMem": 0,
         "testCasesPassed": 0,
-        "status": "incomplete"
+        "status": "incomplete",
+        "topics": ["String", "Hash Table"],
+        "difficulty": "medium"
       }
     ]
   },
@@ -69,19 +82,34 @@
     "status": "incomplete",
     "metrics": {
       "time_spent": {
-        "Dynamic Programming#medium": { "count": 1, "total": 1800 },
+        "Array#easy": { "count": 1, "total": 900 },
         "Array#medium": { "count": 1, "total": 1800 },
-        "Array#easy": { "count": 1, "total": 900 }
+        "Array#all": { "count": 2, "total": 2700 },
+        "Dynamic Programming#medium": { "count": 1, "total": 1800 },
+        "Dynamic Programming#all": { "count": 1, "total": 1800 },
+        "all#easy": { "count": 1, "total": 900 },
+        "all#medium": { "count": 1, "total": 1800 },
+        "all#all": { "count": 2, "total": 2700 }
       },
       "execution_time": {
-        "Dynamic Programming#medium": { "count": 1, "total": 2.8 },
+        "Array#easy": { "count": 1, "total": 1.9 },
         "Array#medium": { "count": 1, "total": 2.8 },
-        "Array#easy": { "count": 1, "total": 1.9 }
+        "Array#all": { "count": 2, "total": 4.7 },
+        "Dynamic Programming#medium": { "count": 1, "total": 2.8 },
+        "Dynamic Programming#all": { "count": 1, "total": 2.8 },
+        "all#easy": { "count": 1, "total": 1.9 },
+        "all#medium": { "count": 1, "total": 2.8 },
+        "all#all": { "count": 2, "total": 4.7 }
       },
       "execution_memory": {
-        "Dynamic Programming#medium": { "count": 1, "total": 720 },
+        "Array#easy": { "count": 1, "total": 680 },
         "Array#medium": { "count": 1, "total": 720 },
-        "Array#easy": { "count": 1, "total": 680 }
+        "Array#all": { "count": 2, "total": 1400 },
+        "Dynamic Programming#medium": { "count": 1, "total": 720 },
+        "Dynamic Programming#all": { "count": 1, "total": 720 },
+        "all#easy": { "count": 1, "total": 680 },
+        "all#medium": { "count": 1, "total": 720 },
+        "all#all": { "count": 2, "total": 1400 }
       }
     },
     "questions": [
@@ -104,7 +132,9 @@
         "bestExecTime": 2.8,
         "bestExecMem": 720,
         "testCasesPassed": 100,
-        "status": "pass"
+        "status": "pass",
+        "topics": ["Array", "Dynammic Programming"],
+        "difficulty": "medium"
       },
       {
         "questionId": "1",
@@ -120,7 +150,9 @@
         "bestExecTime": 1.9,
         "bestExecMem": 680,
         "testCasesPassed": 100,
-        "status": "pass"
+        "status": "pass",
+        "topics": ["Array"],
+        "difficulty": "easy"
       },
       {
         "questionId": "12",
@@ -130,7 +162,9 @@
         "bestExecTime": 0,
         "bestExecMem": 0,
         "testCasesPassed": 0,
-        "status": "incomplete"
+        "status": "incomplete",
+        "topics": ["Array"],
+        "difficulty": "hard"
       }
     ]
   }

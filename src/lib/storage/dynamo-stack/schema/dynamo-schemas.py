@@ -60,6 +60,11 @@ class Topic(Enum):
     RECURSION = "Recursion"
 
 
+class Language(Enum):
+    PYTHON = "python"
+    JAVASCRIPT = "javascript"
+
+
 @dataclass
 class QuestionRecord:
     questionId: str
@@ -69,7 +74,7 @@ class QuestionRecord:
     description: str
     testCases: List[str]
     testAnswers: List[str]
-    starterCode: str
+    starterCode: Dict[Language, str]
     hints: List[str]
 
 
@@ -131,6 +136,8 @@ class Attempt:
 @dataclass
 class QuestionsDone:
     questionId: str
+    topics: List[Topic]
+    difficulty: Difficulty
     attempts: List[Attempt]
     timeStarted: str
     timeEnded: str
