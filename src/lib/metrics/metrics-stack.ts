@@ -47,5 +47,8 @@ export class MetricsStack extends cdk.Stack {
       metricsTable: metricsTable,
       assessmentsTable: assessmentsTable,
     });
+
+    this.metricsDashboardLambda = lambdaStack.lf4_0;
+    this.metricsQuestionLambda = lambdaStack.lf4_1;
   }
 }

@@ -18,9 +18,17 @@ def format_metrics(metrics_dict):
     return formatted_metrics
 
 def handler(event, context):
+    headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
     try:
         # Get parameters from event
-        user_id = event.get("user_id")
+        try:
+            raw_body = event.get("body", "{}")
+            body = raw_body if isinstance(raw_body, dict) else json.loads(raw_body)
+        except json.JSONDecodeError:
+            print("Invalid JSON body")
+            return "400 Bad Request"
+
+        user_id = body.get("user_id")
 
         # Fetch overall metrics
         overall_metrics = fetch_overall_metrics(user_id)
@@ -39,6 +47,7 @@ def handler(event, context):
         # Return formatted data
         return {
             "statusCode": 200,
+            "headers": headers,
             "body": json.dumps({
                 "message": f"Metrics retrieved for user {user_id}",
                 "data": result
@@ -48,6 +57,7 @@ def handler(event, context):
     except Exception as e:
         return {
             "statusCode": 500,
+            "headers": headers,
             "body": json.dumps({ "error": str(e) })
         }
 
