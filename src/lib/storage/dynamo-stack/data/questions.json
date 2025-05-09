@@ -323,21 +323,23 @@
     "questionId": "18",
     "topics": ["Stack"],
     "difficulty": "easy",
-    "title": "Min Stack",
-    "description": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.\n\nImplement the MinStack class:\nMinStack(): initializes the stack object.\nvoid push(int val): pushes the element val onto the stack.\nvoid pop(): removes the element on the top of the stack.\nint top(): gets the top element of the stack.\nint getMin(): retrieves the minimum element in the stack.\n\nYou must implement a solution with O(1) time complexity for each function.",
+    "title": "Next Greater Element",
+    "description": "The next greater element of some element x in an array is the first greater element that is to the right of x in the same array.\n\nYou are given two distinct 0-indexed integer arrays nums1 and nums2, where nums1 is a subset of nums2.\n\nFor each 0 <= i < nums1.length, find the index j such that nums1[i] == nums2[j] and determine the next greater element of nums2[j] in nums2. If there is no next greater element, then the answer for this query is -1.\n\nReturn an array ans of length nums1.length such that ans[i] is the next greater element as described above.",
     "testCases": [
-      "[\"MinStack\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"top\",\"getMin\"], [[],[-2],[0],[-3],[],[],[],[]]"
+      "[4,1,2], [1,3,4,2]",
+      "[2,4], [1,2,3,4]"
     ],
     "testAnswers": [
-      "[null,null,null,null,-3,null,0,-2]"
+      "[-1,3,-1]",
+      "[3,-1]"
     ],
     "starterCode": {
-      "python": "class MinStack:\n    def __init__(self):\n        # Your code here\n        pass\n    def push(self, val: int) -> None:\n        pass\n    def pop(self) -> None:\n        pass\n    def top(self) -> int:\n        pass\n    def getMin(self) -> int:\n        pass",
-      "javascript": "class MinStack {\n  constructor() {\n    // Your code here\n  }\n  push(val) {}\n  pop() {}\n  top() {}\n  getMin() {}\n}"
+      "python": "def solution(nums1, nums2):\n    # Your code here\n    pass",
+      "javascript": "function solution(nums1, nums2) {\n  // Your code here\n}"
     },
     "hints": [
-      "Use two stacks: one for all values, one to track the current minimum at each push.",
-      "On push, compare the new value with the top of the min-stack and push the smaller of the two."
+      "Use a monotonic decreasing stack to iterate through nums2 and record each element’s next greater element in a hash map.",
+      "Then build the answer for nums1 by looking up each value in your precomputed map, defaulting to -1 if not found."
     ]
   },
   {
