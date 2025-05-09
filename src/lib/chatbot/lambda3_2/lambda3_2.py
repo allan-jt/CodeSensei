@@ -1,6 +1,7 @@
 import json
 import os
 import requests
+import boto3
 
 ECS_API_ENDPOINT = os.environ.get('ECS_API_ENDPOINT')  # 建议通过环境变量注入，如 https://your-api.example.com/process
 
@@ -39,7 +40,8 @@ def lambda_handler(event, context):
                 "action": "chatbot",
                 "message": response.text
             }
-            socket = event.get("socket")
+            socket = body.get("socket")
+            print(socket)
             if socket:
                 send_socket_message(
                     socket.get("connectionId"),
