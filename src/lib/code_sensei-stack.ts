@@ -23,20 +23,20 @@ export class CodeSenseiStack extends cdk.Stack {
       assessmentsTable: storage.assessmentsTable,
     });
 
-    const executor = new ExecutorStack(this, "ExecutorStack", {
-      userTable: storage.userTable,
-      questionBankTable: storage.questionBankTable,
-      assessmentsTable: storage.assessmentsTable,
-      assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
-    });
-    const chatbot = new InterviewAiCombinedStack(this, "AIChatBot");
+    // const executor = new ExecutorStack(this, "ExecutorStack", {
+    //   userTable: storage.userTable,
+    //   questionBankTable: storage.questionBankTable,
+    //   assessmentsTable: storage.assessmentsTable,
+    //   assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
+    // });
+    // const chatbot = new InterviewAiCombinedStack(this, "AIChatBot");
 
     const auth = new AuthStack(this, "AuthStack", {
       userTable: storage.userTable,
     });
     const api = new ApiGatewayStack(this, "APIGatewayStack", {
-      executionEntryLambda: executor.executorEntryLambda,
-      chatbotEntryLambda: chatbot.chatbotEntryLambda,
+      // executionEntryLambda: executor.executorEntryLambda,
+      // chatbotEntryLambda: chatbot.chatbotEntryLambda,
       metricsDashboardLambda: metrics.metricsDashboardLambda,
       metricsQuestionLambda: metrics.metricsQuestionLambda,
     });

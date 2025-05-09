@@ -32,6 +32,7 @@ def format_metrics(metrics_dict):
     return formatted_metrics
 
 def handler(event, context):
+    headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
     try:
         # Get parameters from event
         user_id = event.get("user_id")
@@ -92,6 +93,7 @@ def handler(event, context):
         # Return response with updated metrics
         return {
             "statusCode": 200,
+            "headers": headers,
             "body": json.dumps({
                 "message": f"Metrics updated for user {user_id}",
                 "assessment_metrics": updated_assessment_metrics,
@@ -103,6 +105,7 @@ def handler(event, context):
     except Exception as e:
         return {
             "statusCode": 500,
+            "headers": headers,
             "body": json.dumps({ "error": str(e) })
         }
 
