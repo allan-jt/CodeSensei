@@ -387,7 +387,7 @@ async def process_assessment_action(action: dict):
                 if assessment_record.questions:
                     previous_question = assessment_record.questions[-1]
                     previous_question.timeEnded = datetime.now().isoformat()
-                    previous_question.status = QuestionStatus.PASS
+                    #previous_question.status = QuestionStatus.PASS
 
 
                 assessment_record.questions.append(question_record)
@@ -444,7 +444,7 @@ async def process_assessment_action(action: dict):
                 if assessment.questions:
                     last_q = assessment.questions[-1]
                     last_q.timeEnded = datetime.now().isoformat()
-                    last_q.status = QuestionStatus.PASS
+                    #last_q.status = QuestionStatus.PASS
 
                 # 3) Mark the assessment complete
                 assessment.status = Status.COMPLETE
