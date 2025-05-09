@@ -9,6 +9,7 @@ from dynamo_schemas import *
 from dynamo_reader import serialize, deserialize
 from decimal import Decimal
 import os
+import asyncio
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -45,6 +46,7 @@ async def process_assessment_action(action: dict):
         matching_questions = []
         question = {}
         
+        # Begin assessment ----------------------------------------------------------------
         if action["type"] == "begin":
             # Use the provided userId and timestamp
             user_id = action["userId"]
@@ -249,7 +251,7 @@ async def process_assessment_action(action: dict):
                     }
                 
 
-        # Ongoing assessment       
+        # Ongoing assessment ----------------------------------------------------------------       
 
         elif action["type"] == "ongoing":
             user_id = action["userId"]
@@ -272,29 +274,32 @@ async def process_assessment_action(action: dict):
                     raise HTTPException(status_code=500, detail="Failed to deserialize")
                 
 
-                
-
                 MAX_ATTEMPTS = 2  # first try + one retry
+                RETRY_DELAY = 1  # seconds
 
                 # 1) Extract the set of all already‐served question IDs
                 done_ids = { q.questionId for q in assessment_record.questions }
 
                 for attempt in range(MAX_ATTEMPTS):
 
+                    if attempt > 0: 
+                        logger.info(f"Retrying to find a question (attempt {attempt + 1})")
+                        await asyncio.sleep(RETRY_DELAY)
+                    
 
                     # 2) Recompute previous pairing and performance
                     if not assessment_record.questions:
                         raise HTTPException(500, "No previous question to reference")
                     
-                    prev_q    = assessment_record.questions[-1]
+                    prev_q = assessment_record.questions[-1]
                     prev_pair = (prev_q.currentTopic, prev_q.difficulty)
                     prev_perf = {
-                        "bestExecTime":    prev_q.bestExecTime,
-                        "bestExecMem":     prev_q.bestExecMem,
-                        "attempts":        len(prev_q.attempts),
+                        "bestExecTime": prev_q.bestExecTime,
+                        "bestExecMem": prev_q.bestExecMem,
+                        "attempts": len(prev_q.attempts),
                         "testCasesPassed": prev_q.testCasesPassed,
-                        "timeStarted":     prev_q.timeStarted,
-                        "timeEnded":       prev_q.timeEnded,
+                        "timeStarted": prev_q.timeStarted,
+                        "timeEnded": prev_q.timeEnded,
                     }
 
                     # 3) Build the full set of possible topic–difficulty combos
@@ -320,9 +325,9 @@ async def process_assessment_action(action: dict):
                     
                     payload = {
                         "anthropic_version": "bedrock-2023-05-31",
-                        "max_tokens":        50,
-                        "temperature":       0.7,
-                        "messages":          [{"role": "user", "content": prompt}]
+                        "max_tokens": 50,
+                        "temperature": 0.7,
+                        "messages": [{"role": "user", "content": prompt}]
                     }
 
                     bedrock_resp = bedrock.invoke_model(
@@ -421,134 +426,8 @@ async def process_assessment_action(action: dict):
             except Exception as e:
                 logger.error(f"Error retrieving assessment: {str(e)}")
                 raise HTTPException(status_code=500, detail=f"Failed to retrieve assessment: {str(e)}")
-
-
-
-                # next_topic = assessment_response["nextRecommendation"]["topic"]
-                # next_difficulty = assessment_response["nextRecommendation"]["difficulty"]
-                
-                # Now query QuestionBankTable for a matching question
-                # requested_topic = next_topic.lower()
-                # requested_difficulty = next_difficulty.lower()
-                
-                # Initialize matching_questions list
-                # matching_questions = []
-
-                # # Scan the table for all questions
-                # response = question_bank_table.scan()
-                # all_questions = response.get("Items", [])
-
-                # # Filter questions that match topic and difficulty
-                # for q in all_questions:
-                #     q_topics = [t.lower() for t in q.get("topics", [])]
-                #     q_difficulty = q.get("difficulty", "").lower()
-                    
-                #     # Check if the requested topic matches any question topic
-                #     topic_match = any(
-                #         requested_topic in topic or 
-                #         requested_topic.rstrip('s') in topic or
-                #         topic in requested_topic
-                #         for topic in q_topics
-                #     )
-                #     difficulty_match = requested_difficulty == q_difficulty
-                    
-                #     if topic_match and difficulty_match:
-                #         matching_questions.append(q)
-
-                # # If no exact matches, try matching just by topic
-                # if len(matching_questions) == 0:
-                #     logger.warning(f"No questions found for topic: {requested_topic}, difficulty: {requested_difficulty}")
-                    
-                #     for q in all_questions:
-                #         q_topics = [t.lower() for t in q.get("topics", [])]
-                #         topic_match = any(
-                #             requested_topic in topic or 
-                #             requested_topic.rstrip('s') in topic or
-                #             topic in requested_topic
-                #             for topic in q_topics
-                #         )
-                        
-                #         if topic_match:
-                #             matching_questions.append(q)
-
-                # # If we found matching questions, select one randomly
-                # if len(matching_questions) > 0:
-                #     import random
-                #     question = random.choice(matching_questions)
-                    
-                #     # Create question record
-                #     question_record = QuestionsDone(
-                #         questionId=question.get("questionId", ""),
-                #         topic=next_topic,
-                #         difficulty=next_difficulty,
-                #         attempts=[],
-                #         timeStarted=datetime.now().isoformat(),
-                #         timeEnded="",
-                #         bestExecTime=float('inf'),
-                #         bestExecMem=float('inf'),
-                #         testCasesPassed=0,
-                #         status=QuestionStatus.INCOMPLETE
-                #     )
-                    
-                #     # Add question to assessment record
-                #     assessment_record.questions.append(question_record)
-                    
-                #     # Increment the counter
-                #     assessment_record.selectedNumberOfQuestions += 1
-                    
-                #     # Save back to DynamoDB
-                #     assessments_table.put_item(Item=serialize(assessment_record))
-                    
-                #     # Return response with question details
-                #     return {
-                #         "assessmentId": assessment_id,
-                #         "selectedTopics": assessment_record.selectedTopics,
-                #         "selectedDifficulty": assessment_record.selectedDifficulty,
-                #         "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
-                #         "questions": [serialize(q) for q in assessment_record.questions],
-                #         "nextRecommendation": {
-                #             "topic": next_topic,
-                #             "difficulty": next_difficulty
-                #         },
-                #         "question": {
-                #             "questionId": question.get("questionId", ""),
-                #             "questionTitle": question.get("title", "Sample Question"),
-                #             "questionDescription": question.get("description", "This is a placeholder question"),
-                #             "starterCode": question.get("starterCode", "# Your code here"),
-                #             "questionTopics": question.get("topics", [next_topic]),
-                #             "questionDifficulty": question.get("difficulty", next_difficulty),
-                #             "testCases": question.get("testCases", [])
-                #         }
-                #     }
-                # else:
-                #     # No matching questions found
-                #     return {
-                #         "assessmentId": assessment_id,
-                #         "selectedTopics": assessment_record.selectedTopics,
-                #         "selectedDifficulty": assessment_record.selectedDifficulty,
-                #         "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
-                #         "questions": [serialize(q) for q in assessment_record.questions],
-                #         "nextRecommendation": {
-                #             "topic": next_topic,
-                #             "difficulty": next_difficulty
-                #         },
-                #         "message": f"No questions found for topic: {next_topic}, difficulty: {next_difficulty}"
-                #     }
-
-                # return {
-                #     "assessmentId": assessment_id,
-                #     "selectedTopics": assessment_record.selectedTopics,
-                #     "selectedDifficulty": assessment_record.selectedDifficulty,
-                #     "selectedNumberOfQuestions": assessment_record.selectedNumberOfQuestions,
-                #     "questions": [serialize(q) for q in assessment_record.questions],
-                #     "nextRecommendation": {
-                #       "topic": next_topic,
-                #         "difficulty": next_difficulty
-                #    }
-                #}
-
             
-
+        # End assessment ----------------------------------------------------------------
         elif action["type"] == "end":
             user_id   = action["userId"]
             timestamp = action["assessmentId"]
