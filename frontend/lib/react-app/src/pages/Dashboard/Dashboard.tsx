@@ -10,10 +10,12 @@ import { IconBrandSpeedtest } from "@tabler/icons-react";
 import type { Metric, Scope } from "../../common/CustomTypes";
 import {
   getInvertedMetrics,
+  inferUnit,
   mergeMetrics,
   roundToTwoDecimals,
 } from "../../common/Utils";
 import MetricSection from "../../common/MetricSection";
+import { useEffect, useState } from "react";
 
 interface AssessmentMetrics {
   timestamp: string;
@@ -21,39 +23,91 @@ interface AssessmentMetrics {
 }
 
 interface DashboardPageProps {
-  assessmentMetrics: AssessmentMetrics[];
+  httpURL: string;
+  userId: string;
 }
 
-function DashboardPage({ assessmentMetrics }: DashboardPageProps) {
-  let overallMetrics: Scope[] = [];
-  let assessments: {
-    timeStamp: string;
-    metrics: Scope[];
-  }[] = [];
+function DashboardPage({ httpURL, userId }: DashboardPageProps) {
+  const [overallMetrics, setOverallMetrics] = useState<Scope[]>([]);
+  const [assessments, setAssessments] = useState<
+    {
+      timeStamp: string;
+      metrics: Scope[];
+    }[]
+  >([]);
 
-  if (assessmentMetrics.length > 0) {
-    overallMetrics = getInvertedMetrics(assessmentMetrics[0].metrics);
-    assessments = assessmentMetrics.slice(1).map((assessment) => {
-      return {
-        timeStamp: assessment.timestamp,
-        metrics: mergeMetrics(
-          getInvertedMetrics(assessment.metrics),
-          overallMetrics
-        ),
-      };
-    });
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = `${httpURL}/dashboard`;
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
+
+        const data = await response.json();
+        console.log("Fetched data:", data);
+
+        const assessmentMetrics: AssessmentMetrics[] = data.data.map(
+          (entry: any) => ({
+            timestamp: entry.type,
+            metrics: entry.metrics.map((metric: any) => ({
+              metricName: metric.metricName,
+              scopes: metric.scopes.map((scope: any) => ({
+                scopeName: scope.scopeName,
+                count: scope.count,
+                value: scope.value,
+                unit: inferUnit(metric.metricName),
+              })),
+            })),
+          })
+        );
+
+        if (assessmentMetrics.length === 0) {
+          console.log("No metrics found");
+          return;
+        }
+        const curOverallMetrics = getInvertedMetrics(
+          assessmentMetrics[0].metrics
+        );
+        setOverallMetrics(curOverallMetrics);
+
+        const curAssessmentMetrics = assessmentMetrics
+          .slice(1)
+          .map((assessment) => {
+            return {
+              timeStamp: assessment.timestamp,
+              metrics: mergeMetrics(
+                getInvertedMetrics(assessment.metrics),
+                curOverallMetrics
+              ),
+            };
+          });
+        setAssessments(curAssessmentMetrics);
+
+        console.log("Merged metrics:", curAssessmentMetrics);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [httpURL, userId]);
 
   return (
     <>
-      {assessmentMetrics.length <= 1 && (
+      {assessments.length < 1 && (
         <Group justify="center" align="center" h="500px">
           <Text c="dimmed" size="80px" fw={1000}>
             No Metrics Yet
           </Text>
         </Group>
       )}
-      {assessmentMetrics.length > 1 && (
+      {assessments.length > 0 && (
         <Timeline active={0} bulletSize={35} lineWidth={5}>
           <Timeline.Item
             key="overall"
@@ -101,7 +155,7 @@ function DashboardPage({ assessmentMetrics }: DashboardPageProps) {
                 <Accordion
                   variant="contained"
                   radius="md"
-                  defaultValue={assessment.timeStamp}
+                  // defaultValue={assessment.timeStamp}
                 >
                   <Accordion.Item value={assessment.timeStamp}>
                     <Accordion.Control>
@@ -123,8 +177,8 @@ function DashboardPage({ assessmentMetrics }: DashboardPageProps) {
                                 label={m.metricName}
                                 current={roundToTwoDecimals(m.value / m.count)}
                                 overall={roundToTwoDecimals(
-                                  metric.overall[attemptIndex].value /
-                                    metric.overall[attemptIndex].count
+                                  metric.overall[i].value /
+                                    metric.overall[i].count
                                 )}
                                 overall_label="Overall"
                                 unit={m.unit}

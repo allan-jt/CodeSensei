@@ -16,9 +16,10 @@ import LoginPage from "./pages/LogIn/Login";
 
 interface AppProps {
   socketURL: string;
+  httpURL: string;
 }
 
-function App({ socketURL }: AppProps) {
+function App({ socketURL, httpURL }: AppProps) {
   const auth = useAuth();
 
   const pages = [
@@ -28,7 +29,7 @@ function App({ socketURL }: AppProps) {
     },
     {
       name: "dashboard",
-      component: <DashboardPage assessmentMetrics={[]} />,
+      component: <DashboardPage httpURL={httpURL} userId="u001" />,
     },
     {
       name: "assessment",
@@ -48,6 +49,7 @@ function App({ socketURL }: AppProps) {
               "function solution(nums, target) {\n  // Your code here\n}",
           }}
           socketURL={socketURL}
+          httpURL={httpURL}
           nextQuestionHandler={(data) => {
             console.log("Next question data:", data);
           }}

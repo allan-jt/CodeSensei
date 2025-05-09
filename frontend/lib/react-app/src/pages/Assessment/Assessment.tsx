@@ -21,6 +21,7 @@ interface AssessmentProps {
   starterCode: Record<string, string>;
 
   socketURL: string;
+  httpURL: string;
   nextQuestionHandler: (data: any) => void;
 }
 

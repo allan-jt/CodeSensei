@@ -55,3 +55,16 @@ export function mergeMetrics(
 
   return mergedMetrics;
 }
+
+export function inferUnit(metricName: string): string {
+  switch (metricName) {
+    case "time_spent":
+      return "s";
+    case "execution_time":
+      return "s";
+    case "execution_memory":
+      return "kb";
+    default:
+      return "";
+  }
+}
