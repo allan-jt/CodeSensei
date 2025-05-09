@@ -364,6 +364,20 @@
       "Use a stack: push numbers, and on seeing an operator, pop the top two numbers, apply the operator, and push the result.",
       "Be careful with operand order for non-commutative operations like subtraction and division."
     ]
+  },
+  {
+    "questionId": "4",
+    "topics": ["String"],
+    "difficulty": "easy",
+    "title": "Print String",
+    "description": "Write a function that takes a string as input and prints it.",
+    "testCases": ["\"Hello, world!\"", "\"OpenAI GPT\""],
+    "testAnswers": ["Hello, world!", "OpenAI GPT"],
+    "starterCode": {
+      "python": "def solution(input_str):\n    # Your code here\n    pass",
+      "javascript": "function solution(inputStr) {\n  // Your code here\n}"
+    },
+    "hints": ["Use the print() function to display the string."]
   }
 
 ]

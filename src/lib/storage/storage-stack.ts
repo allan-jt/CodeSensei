@@ -24,6 +24,7 @@ export class StorageStack extends cdk.Stack {
     this.metricsTable = dynamo.metricsTable;
 
     // Comment out if you don't want to create OpenSearch
+
     const openSearchStack = new OpenSearchStack(this, 'OpenSearchStack', {
       dynamoTable: this.questionBankTable,
     });
@@ -34,6 +35,5 @@ export class StorageStack extends cdk.Stack {
       value:       this.opensearchLambda.functionArn,
       description: 'ARN of the OpenSearch init/query Lambda',
     });
-
   }
 }
