@@ -18,19 +18,7 @@ export class InterviewAiCombinedStack extends cdk.Stack {
     super(scope, id, props);
 
     // -------------------- VPC & ECS Setup --------------------
-    // const vpc = new ec2.Vpc(this, "InterviewerVPC", {
-    //   maxAzs: 2,
-    // });
-
-    const cluster = new ecs.Cluster(this, "InterviewerCluster", {
-      // vpc: vpc,
-    });
-
-    // const repository = ecr.Repository.fromRepositoryName(
-    //   this,
-    //   "InterviewerRepo",
-    //   "ai_interviewer"
-    // );
+    const cluster = new ecs.Cluster(this, "InterviewerCluster");
 
     const taskRole = new iam.Role(this, "FargateTaskRole", {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
@@ -105,7 +93,7 @@ export class InterviewAiCombinedStack extends cdk.Stack {
       functionName: "Lambda3-2-ReadFromSQS",
       runtime: lambda.Runtime.PYTHON_3_13,
       handler: "lambda3_2.lambda_handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "lambda3_2")),
+      code: lambda.Code.fromAsset(path.join(__dirname, "lambda")),
       timeout: cdk.Duration.seconds(100),
       environment: {
         ECS_API_ENDPOINT: ecsEndpoint,
