@@ -132,8 +132,9 @@ async def process_assessment_action(action: dict):
             if action.get("selectedTopics") and action.get("selectedDifficulty"):
                 try:
                     # Get the first topic and difficulty for querying
-                    requested_topic = action["selectedTopics"][0]
-                    requested_difficulty = action["selectedDifficulty"][0]
+                    import random
+                    requested_topic = random.choice(action["selectedTopics"])
+                    requested_difficulty = random.choice(action["selectedDifficulty"])
                     
                     # Call the OpenSearch Lambda to get matching question IDs
                     lambda_client = boto3.client('lambda')
@@ -246,7 +247,10 @@ async def process_assessment_action(action: dict):
                         "questionTopics": action["selectedTopics"],
                         "questionDifficulty": action["selectedDifficulty"][0]
                     }
-                    
+                
+
+        # Ongoing assessment       
+
         elif action["type"] == "ongoing":
             user_id = action["userId"]
             timestamp = action["assessmentId"]
@@ -391,7 +395,24 @@ async def process_assessment_action(action: dict):
 
                 assessment_record.questions.append(question_record)
                 assessment_record.selectedNumberOfQuestions += 1
-                assessments_table.put_item(Item=serialize(assessment_record))
+                #assessments_table.put_item(Item=serialize(assessment_record))
+
+                new_questions = [ serialize(q) for q in assessment_record.questions ]
+
+                assessments_table.update_item(
+                    Key={
+                        "userId":    user_id,
+                        "timestamp": timestamp
+                    },
+                    UpdateExpression="""
+                        SET questions                = :qs,
+                            selectedNumberOfQuestions = :n
+                    """,
+                    ExpressionAttributeValues={
+                        ":qs": new_questions,
+                        ":n":  assessment_record.selectedNumberOfQuestions
+                    }
+                )
 
                 return_statement = {
                     "assessmentId": timestamp,
@@ -537,44 +558,62 @@ async def process_assessment_action(action: dict):
             
 
         elif action["type"] == "end":
-            # Get userId and assessmentId
-            user_id = action["userId"]
+            user_id   = action["userId"]
             timestamp = action["assessmentId"]
-            
+
             try:
-                # Get the assessment first
-                response = assessments_table.get_item(
+                # 1) Fetch the existing record
+                resp = assessments_table.get_item(Key={"userId": user_id, "timestamp": timestamp})
+                if "Item" not in resp:
+                    raise HTTPException(status_code=404, detail="Assessment not found")
+
+                assessment = deserialize(AssessmentRecord, resp["Item"])
+
+                # 2) Close out the last question
+                if assessment.questions:
+                    last_q = assessment.questions[-1]
+                    last_q.timeEnded = datetime.now().isoformat()
+                    last_q.status = QuestionStatus.PASS
+
+                # 3) Mark the assessment complete
+                assessment.status = Status.COMPLETE
+
+                # 4) Prepare fields to update
+                new_questions = [serialize(q) for q in assessment.questions]
+                new_status = assessment.status.value if hasattr(assessment.status, 'value') else assessment.status
+
+                # 5) Partial update so metrics stays untouched
+                assessments_table.update_item(
                     Key={
-                        "userId": user_id,
+                        "userId":    user_id,
                         "timestamp": timestamp
+                    },
+                    UpdateExpression="""
+                        SET questions = :qs,
+                            #s        = :st
+                    """,
+                    ExpressionAttributeNames={
+                        "#s": "status"
+                    },
+                    ExpressionAttributeValues={
+                        ":qs": new_questions,
+                        ":st": new_status
                     }
                 )
-                
-                if 'Item' not in response:
-                    raise HTTPException(status_code=404, detail="Assessment not found")
-                
-                # Deserialize the assessment
-                assessment = deserialize(AssessmentRecord, response['Item'])
-                
-                # Update the status
-                assessment.questions[-1].timeEnded = datetime.now().isoformat()
-                assessment.questions[-1].status = QuestionStatus.PASS
-                assessment.status = Status.COMPLETE
-                
-                # Serialize and save back to DynamoDB
-                assessments_table.put_item(Item=serialize(assessment))
-                
+
+                # 6) Return simple payload
                 return {
-                    "status": "completed",
+                    "status":       "completed",
                     "assessmentId": timestamp
                 }
-                
+
+            except HTTPException:
+                # rethrow known HTTP errors
+                raise
             except Exception as e:
-                logger.error(f"Error ending assessment: {str(e)}")
-                raise HTTPException(status_code=500, detail=f"Failed to end assessment: {str(e)}")
-        
-        else:
-            raise HTTPException(status_code=400, detail=f"Invalid action type: {action['type']}")
+                logger.error(f"Error ending assessment: {e}", exc_info=True)
+                raise HTTPException(status_code=500, detail=f"Failed to end assessment: {e}")
+
             
     except KeyError as ke:
         logger.error(f"Missing required field: {str(ke)}")
