@@ -49,6 +49,27 @@ function App({ socketURL, httpURL }: AppProps) {
     }
   };
 
+  const fetchScopeMetrics = async () => {
+    const url = `${httpURL}/metrics`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          assessmentId: assessmentId,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error scope metrics:", error);
+    }
+  };
+
   const storeReceivedQuestion = (data: any) => {
     if (!data.questionId) return;
     setQuestionNumber(questionNumber + 1);
@@ -72,7 +93,6 @@ function App({ socketURL, httpURL }: AppProps) {
 
   const nextQuestionHandler = async () => {
     if (!configuration) return;
-
     if (questionNumber >= configuration.numberOfQuestions) {
       const payload = {
         userId: userId,
@@ -84,15 +104,16 @@ function App({ socketURL, httpURL }: AppProps) {
       setConfiguration(undefined);
       setQuestion(undefined);
       setAssessmentId("");
+      await fetchScopeMetrics();
       return;
     }
-
     const payload = {
       userId: userId,
       assessmentId: assessmentId,
       type: "ongoing",
     };
     await fetchQuestion(payload);
+    await fetchScopeMetrics();
   };
 
   const pages = [
@@ -102,7 +123,7 @@ function App({ socketURL, httpURL }: AppProps) {
     },
     {
       name: "dashboard",
-      component: <DashboardPage httpURL={httpURL} userId="u001" />,
+      component: <DashboardPage httpURL={httpURL} userId={userId} />,
     },
     {
       name: "assessment",

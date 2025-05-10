@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import CodeEditorComponent from "./components/CodeEditor";
 import { Skeleton, Stack, Tabs } from "@mantine/core";
 import QuestionInfoComponent from "./components/QuestionInfo";
@@ -38,8 +38,8 @@ function AssessmentPage({
   nextQuestionHandler,
 }: AssessmentProps) {
   const tabSize = 24;
-  const languages = Object.keys(starterCode);
-  const languageSnippets = Object.values(starterCode);
+  let languages = Object.keys(starterCode);
+  let languageSnippets = Object.values(starterCode);
   const socketRef = useRef<WebSocket | null>(null);
 
   const [language, setLanguage] = useState(languages[0]);
@@ -160,6 +160,17 @@ function AssessmentPage({
     setLoading(false);
   };
 
+  useEffect(() => {
+    setCodeOutput("Output will appear here");
+    setAttempts([]);
+    setMessages([]);
+    setUserMessage("");
+    let languages = Object.keys(starterCode);
+    let languageSnippets = Object.values(starterCode);
+    setLanguage(languages[0]);
+    setCode(languageSnippets[0]);
+  }, [questionId]);
+
   return (
     <Stack align="stretch" justify="center" gap="md">
       <Skeleton visible={loading}>
@@ -203,12 +214,12 @@ function AssessmentPage({
             >
               Attempts
             </Tabs.Tab>
-            <Tabs.Tab
+            {/* <Tabs.Tab
               value="scopes"
               leftSection={<IconBrandSpeedtest size={tabSize} />}
             >
               Scopes
-            </Tabs.Tab>
+            </Tabs.Tab> */}
           </Tabs.List>
 
           <Tabs.Panel value="codeOutput" pt="md" h={600}>
@@ -225,9 +236,9 @@ function AssessmentPage({
           <Tabs.Panel value="attempts" pt="md" h={600}>
             <AttemptCardComponent attempts={attempts} />
           </Tabs.Panel>
-          <Tabs.Panel value="scopes" pt="md" h={600}>
+          {/* <Tabs.Panel value="scopes" pt="md" h={600}>
             <ScopeCardComponent metrics={[]} overallMetrics={[]} />
-          </Tabs.Panel>
+          </Tabs.Panel> */}
         </Tabs>
       </Skeleton>
     </Stack>
