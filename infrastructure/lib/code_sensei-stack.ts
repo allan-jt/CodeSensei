@@ -17,10 +17,10 @@ export class CodeSenseiStack extends cdk.Stack {
 
     const storage = new StorageStack(this, "StorageStack");
 
-    const assessment = new AssessmentStack(this, "AssessmentStack", {
-      env: props?.env,
-      opensearchLamba: storage.opensearchLambda,
-    });
+    // const assessment = new AssessmentStack(this, "AssessmentStack", {
+    //   env: props?.env,
+    //   opensearchLamba: storage.opensearchLambda,
+    // });
 
     // const metrics = new MetricsStack(this, "MetricsStack", {
     //   appName: appName,
@@ -40,12 +40,12 @@ export class CodeSenseiStack extends cdk.Stack {
     const auth = new AuthStack(this, "AuthStack", {
       userTable: storage.userTable,
     });
-    const api = new ApiGatewayStack(this, "APIGatewayStack", {
-      // executionEntryLambda: executor.executorEntryLambda,
-      // chatbotEntryLambda: chatbot.chatbotEntryLambda,
-      // metricsDashboardLambda: metrics.metricsDashboardLambda,
-      // metricsQuestionLambda: metrics.metricsQuestionLambda,
-      assessmentEntryLambda: assessment.lambdaForEcs.fn,
-    });
+    // const api = new ApiGatewayStack(this, "APIGatewayStack", {
+    //   // executionEntryLambda: executor.executorEntryLambda,
+    //   // chatbotEntryLambda: chatbot.chatbotEntryLambda,
+    //   // metricsDashboardLambda: metrics.metricsDashboardLambda,
+    //   // metricsQuestionLambda: metrics.metricsQuestionLambda,
+    //   assessmentEntryLambda: assessment.lambdaForEcs.fn,
+    // });
   }
 }

@@ -1,5 +1,5 @@
 import { Card, Group, Paper, ScrollArea, Text, TextInput } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { MessageType } from "../../../common/CustomTypes";
 
 interface ChatBotProps {

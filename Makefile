@@ -1,4 +1,4 @@
-INFRA = ./src
+INFRA = ./infrastructure
 FRONTEND = ./frontend
 
 REACT_APP = ${FRONTEND}/lib/react-app
