@@ -20,7 +20,7 @@ function NewAssessentPage({ handleSubmit }: NewAssessentProps) {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [difficulty, setDifficulty] = useState<Difficulty[]>([]);
   const [duration, setDuration] = useState<number>(10);
-  const [numberOfQuestions, setNumberOfQuestions] = useState<number>(1);
+  const [numberOfQuestions, setNumberOfQuestions] = useState<number>(2);
   const [disabled, setDisabled] = useState<boolean>(false);
 
   const handleSubmitNative = () => {
@@ -33,8 +33,8 @@ function NewAssessentPage({ handleSubmit }: NewAssessentProps) {
       alert("Please select at least one difficulty");
       return;
     }
-    if (numberOfQuestions < 1 || numberOfQuestions > 10) {
-      alert("Number of questions should be between 1 and 10");
+    if (numberOfQuestions < 2 || numberOfQuestions > 10) {
+      alert("Number of questions should be between 2 and 10");
       return;
     }
 
@@ -82,7 +82,7 @@ function NewAssessentPage({ handleSubmit }: NewAssessentProps) {
         placeholder="Enter number of questions"
         value={numberOfQuestions}
         onChange={(value) => setNumberOfQuestions(Number(value))}
-        min={1}
+        min={2}
         max={10}
       />
       <Group justify="flex-end" mt="md">
