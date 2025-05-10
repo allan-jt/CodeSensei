@@ -1,6 +1,7 @@
 import os
 import boto3
 from boto3.dynamodb.conditions import Key
+from decimal import Decimal
 
 dynamodb = boto3.resource("dynamodb")
 metrics_table = dynamodb.Table(os.environ.get("METRICS_TABLE_NAME"))
@@ -11,6 +12,7 @@ assessments_table = dynamodb.Table(os.environ.get("ASSESSMENTS_TABLE_NAME"))
 def fetch_overall_metrics(user_id):
     try:
         response = metrics_table.get_item(Key={"userId": user_id})
+        
         item = response.get("Item", {})
         metrics = item.get("metrics", {})
         

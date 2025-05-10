@@ -94,12 +94,7 @@ async def process_assessment_action(action: dict):
                 "selectedDuration": action.get("selectedDuration", 60) * 60,  # Convert to seconds
                 "selectedNumberOfQuestions": number_of_questions,  # Start with 1, will increment on ongoing calls
                 "status": "ongoing",
-                "metrics": {
-                    "scope": {
-                        "count": 0,
-                        "total": 0
-                    }
-                },
+                "metrics": {},
                 "questions": []
             }
             

@@ -5,12 +5,14 @@ import { CodeExecStack } from "./code-exec-stack/code-exec-stack";
 import { ResultManagerStack } from "./result-manager-stack/result-manager-stack";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 import { Function } from "aws-cdk-lib/aws-lambda";
+import { Cluster } from "aws-cdk-lib/aws-ecs";
 
 interface ExecutorStackProps extends cdk.StackProps {
   userTable: TableV2;
   questionBankTable: TableV2;
   assessmentsTable: TableV2;
   assessmentQuestionLocatorTable: TableV2;
+  cluster: Cluster;
 }
 
 export class ExecutorStack extends cdk.Stack {
@@ -32,6 +34,7 @@ export class ExecutorStack extends cdk.Stack {
     const codeExecStack = new CodeExecStack(this, "ExecutorCodeExecStack", {
       resultManagerLambda: resultManagerStack.resultManagerLambda,
       questionBankTable: props.questionBankTable,
+      cluster: props.cluster,
     });
 
     const queueStack = new QueueStack(this, "ExecutorQueueStack", {

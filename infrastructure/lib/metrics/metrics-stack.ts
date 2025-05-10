@@ -5,11 +5,14 @@ import { MetricsEcsStack } from "./ecs/ecs-stack";
 import { MetricsSqsStack } from "./sqs/sqs-stack";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 import { Function } from "aws-cdk-lib/aws-lambda";
+import { Cluster } from "aws-cdk-lib/aws-ecs";
+
 
 interface MetricsStackProps extends cdk.StackProps {
   appName: string;
   metricsTable: TableV2;
   assessmentsTable: TableV2;
+  cluster: Cluster;
 }
 
 export class MetricsStack extends cdk.Stack {
@@ -19,7 +22,7 @@ export class MetricsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: MetricsStackProps) {
     super(scope, id, props);
 
-    const { appName, metricsTable, assessmentsTable } = props;
+    const { appName, metricsTable, assessmentsTable, cluster } = props;
 
     const ecsStack = new MetricsEcsStack(this, "MetricsEcsStack", {
       stackName: `${appName}MetricsEcsStack`,
@@ -30,6 +33,7 @@ export class MetricsStack extends cdk.Stack {
       loadBalancerName: `${appName}MetricsLoadBalancer`,
       metricsTable: metricsTable,
       assessmentsTable: assessmentsTable,
+      cluster: cluster,
     });
 
     const sqsStack = new MetricsSqsStack(this, "MetricsSqsStack", {

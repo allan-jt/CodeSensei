@@ -132,6 +132,7 @@ class Attempt:
     execMemoryTaken: int  # Memory taken in KB
     status: AttemptStatus  # Status of the attempt (success or fail)
 
+
 @dataclass
 class QuestionsDone:
     questionId: str
@@ -156,7 +157,7 @@ class AssessmentRecord:
     selectedDuration: int  # Duration in minutes
     selectedNumberOfQuestions: int
     status: Status
-    metrics: Metrics
+    metrics: Dict[str, Dict[str, str]]
     questions: List[QuestionsDone]
 
 

@@ -91,7 +91,7 @@
     "title": "Merge Intervals",
     "description": "Given an array of intervals where intervals[i] = [start_i, end_i], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
     "testCases": ["[[1,3],[2,6],[8,10],[15,18]]", "[[1,4],[4,5]]"],
-    "testAnswers": ["[[1,6],[8,10],[15,18]]", "[[1,5]]"],
+    "testAnswers": ["[[1, 6], [8, 10], [15, 18]]", "[[1, 5]]"],
     "starterCode": {
       "python": "def solution(intervals):\n    # Your code here\n    pass",
       "javascript": "function solution(intervals) {\n  // Your code here\n}"
@@ -200,7 +200,7 @@
     "title": "Move Zeroes",
     "description": "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements.\n\nNote that you must do this in-place without making a copy of the array.",
     "testCases": ["[0,1,0,3,12]", "[1,0,2,0,1]"],
-    "testAnswers": ["[1,3,12,0,0]", "[1,2,1,0,0]"],
+    "testAnswers": ["[1, 3, 12, 0, 0]", "[1, 2, 1, 0, 0]"],
     "starterCode": {
       "python": "def solution(nums):\n    # Your code here\n    pass",
       "javascript": "function solution(nums) {\n  // Your code here\n}"
@@ -217,7 +217,7 @@
     "title": "Product of Array Except Self",
     "description": "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].\n\nThe product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.\n\nYou must write an algorithm that runs in O(n) time and without using the division operation.",
     "testCases": ["[1,2,3,4]", "[-1,1,0,-3,3]"],
-    "testAnswers": ["[24,12,8,6]", "[0,0,9,0,0]"],
+    "testAnswers": ["[24, 12, 8, 6]", "[0, 0, 9, 0, 0]"],
     "starterCode": {
       "python": "def solution(nums):\n    # Your code here\n    pass",
       "javascript": "function solution(nums) {\n  // Your code here\n}"
@@ -235,12 +235,9 @@
     "description": "There is a bi-directional graph with n vertices, where each vertex is labeled from 0 to n - 1 (inclusive). The edges in the graph are represented as a 2D integer array edges, where each edges[i] = [u_i, v_i] denotes a bi-directional edge between vertex u_i and vertex v_i. Every vertex pair is connected by at most one edge, and no vertex has an edge to itself.\n\nYou want to determine if there is a valid path that exists from vertex source to vertex destination.\n\nGiven edges and the integers n, source, and destination, return true if there is a valid path from source to destination, or false otherwise.",
     "testCases": [
       "3, [[0,1],[1,2],[2,0]], 0, 2",
-      "6, [[0,1],[0,2],[3,5],[5,4],[4,3]], 0, 5"
+      "6, [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]], 0, 5"
     ],
-    "testAnswers": [
-      "true",
-      "false"
-    ],
+    "testAnswers": ["true", "false"],
     "starterCode": {
       "python": "def solution(n, edges, start, end):\n    # Your code here\n    pass",
       "javascript": "function solution(n, edges, start, end) {\n  // Your code here\n}"
@@ -256,14 +253,8 @@
     "difficulty": "easy",
     "title": "Climbing Stairs",
     "description": "You are climbing a staircase. It takes n steps to reach the top.\n\nEach time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
-    "testCases": [
-      "2",
-      "3"
-    ],
-    "testAnswers": [
-      "2",
-      "3"
-    ],
+    "testCases": ["2", "3"],
+    "testAnswers": ["2", "3"],
     "starterCode": {
       "python": "def solution(n):\n    # Your code here\n    pass",
       "javascript": "function solution(n) {\n  // Your code here\n}"
@@ -279,14 +270,8 @@
     "difficulty": "easy",
     "title": "Number of Connected Components in an Undirected Graph",
     "description": "There is an undirected graph with n nodes. There is also an edges array, where edges[i] = [a, b] means that there is an edge between node a and node b in the graph.\n\nThe nodes are numbered from 0 to n - 1.\n\nReturn the total number of connected components in that graph.",
-    "testCases": [
-      "3, [[0,1],[0,2]]",
-      "6, [[0,1],[1,2],[2,3],[4,5]]"
-    ],
-    "testAnswers": [
-      "1",
-      "2"
-    ],
+    "testCases": ["3, [[0,1],[0,2]]", "6, [[0,1],[1,2],[2,3],[4,5]]"],
+    "testAnswers": ["1", "2"],
     "starterCode": {
       "python": "def solution(n, edges):\n    # Your code here\n    pass",
       "javascript": "function solution(n, edges) {\n  // Your code here\n}"
@@ -302,14 +287,8 @@
     "difficulty": "easy",
     "title": "Maximum Subarray",
     "description": "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
-    "testCases": [
-      "[1]",
-      "[5,4,-1,7,8]"
-    ],
-    "testAnswers": [
-      "1",
-      "23"
-    ],
+    "testCases": ["[1]", "[5,4,-1,7,8]"],
+    "testAnswers": ["1", "23"],
     "starterCode": {
       "python": "def solution(nums):\n    # Your code here\n    pass",
       "javascript": "function solution(nums) {\n  // Your code here\n}"
@@ -325,14 +304,8 @@
     "difficulty": "easy",
     "title": "Next Greater Element",
     "description": "The next greater element of some element x in an array is the first greater element that is to the right of x in the same array.\n\nYou are given two distinct 0-indexed integer arrays nums1 and nums2, where nums1 is a subset of nums2.\n\nFor each 0 <= i < nums1.length, find the index j such that nums1[i] == nums2[j] and determine the next greater element of nums2[j] in nums2. If there is no next greater element, then the answer for this query is -1.\n\nReturn an array ans of length nums1.length such that ans[i] is the next greater element as described above.",
-    "testCases": [
-      "[4,1,2], [1,3,4,2]",
-      "[2,4], [1,2,3,4]"
-    ],
-    "testAnswers": [
-      "[-1,3,-1]",
-      "[3,-1]"
-    ],
+    "testCases": ["[4,1,2], [1,3,4,2]", "[2,4], [1,2,3,4]"],
+    "testAnswers": ["[-1, 3, -1]", "[3, -1]"],
     "starterCode": {
       "python": "def solution(nums1, nums2):\n    # Your code here\n    pass",
       "javascript": "function solution(nums1, nums2) {\n  // Your code here\n}"
@@ -352,10 +325,7 @@
       "[\"2\",\"1\",\"+\",\"3\",\"*\"]",
       "[\"4\",\"13\",\"5\",\"/\",\"+\"]"
     ],
-    "testAnswers": [
-      "9",
-      "6"
-    ],
+    "testAnswers": ["9", "6"],
     "starterCode": {
       "python": "def solution(tokens):\n    # Your code here\n    pass",
       "javascript": "function solution(tokens) {\n  // Your code here\n}"
@@ -379,5 +349,4 @@
     },
     "hints": ["Use the print() function to display the string."]
   }
-
 ]

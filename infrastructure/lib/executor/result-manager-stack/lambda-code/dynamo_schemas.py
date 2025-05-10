@@ -136,6 +136,9 @@ class Attempt:
 @dataclass
 class QuestionsDone:
     questionId: str
+    topics: List[str]              # I need it for bedrock
+    difficulty: str        # <I need it for bedrock
+    currentTopic: str
     attempts: List[Attempt]
     timeStarted: str
     timeEnded: str
@@ -154,7 +157,7 @@ class AssessmentRecord:
     selectedDuration: int  # Duration in minutes
     selectedNumberOfQuestions: int
     status: Status
-    metrics: Metrics
+    metrics: Dict[str, Dict[str, str]]
     questions: List[QuestionsDone]
 
 
