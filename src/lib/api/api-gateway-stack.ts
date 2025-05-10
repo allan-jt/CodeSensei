@@ -7,8 +7,9 @@ import { HttpApiCustom } from "./custom-constructs/http-api";
 interface ApiGatewayProps extends cdk.StackProps {
   // executionEntryLambda: Function;
   // chatbotEntryLambda: Function;
-  metricsDashboardLambda: Function;
-  metricsQuestionLambda: Function;
+  // metricsDashboardLambda: Function;
+  // metricsQuestionLambda: Function;
+  assessmentEntryLambda: Function;
 }
 
 export class ApiGatewayStack extends cdk.Stack {
@@ -21,8 +22,9 @@ export class ApiGatewayStack extends cdk.Stack {
     // });
 
     const httpApi = new HttpApiCustom(this, "HttpApi", {
-      metricsDashboardLambda: props.metricsDashboardLambda,
-      metricsQuestionLambda: props.metricsQuestionLambda,
+      // metricsDashboardLambda: props.metricsDashboardLambda,
+      // metricsQuestionLambda: props.metricsQuestionLambda,
+      assessmentEntryLambda: props.assessmentEntryLambda,
     });
   }
 }

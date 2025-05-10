@@ -9,8 +9,9 @@ import { Function } from "aws-cdk-lib/aws-lambda";
 import { Construct } from "constructs";
 
 interface HttpApiCustomProps {
-  metricsDashboardLambda: Function;
-  metricsQuestionLambda: Function;
+  // metricsDashboardLambda: Function;
+  // metricsQuestionLambda: Function;
+  assessmentEntryLambda: Function;
 }
 
 export class HttpApiCustom extends Construct {
@@ -25,21 +26,30 @@ export class HttpApiCustom extends Construct {
       },
     });
 
-    api.addRoutes({
-      path: "/dashboard",
-      methods: [HttpMethod.POST],
-      integration: new HttpLambdaIntegration(
-        "DashBoardLambda",
-        props.metricsDashboardLambda
-      ),
-    });
+    // api.addRoutes({
+    //   path: "/dashboard",
+    //   methods: [HttpMethod.POST],
+    //   integration: new HttpLambdaIntegration(
+    //     "DashBoardLambda",
+    //     props.metricsDashboardLambda
+    //   ),
+    // });
+
+    // api.addRoutes({
+    //   path: "/metrics",
+    //   methods: [HttpMethod.POST],
+    //   integration: new HttpLambdaIntegration(
+    //     "QuestionLambda",
+    //     props.metricsQuestionLambda
+    //   ),
+    // });
 
     api.addRoutes({
-      path: "/metrics",
+      path: "/assessment",
       methods: [HttpMethod.POST],
       integration: new HttpLambdaIntegration(
-        "QuestionLambda",
-        props.metricsQuestionLambda
+        "AssessmentEntryLambda",
+        props.assessmentEntryLambda
       ),
     });
   }
