@@ -19,8 +19,6 @@ export class FrontendStack extends cdk.Stack {
       versioned: false,
       autoDeleteObjects: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      // publicReadAccess: false,
-      // blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       publicReadAccess: true,
       blockPublicAccess: new BlockPublicAccess({
         blockPublicAcls: false,
@@ -55,15 +53,15 @@ export class FrontendStack extends cdk.Stack {
     });
 
     const reactDist = path.join(__dirname, "react-app/dist");
-    const envFilePath = path.join(reactDist, "env.js");
-    const envContent = `window.env = {
-      CLIENT_ID: "${process.env.CLIENT_ID}",
-      AUTHORITY: "${process.env.AUTHORITY}",
-      REDIRECT_URL: "https://${distribution.domainName}",
-      SOCKET_URL: "${process.env.SOCKET_URL}",
-      HTTP_URL: "${process.env.HTTP_URL}",
-    };`;
-    writeFileSync(envFilePath, envContent);
+    // const envFilePath = path.join(reactDist, "env.js");
+    // const envContent = `window.env = {
+    //   CLIENT_ID: "${process.env.CLIENT_ID}",
+    //   AUTHORITY: "${process.env.AUTHORITY}",
+    //   REDIRECT_URL: "https://${distribution.domainName}",
+    //   SOCKET_URL: "${process.env.SOCKET_URL}",
+    //   HTTP_URL: "${process.env.HTTP_URL}",
+    // };`;
+    // writeFileSync(envFilePath, envContent);
 
     new BucketDeployment(this, "DeployWebsite", {
       sources: [Source.asset(reactDist)],
