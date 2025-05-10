@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import CodeEditorComponent from "./components/CodeEditor";
-import { Stack, Tabs } from "@mantine/core";
+import { Skeleton, Stack, Tabs } from "@mantine/core";
 import QuestionInfoComponent from "./components/QuestionInfo";
 import ChatBotComponent from "./components/ChatBot";
 import CodeOutputComponent from "./components/CodeOutput";
 import { IconBrandSpeedtest, IconTerminal } from "@tabler/icons-react";
 import { BotMessageSquare } from "lucide-react";
 import AttemptCardComponent from "./components/AttemptCard";
-import type { Attempts, MessageType, Metric } from "../../common/CustomTypes";
+import type { Attempts, MessageType } from "../../common/CustomTypes";
 import ScopeCardComponent from "./components/ScopeCard";
 
 interface AssessmentProps {
@@ -22,7 +22,7 @@ interface AssessmentProps {
 
   socketURL: string;
   httpURL: string;
-  nextQuestionHandler: (data: any) => void;
+  nextQuestionHandler: () => void;
 }
 
 function AssessmentPage({
@@ -48,6 +48,7 @@ function AssessmentPage({
   const [attempts, setAttempts] = useState<Attempts[]>([]);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [userMessage, setUserMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleMessageSend = () => {
     if (userMessage.trim() === "") return;
@@ -153,74 +154,82 @@ function AssessmentPage({
     console.log("Message sent:", payload);
   };
 
-  const handleNext = () => {
-    nextQuestionHandler({ userId, assessmentId, code });
+  const handleNext = async () => {
+    setLoading(true);
+    await nextQuestionHandler();
+    setLoading(false);
   };
 
   return (
     <Stack align="stretch" justify="center" gap="md">
-      <QuestionInfoComponent
-        title={questionTitle}
-        description={questionDescription}
-        topic={questionTopics}
-        difficulty={questionDifficulty}
-      />
+      <Skeleton visible={loading}>
+        <QuestionInfoComponent
+          title={questionTitle}
+          description={questionDescription}
+          topic={questionTopics}
+          difficulty={questionDifficulty}
+        />
+      </Skeleton>
 
-      <CodeEditorComponent
-        languages={languages}
-        languageSnippets={languageSnippets}
-        getLanguage={setLanguage}
-        getCode={setCode}
-        handleSubmit={handleSubmit}
-        handleNext={handleNext}
-      />
+      <Skeleton visible={loading}>
+        <CodeEditorComponent
+          languages={languages}
+          languageSnippets={languageSnippets}
+          getLanguage={setLanguage}
+          getCode={setCode}
+          handleSubmit={handleSubmit}
+          handleNext={handleNext}
+        />
+      </Skeleton>
 
-      <Tabs defaultValue="codeOutput">
-        <Tabs.List grow>
-          <Tabs.Tab
-            value="codeOutput"
-            leftSection={<IconTerminal size={tabSize} />}
-          >
-            Code Output
-          </Tabs.Tab>
-          <Tabs.Tab
-            value="messages"
-            leftSection={<BotMessageSquare size={tabSize} />}
-          >
-            Chat Bot
-          </Tabs.Tab>
-          <Tabs.Tab
-            value="attempts"
-            leftSection={<IconBrandSpeedtest size={tabSize} />}
-          >
-            Attempts
-          </Tabs.Tab>
-          <Tabs.Tab
-            value="scopes"
-            leftSection={<IconBrandSpeedtest size={tabSize} />}
-          >
-            Scopes
-          </Tabs.Tab>
-        </Tabs.List>
+      <Skeleton visible={loading}>
+        <Tabs defaultValue="codeOutput">
+          <Tabs.List grow>
+            <Tabs.Tab
+              value="codeOutput"
+              leftSection={<IconTerminal size={tabSize} />}
+            >
+              Code Output
+            </Tabs.Tab>
+            <Tabs.Tab
+              value="messages"
+              leftSection={<BotMessageSquare size={tabSize} />}
+            >
+              Chat Bot
+            </Tabs.Tab>
+            <Tabs.Tab
+              value="attempts"
+              leftSection={<IconBrandSpeedtest size={tabSize} />}
+            >
+              Attempts
+            </Tabs.Tab>
+            <Tabs.Tab
+              value="scopes"
+              leftSection={<IconBrandSpeedtest size={tabSize} />}
+            >
+              Scopes
+            </Tabs.Tab>
+          </Tabs.List>
 
-        <Tabs.Panel value="codeOutput" pt="md" h={600}>
-          <CodeOutputComponent codeOutput={codeOutput} />
-        </Tabs.Panel>
-        <Tabs.Panel value="messages" pt="md" h={600}>
-          <ChatBotComponent
-            messages={messages}
-            userMessage={userMessage}
-            setUserMessage={setUserMessage}
-            handleSend={handleMessageSend}
-          />
-        </Tabs.Panel>
-        <Tabs.Panel value="attempts" pt="md" h={600}>
-          <AttemptCardComponent attempts={attempts} />
-        </Tabs.Panel>
-        <Tabs.Panel value="scopes" pt="md" h={600}>
-          <ScopeCardComponent metrics={[]} overallMetrics={[]} />
-        </Tabs.Panel>
-      </Tabs>
+          <Tabs.Panel value="codeOutput" pt="md" h={600}>
+            <CodeOutputComponent codeOutput={codeOutput} />
+          </Tabs.Panel>
+          <Tabs.Panel value="messages" pt="md" h={600}>
+            <ChatBotComponent
+              messages={messages}
+              userMessage={userMessage}
+              setUserMessage={setUserMessage}
+              handleSend={handleMessageSend}
+            />
+          </Tabs.Panel>
+          <Tabs.Panel value="attempts" pt="md" h={600}>
+            <AttemptCardComponent attempts={attempts} />
+          </Tabs.Panel>
+          <Tabs.Panel value="scopes" pt="md" h={600}>
+            <ScopeCardComponent metrics={[]} overallMetrics={[]} />
+          </Tabs.Panel>
+        </Tabs>
+      </Skeleton>
     </Stack>
   );
 }

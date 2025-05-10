@@ -152,11 +152,7 @@ function DashboardPage({ httpURL, userId }: DashboardPageProps) {
               key={assessment.timeStamp}
               bullet={<IconBrandSpeedtest size={25} />}
               title={
-                <Accordion
-                  variant="contained"
-                  radius="md"
-                  // defaultValue={assessment.timeStamp}
-                >
+                <Accordion variant="contained" radius="md">
                   <Accordion.Item value={assessment.timeStamp}>
                     <Accordion.Control>
                       {assessment.timeStamp}
