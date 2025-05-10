@@ -20,6 +20,9 @@ run_frontend_local:
 build_frontend:
 	cd ${REACT_APP} && npm run build
 
+gen_frontend_env:
+	cd ${FRONTEND} && npx ts-node generate-env.ts
+
 destroy_infra:
 	${I_CMD} destroy --all --require-approval never
 
