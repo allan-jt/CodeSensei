@@ -51,6 +51,7 @@ async def process_assessment_action(action: dict):
             # Use the provided userId and timestamp
             user_id = action["userId"]
             timestamp = action["timestamp"]
+            number_of_questions = action.get("numberOfQuestions", 1)
             
             # Convert string topics to Topic enum - Handle multiple topics correctly
             selected_topics = []
@@ -91,7 +92,7 @@ async def process_assessment_action(action: dict):
                 "selectedTopics": [topic.value for topic in selected_topics],  # Convert enums to values
                 "selectedDifficulty": [diff.value for diff in selected_difficulties],  # Convert enums to values
                 "selectedDuration": action.get("selectedDuration", 60) * 60,  # Convert to seconds
-                "selectedNumberOfQuestions": 1,  # Start with 1, will increment on ongoing calls
+                "selectedNumberOfQuestions": number_of_questions,  # Start with 1, will increment on ongoing calls
                 "status": "ongoing",
                 "metrics": {
                     "scope": {
@@ -279,6 +280,8 @@ async def process_assessment_action(action: dict):
 
                 # 1) Extract the set of all already‐served question IDs
                 done_ids = { q.questionId for q in assessment_record.questions }
+                completed_topic_difficulty_pairs = { (q.currentTopic, q.difficulty) for q in assessment_record.questions }
+                selected_question_amount = assessment_record.selectedNumberOfQuestions
 
                 for attempt in range(MAX_ATTEMPTS):
 
@@ -310,18 +313,39 @@ async def process_assessment_action(action: dict):
                     ]
 
                     # 4) Prompt Bedrock (telling it to avoid prev_pair)
-                    prompt = f"""
-                            You are a recommender.
-                            Requested topics:       {assessment_record.selectedTopics}
-                            Requested difficulties: {assessment_record.selectedDifficulty}
-                            Previously served pair: {prev_pair}
-                            Previous performance:   {prev_perf}
-                            All possible combos:    {all_pairs}
+                    prompt =    f"""
+                                You are a recommender.
+                                Requested topics: {assessment_record.selectedTopics}
+                                Requested difficulties: {assessment_record.selectedDifficulty}
+                                Previously served pairs: {completed_topic_difficulty_pairs}
+                                User requested number of questions: {selected_question_amount}
+                                All possible topic-difficulty combos: {all_pairs}
+                                Previous performance: {prev_perf}
 
-                            Pick one **different** pair at random (i.e. not the previously served pair).
-                            Use previous performance to inform your choices.
-                            Respond **only** in JSON: {{ "topic": "<topic>", "difficulty": "<difficulty>" }}
-                            """
+                                From the list of all possible combos, select one that has NOT yet been served.  
+                                If every combo has already been previously served AND the total requested questions ({selected_question_amount})  
+                                exceeds the count of unique combos, you MAY pick a combo that was already served.  
+                                Use the user's previous performance to guide your choice (e.g. ease off harder combos if needed).  
+                                Respond **only** in JSON format exactly as:
+                                {{ "topic": "<topic>", "difficulty": "<difficulty>" }}
+                                """
+                    
+                    #Previously served pair: {prev_pair}
+                    #Previous performance:   {prev_perf}
+
+                    #prompt = f"""
+                    #        You are a recommender.
+                    #        Requested topics:       {assessment_record.selectedTopics}
+                    #        Requested difficulties: {assessment_record.selectedDifficulty}
+                    #        Previously served pairs: {prev_pair}
+                    #        User Selected Number of Questions: {selected_question_amount}
+                    #        All possible combos:    {all_pairs}
+
+
+                    #        Pick one **different** pair at random (i.e. not the previously served pair).
+                    #        Use previous performance to inform your choices.
+                    #        Respond **only** in JSON: {{ "topic": "<topic>", "difficulty": "<difficulty>" }}   
+                    #        """
                     
                     payload = {
                         "anthropic_version": "bedrock-2023-05-31",
