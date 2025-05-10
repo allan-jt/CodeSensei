@@ -34,12 +34,22 @@ def format_metrics(metrics_dict):
 def handler(event, context):
     headers = {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}
     try:
+        try:
+            raw_body = event.get("body", "{}")
+            body = raw_body if isinstance(raw_body, dict) else json.loads(raw_body)
+        except json.JSONDecodeError:
+            print("Invalid JSON body")
+            return "400 Bad Request"
+        
+        print(body)
+
         # Get parameters from event
-        user_id = event.get("user_id")
-        timestamp = event.get("timestamp")
+        user_id = body.get("userId")
+        timestamp = body.get("assessmentId")
         
         # Fetch most recently completed assessment question
         question = fetch_assessment_question(user_id, timestamp)
+        print(question)
         if not question:
             raise Exception("There are no completed assessment questions")
         
@@ -53,12 +63,17 @@ def handler(event, context):
         best_exec_mem = question.get("bestExecMem")
 
         # Validate the values
+        print(status)
         if status != "pass":
             raise Exception("The question was not completed")
         if not all([topics, difficulty]):
             raise Exception("The question has missing scopes")
-        if not all([time_started, time_ended, best_exec_time, best_exec_mem]):
+        print(time_started, time_ended, best_exec_time, best_exec_mem)
+        if not all(x is not None for x in [time_started, time_ended, best_exec_time, best_exec_mem]):
             raise Exception("The question has missing metrics")
+
+        # if not all([time_started, time_ended, best_exec_time, best_exec_mem]):
+        #     raise Exception("The question has missing metrics")
         
         # Create update metrics payload
         scopes = [f"{topic}#{difficulty}" for topic in topics]

@@ -15,9 +15,9 @@ import { join } from "path";
 interface CodeExecStackProps extends cdk.StackProps {
   readonly resultManagerLambda: Function;
   readonly questionBankTable: TableV2;
+  readonly cluster: Cluster;
 }
 export class CodeExecStack extends cdk.Stack {
-  public readonly cluster: Cluster;
   public readonly taskDefinition: FargateTaskDefinition[] = [];
   public readonly fargateService: ApplicationLoadBalancedFargateService[] = [];
   public readonly languages: string[] = ["python", "javascript"];
@@ -25,7 +25,7 @@ export class CodeExecStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: CodeExecStackProps) {
     super(scope, id, props);
 
-    this.cluster = new Cluster(this, "ExecutorECSCluster");
+    // this.cluster = new Cluster(this, "ExecutorECSCluster");
 
     for (const language of this.languages) {
       const taskDefinition = new FargateTaskDefinition(
@@ -59,13 +59,18 @@ export class CodeExecStack extends cdk.Stack {
         this,
         `ECSFargateServiceWithALB${language}`,
         {
-          cluster: this.cluster,
+          cluster: props.cluster,
           taskDefinition: taskDefinition,
           publicLoadBalancer: true,
           loadBalancerName: `ECSExecutorALB${language}`,
           desiredCount: 1,
         }
       );
+
+      fargateService.service.autoScaleTaskCount({
+        minCapacity: 1,
+        maxCapacity: 6,
+      });
 
       this.taskDefinition.push(taskDefinition);
       this.fargateService.push(fargateService);

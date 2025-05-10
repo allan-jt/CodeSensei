@@ -11,14 +11,18 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 
+interface ChatBotProps extends cdk.StackProps {
+  cluster: ecs.Cluster;
+}
+
 export class InterviewAiCombinedStack extends cdk.Stack {
   public readonly chatbotEntryLambda: lambda.Function;
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: ChatBotProps) {
     super(scope, id, props);
 
     // -------------------- VPC & ECS Setup --------------------
-    const cluster = new ecs.Cluster(this, "InterviewerCluster");
+    // const cluster = new ecs.Cluster(this, "InterviewerCluster");
 
     const taskRole = new iam.Role(this, "FargateTaskRole", {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
@@ -33,7 +37,7 @@ export class InterviewAiCombinedStack extends cdk.Stack {
         this,
         "InterviewerFargateService",
         {
-          cluster,
+          cluster: props.cluster,
           cpu: 256,
           memoryLimitMiB: 512,
           desiredCount: 1,
@@ -49,6 +53,11 @@ export class InterviewAiCombinedStack extends cdk.Stack {
           },
         }
       );
+
+    fargateService.service.autoScaleTaskCount({
+      minCapacity: 1,
+      maxCapacity: 6,
+    });
 
     const ecsEndpoint =
       "http://" + fargateService.loadBalancer.loadBalancerDnsName + "/hint";

@@ -32,10 +32,11 @@ def handler(event, context):
 
         # Fetch overall metrics
         overall_metrics = fetch_overall_metrics(user_id)
+        print(overall_metrics)
 
         # Fetch all assessment metrics
         all_assessment_metrics = fetch_all_assessment_metrics(user_id)
-        
+        print(all_assessment_metrics)
         # Format for metrics data
         result = [{ "type": "overall", "metrics": format_metrics(overall_metrics) }]
         for assessment in all_assessment_metrics:
