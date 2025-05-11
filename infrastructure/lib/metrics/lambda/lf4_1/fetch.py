@@ -11,8 +11,10 @@ def fetch_assessment_question(user_id, timestamp):
         response = table.get_item(Key=key)
         item = response.get("Item", {})
         questions = item.get("questions", [])
-        
+        status = item.get("status", "")
         # Return most recently completed question
+        if status == "complete":
+            return questions[-1] if questions and len(questions) > 1 else {}
         return questions[-2] if questions and len(questions) > 1 else {}
     
     except Exception as e:
