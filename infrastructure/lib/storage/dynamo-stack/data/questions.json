@@ -336,10 +336,10 @@
     ]
   },
   {
-    "questionId": "4",
+    "questionId": "20",
     "topics": ["String"],
     "difficulty": "easy",
-    "title": "Print String",
+    "title": "Return String",
     "description": "Write a function that takes a string as input and prints it.",
     "testCases": ["\"Hello, world!\"", "\"OpenAI GPT\""],
     "testAnswers": ["Hello, world!", "OpenAI GPT"],
