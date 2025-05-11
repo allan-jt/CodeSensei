@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CodeEditorComponent from "./components/CodeEditor";
 import { Skeleton, Stack, Tabs } from "@mantine/core";
 import QuestionInfoComponent from "./components/QuestionInfo";
@@ -8,7 +8,7 @@ import { IconBrandSpeedtest, IconTerminal } from "@tabler/icons-react";
 import { BotMessageSquare } from "lucide-react";
 import AttemptCardComponent from "./components/AttemptCard";
 import type { Attempts, MessageType } from "../../common/CustomTypes";
-import ScopeCardComponent from "./components/ScopeCard";
+// import ScopeCardComponent from "./components/ScopeCard";
 
 interface AssessmentProps {
   userId: string;
