@@ -1,0 +1,32 @@
+[
+  {
+    "userId": "u001",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "email": "alice.smith@example.com",
+    "createdAt": "2025-04-09T10:00:00Z",
+    "executionSocketUrl": null,
+    "chatSocketUrl": null,
+    "currentAssessmentTimestamp": null
+  },
+  {
+    "userId": "u002",
+    "firstName": "Bob",
+    "lastName": "Johnson",
+    "email": "bob.johnson@example.com",
+    "createdAt": "2025-04-07T08:45:00Z",
+    "executionSocketUrl": null,
+    "chatSocketUrl": null,
+    "currentAssessmentTimestamp": "2025-04-08T14:30:00Z"
+  },
+  {
+    "userId": "u003",
+    "firstName": "Carol",
+    "lastName": "Davis",
+    "email": "carol.davis@example.com",
+    "createdAt": "2025-04-06T14:20:00Z",
+    "executionSocketUrl": null,
+    "chatSocketUrl": null,
+    "currentAssessmentTimestamp": null
+  }
+]

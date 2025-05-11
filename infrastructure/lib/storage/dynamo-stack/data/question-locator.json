@@ -1,0 +1,16 @@
+[
+  {
+    "userId": "u003",
+    "scope": "Dynamic Programming#medium",
+    "location": {
+      "2025-04-07T10:15:00Z": ["0"]
+    }
+  },
+  {
+    "userId": "u003",
+    "scope": "Array#all",
+    "location": {
+      "2025-04-07T10:15:00Z": ["1", "2"]
+    }
+  }
+]
