@@ -6,7 +6,6 @@ import { MetricsStack } from "./metrics/metrics-stack";
 import { ExecutorStack } from "./executor/executor-stack";
 import { ApiGatewayStack } from "./api/api-gateway-stack";
 import { AuthStack } from "./auth/auth-stack";
-import { InterviewAiCombinedStack } from "./chatbot/ai-interviewer-cdk-stack";
 import { Cluster } from "aws-cdk-lib/aws-ecs";
 
 export class CodeSenseiStack extends cdk.Stack {
