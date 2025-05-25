@@ -6,7 +6,8 @@ import { MetricsStack } from "./metrics/metrics-stack";
 import { ExecutorStack } from "./executor/executor-stack";
 import { ApiGatewayStack } from "./api/api-gateway-stack";
 import { AuthStack } from "./auth/auth-stack";
-import { Cluster } from "aws-cdk-lib/aws-ecs";
+import { ChatbotStack } from "./chatbot/chatbot-stack";
+import { ECSStack } from "./ecs/ecs-stack";
 
 export class CodeSenseiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -16,44 +17,45 @@ export class CodeSenseiStack extends cdk.Stack {
 
     const storage = new StorageStack(this, "StorageStack");
 
-    const ECSCluster = new Cluster(this, "CodeSenseiECSCluster");
+    const ecs = new ECSStack(this, "ECSStack");
 
-    const auth = new AuthStack(this, "AuthStack", {
-      userTable: storage.userTable,
-    });
+    // const auth = new AuthStack(this, "AuthStack", {
+    //   userTable: storage.userTable,
+    // });
 
-    const assessment = new AssessmentStack(this, "AssessmentStack", {
-      env: props?.env,
-      opensearchLamba: storage.opensearchLambda,
-      cluster: ECSCluster,
-    });
+    // const assessment = new AssessmentStack(this, "AssessmentStack", {
+    //   env: props?.env,
+    //   opensearchLamba: storage.opensearchLambda,
+    //   cluster: ecs.cluster,
+    // });
 
-    const executor = new ExecutorStack(this, "ExecutorStack", {
-      userTable: storage.userTable,
+    // const executor = new ExecutorStack(this, "ExecutorStack", {
+    //   userTable: storage.userTable,
+    //   questionBankTable: storage.questionBankTable,
+    //   assessmentsTable: storage.assessmentsTable,
+    //   assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
+    //   cluster: ecs.cluster,
+    // });
+
+    // const metrics = new MetricsStack(this, "MetricsStack", {
+    //   appName: appName,
+    //   stackName: `${appName}MetricsStack`,
+    //   metricsTable: storage.metricsTable,
+    //   assessmentsTable: storage.assessmentsTable,
+    //   cluster: ecs.cluster,
+    // });
+
+    const chatbot = new ChatbotStack(this, "ChatBot", {
+      cluster: ecs.cluster,
       questionBankTable: storage.questionBankTable,
-      assessmentsTable: storage.assessmentsTable,
-      assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
-      cluster: ECSCluster,
     });
 
-    const metrics = new MetricsStack(this, "MetricsStack", {
-      appName: appName,
-      stackName: `${appName}MetricsStack`,
-      metricsTable: storage.metricsTable,
-      assessmentsTable: storage.assessmentsTable,
-      cluster: ECSCluster,
-    });
-
-    const chatbot = new InterviewAiCombinedStack(this, "AIChatBot", {
-      cluster: ECSCluster,
-    });
-
-    const api = new ApiGatewayStack(this, "APIGatewayStack", {
-      executionEntryLambda: executor.executorEntryLambda,
-      chatbotEntryLambda: chatbot.chatbotEntryLambda,
-      metricsDashboardLambda: metrics.metricsDashboardLambda,
-      metricsQuestionLambda: metrics.metricsQuestionLambda,
-      assessmentEntryLambda: assessment.lambdaForEcs.fn,
-    });
+    // const api = new ApiGatewayStack(this, "APIGatewayStack", {
+    //   executionEntryLambda: executor.executorEntryLambda,
+    //   chatbotEntryLambda: chatbot.chatbotEntryLambda,
+    //   metricsDashboardLambda: metrics.metricsDashboardLambda,
+    //   metricsQuestionLambda: metrics.metricsQuestionLambda,
+    //   assessmentEntryLambda: assessment.lambdaForEcs.fn,
+    // });
   }
 }
