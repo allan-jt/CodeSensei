@@ -6,6 +6,7 @@ import { Cluster } from "aws-cdk-lib/aws-ecs";
 import { BedrockAccessRole } from "./custom-constructs/bedrock";
 import { ECSCustom } from "./custom-constructs/ecs";
 import { LambdaCustom } from "./custom-constructs/lambda";
+import { Queue } from "aws-cdk-lib/aws-sqs";
 
 interface ChatbotStackProps extends cdk.StackProps {
   readonly questionBankTable: TableV2;
@@ -20,15 +21,18 @@ export class ChatbotStack extends cdk.Stack {
 
     const bedrockRole = new BedrockAccessRole(this, "BedrockAccessRole");
 
+    const sqs = new Queue(this, "ChatbotSQSQueue");
+
     const ecs = new ECSCustom(this, "ChatbotECSService", {
       questionBankTable: props.questionBankTable,
       cluster: props.cluster,
       modelId: bedrockRole.modelId.modelId,
       bedrockRole: bedrockRole.role,
+      sqs: sqs
     });
 
     this.entryLambda = new LambdaCustom(this, "ChatbotLambda", {
-      ecsURL: ecs.fargateServiceUrl,
+      sqs: sqs
     }).lambda;
   }
 }

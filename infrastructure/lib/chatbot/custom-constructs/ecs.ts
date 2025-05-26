@@ -9,6 +9,7 @@ import {
 import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import { Role } from "aws-cdk-lib/aws-iam";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import { Queue } from "aws-cdk-lib/aws-sqs";
 import { Construct } from "constructs";
 import { join } from "path";
 
@@ -17,6 +18,7 @@ interface ECSProps {
   readonly cluster: Cluster;
   readonly modelId: string;
   readonly bedrockRole: Role;
+  readonly sqs: Queue;
 }
 
 export class ECSCustom extends Construct {
@@ -36,7 +38,7 @@ export class ECSCustom extends Construct {
     );
 
     taskDefinition.addContainer(`ECSFargateContainerChatbot`, {
-      image: ContainerImage.fromAsset(join(__dirname, `../ecs-server`)),
+      image: ContainerImage.fromAsset(join(__dirname, `../ecs-service`)),
       logging: LogDrivers.awsLogs({
         streamPrefix: `ecsChatbot`,
         logRetention: RetentionDays.ONE_DAY,
@@ -45,10 +47,12 @@ export class ECSCustom extends Construct {
       environment: {
         BEDROCK_MODEL: props.modelId,
         QUESTION_DB: props.questionBankTable.tableName,
+        SQS_URL: props.sqs.queueUrl,
       },
     });
 
     props.questionBankTable.grantReadData(taskDefinition.taskRole);
+    props.sqs.grantConsumeMessages(taskDefinition.taskRole);
 
     const fargateService = new ApplicationLoadBalancedFargateService(
       this,
