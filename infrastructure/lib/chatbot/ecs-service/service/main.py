@@ -1,6 +1,6 @@
 from utils import *
 
-def handle_message(msg):
+def handle_message(message):
     question_id = message.get("questionId")
     prompt = message.get("prompt")
     socket = message.get("socket", {})

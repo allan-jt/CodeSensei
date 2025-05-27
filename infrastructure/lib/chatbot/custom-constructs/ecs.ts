@@ -1,12 +1,11 @@
-import * as cdk from "aws-cdk-lib";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
 import {
   Cluster,
   ContainerImage,
+  FargateService,
   FargateTaskDefinition,
   LogDrivers,
 } from "aws-cdk-lib/aws-ecs";
-import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
 import { Role } from "aws-cdk-lib/aws-iam";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Queue } from "aws-cdk-lib/aws-sqs";
@@ -22,8 +21,6 @@ interface ECSProps {
 }
 
 export class ECSCustom extends Construct {
-  public readonly fargateServiceUrl: string;
-
   constructor(scope: Construct, id: string, props: ECSProps) {
     super(scope, id);
 
@@ -54,23 +51,19 @@ export class ECSCustom extends Construct {
     props.questionBankTable.grantReadData(taskDefinition.taskRole);
     props.sqs.grantConsumeMessages(taskDefinition.taskRole);
 
-    const fargateService = new ApplicationLoadBalancedFargateService(
+    const fargateService = new FargateService(
       this,
-      `ECSFargateServiceWithALBChatbot`,
+      "ECSFargateServiceChatbot",
       {
         cluster: props.cluster,
         taskDefinition: taskDefinition,
-        publicLoadBalancer: true,
-        loadBalancerName: `ECSExecutorALBChatbot`,
         desiredCount: 1,
       }
     );
 
-    fargateService.service.autoScaleTaskCount({
+    fargateService.autoScaleTaskCount({
       minCapacity: 1,
       maxCapacity: 6,
     });
-
-    this.fargateServiceUrl = fargateService.loadBalancer.loadBalancerDnsName;
   }
 }

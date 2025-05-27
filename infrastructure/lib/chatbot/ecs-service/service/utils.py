@@ -51,7 +51,7 @@ def send_to_socket(socket: dict, message: dict):
         print(f"Error sending to socket: {e}")
 
 def call_bedrock(prompt: str, context: dict) -> str:
-    final_prompt = f"""
+    final_prompt = f"""\n\nHuman:
         You are a helpful assistant designed to support users 
         working on coding problems. Your role is to provide 
         clarifications, explanations, and gentle hints that 
@@ -65,12 +65,9 @@ def call_bedrock(prompt: str, context: dict) -> str:
         Current Coding Problem:
         Title: {context["title"]}
         Description: {context["description"]}
-        Topics: {context["topics"]}
+        Topics: {', '.join(context["topics"])}
 
-
-        User question: {prompt}
-
-        Return only the answer to the user's quesiton.
+        Question: {prompt}\n\nAssistant:
         """
     
     try:
