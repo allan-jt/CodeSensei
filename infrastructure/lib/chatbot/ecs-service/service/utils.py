@@ -51,7 +51,7 @@ def send_to_socket(socket: dict, message: dict):
         print(f"Error sending to socket: {e}")
 
 def call_bedrock(prompt: str, context: dict) -> str:
-    final_prompt = f"""\n\nHuman:
+    system_prompt = f"""
         You are a helpful assistant designed to support users 
         working on coding problems. Your role is to provide 
         clarifications, explanations, and gentle hints that 
@@ -66,26 +66,28 @@ def call_bedrock(prompt: str, context: dict) -> str:
         Title: {context["title"]}
         Description: {context["description"]}
         Topics: {', '.join(context["topics"])}
-
-        Question: {prompt}\n\nAssistant:
-        """
+    """
+    
+    messages = [{"role": "user", "content": prompt}]
     
     try:
         payload = {
-            "prompt": final_prompt,
-            "max_tokens_to_sample": 50,
+            "anthropic_version": "bedrock-2023-05-31",
+            "messages": messages,
+            "system": system_prompt,
+            "max_tokens": 75,
             "temperature": 0.7,
             "top_p": 0.9,
         }
 
         response = bedrock.invoke_model(
-            modelId=bedrock_model,
+            modelId=f"us.{bedrock_model}",
             body=json.dumps(payload),
             contentType="application/json",
             accept="application/json"
         )
-        response_body = json.loads(response["body"].read().decode("utf-8"))
-        return response_body.get("completion", "").strip()
+        response_body = json.loads(response["body"].read())
+        return response_body
     except Exception as e:
         print(f"Error from Bedrock: {e}")
         return "Error generating response."

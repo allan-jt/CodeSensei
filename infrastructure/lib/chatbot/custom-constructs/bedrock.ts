@@ -13,7 +13,7 @@ import {
 export class BedrockAccessRole extends Construct {
   public readonly role: Role;
   public readonly modelId =
-    FoundationModelIdentifier.ANTHROPIC_CLAUDE_3_7_SONNET_20250219_V1_0
+    FoundationModelIdentifier.ANTHROPIC_CLAUDE_3_5_SONNET_20241022_V2_0;
 
   constructor(scope: Construct, id: string) {
     super(scope, id);
