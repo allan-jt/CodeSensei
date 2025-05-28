@@ -25,15 +25,15 @@ export class StorageStack extends cdk.Stack {
 
     // Comment out if you don't want to create OpenSearch
 
-    // const openSearchStack = new OpenSearchStack(this, 'OpenSearchStack', {
-    //   dynamoTable: this.questionBankTable,
-    // });
-    // this.opensearchLambda = openSearchStack.opensearchLamba;
+    const openSearchStack = new OpenSearchStack(this, "OpenSearchStack", {
+      dynamoTable: this.questionBankTable,
+    });
+    this.opensearchLambda = openSearchStack.opensearchLamba;
 
-    // // Export the opensearchLambda ARN for downstream consumption
-    // new cdk.CfnOutput(this, 'OpenSearchLambdaArn', {
-    //   value:       this.opensearchLambda.functionArn,
-    //   description: 'ARN of the OpenSearch init/query Lambda',
-    // });
+    // Export the opensearchLambda ARN for downstream consumption
+    new cdk.CfnOutput(this, "OpenSearchLambdaArn", {
+      value: this.opensearchLambda.functionArn,
+      description: "ARN of the OpenSearch init/query Lambda",
+    });
   }
 }

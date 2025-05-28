@@ -19,43 +19,43 @@ export class CodeSenseiStack extends cdk.Stack {
 
     const ecs = new ECSStack(this, "ECSStack");
 
-    // const auth = new AuthStack(this, "AuthStack", {
-    //   userTable: storage.userTable,
-    // });
+    const auth = new AuthStack(this, "AuthStack", {
+      userTable: storage.userTable,
+    });
 
-    // const assessment = new AssessmentStack(this, "AssessmentStack", {
-    //   env: props?.env,
-    //   opensearchLamba: storage.opensearchLambda,
-    //   cluster: ecs.cluster,
-    // });
+    const assessment = new AssessmentStack(this, "AssessmentStack", {
+      env: props?.env,
+      opensearchLamba: storage.opensearchLambda,
+      cluster: ecs.cluster,
+    });
 
-    // const executor = new ExecutorStack(this, "ExecutorStack", {
-    //   userTable: storage.userTable,
-    //   questionBankTable: storage.questionBankTable,
-    //   assessmentsTable: storage.assessmentsTable,
-    //   assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
-    //   cluster: ecs.cluster,
-    // });
+    const executor = new ExecutorStack(this, "ExecutorStack", {
+      userTable: storage.userTable,
+      questionBankTable: storage.questionBankTable,
+      assessmentsTable: storage.assessmentsTable,
+      assessmentQuestionLocatorTable: storage.assessmentQuestionLocatorTable,
+      cluster: ecs.cluster,
+    });
 
-    // const metrics = new MetricsStack(this, "MetricsStack", {
-    //   appName: appName,
-    //   stackName: `${appName}MetricsStack`,
-    //   metricsTable: storage.metricsTable,
-    //   assessmentsTable: storage.assessmentsTable,
-    //   cluster: ecs.cluster,
-    // });
+    const metrics = new MetricsStack(this, "MetricsStack", {
+      appName: appName,
+      stackName: `${appName}MetricsStack`,
+      metricsTable: storage.metricsTable,
+      assessmentsTable: storage.assessmentsTable,
+      cluster: ecs.cluster,
+    });
 
     const chatbot = new ChatbotStack(this, "ChatBot", {
       cluster: ecs.cluster,
       questionBankTable: storage.questionBankTable,
     });
 
-    // const api = new ApiGatewayStack(this, "APIGatewayStack", {
-    //   executionEntryLambda: executor.executorEntryLambda,
-    //   chatbotEntryLambda: chatbot.chatbotEntryLambda,
-    //   metricsDashboardLambda: metrics.metricsDashboardLambda,
-    //   metricsQuestionLambda: metrics.metricsQuestionLambda,
-    //   assessmentEntryLambda: assessment.lambdaForEcs.fn,
-    // });
+    const api = new ApiGatewayStack(this, "APIGatewayStack", {
+      executionEntryLambda: executor.executorEntryLambda,
+      chatbotEntryLambda: chatbot.entryLambda,
+      metricsDashboardLambda: metrics.metricsDashboardLambda,
+      metricsQuestionLambda: metrics.metricsQuestionLambda,
+      assessmentEntryLambda: assessment.lambdaForEcs.fn,
+    });
   }
 }

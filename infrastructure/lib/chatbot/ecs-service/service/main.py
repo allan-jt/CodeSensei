@@ -13,13 +13,14 @@ def handle_message(message):
     print(context)
     answer = call_bedrock(prompt, context)
     print(answer)
-    send_to_socket(socket, {"message": answer})
+    send_to_socket(socket, {"message": answer, "action": "chatbot"})
+    print("sent to socket")
 
 while True:
     response = sqs.receive_message(
         QueueUrl=sqs_url,
         MaxNumberOfMessages=5,
-        WaitTimeSeconds=10
+        WaitTimeSeconds=5
     )
 
     messages = response.get("Messages", [])

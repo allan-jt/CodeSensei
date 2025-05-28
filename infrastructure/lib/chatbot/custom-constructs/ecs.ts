@@ -6,7 +6,7 @@ import {
   FargateTaskDefinition,
   LogDrivers,
 } from "aws-cdk-lib/aws-ecs";
-import { Role } from "aws-cdk-lib/aws-iam";
+import { Role, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import { Construct } from "constructs";
@@ -50,6 +50,13 @@ export class ECSCustom extends Construct {
 
     props.questionBankTable.grantReadData(taskDefinition.taskRole);
     props.sqs.grantConsumeMessages(taskDefinition.taskRole);
+    taskDefinition.taskRole.addToPrincipalPolicy(
+      new PolicyStatement({
+        actions: ["execute-api:ManageConnections"],
+        resources: ["arn:aws:execute-api:*:*:*/*/POST/@connections/*"],
+      })
+    );
+    
 
     const fargateService = new FargateService(
       this,

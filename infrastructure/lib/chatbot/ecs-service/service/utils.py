@@ -32,7 +32,7 @@ def get_question_context(question_id: str) -> dict:
     except KeyError as e:
         print(f"Missing field in item: {e}")
         return {}
-    except ClientError as e:
+    except Exception as e:
         print(f"Error fetching question context: {e}")
         return {}
 
@@ -47,7 +47,7 @@ def send_to_socket(socket: dict, message: dict):
             ConnectionId=socket["connectionId"],
             Data=json.dumps(message).encode('utf-8')
         )
-    except ClientError as e:
+    except Exception as e:
         print(f"Error sending to socket: {e}")
 
 def call_bedrock(prompt: str, context: dict) -> str:
@@ -62,6 +62,8 @@ def call_bedrock(prompt: str, context: dict) -> str:
         code, respond by helping them understand the concepts or 
         think critically about how to approach the problem.
 
+        Keep your answers concise and under 100 words.
+
         Current Coding Problem:
         Title: {context["title"]}
         Description: {context["description"]}
@@ -75,7 +77,7 @@ def call_bedrock(prompt: str, context: dict) -> str:
             "anthropic_version": "bedrock-2023-05-31",
             "messages": messages,
             "system": system_prompt,
-            "max_tokens": 75,
+            "max_tokens": 250,
             "temperature": 0.7,
             "top_p": 0.9,
         }
@@ -87,7 +89,7 @@ def call_bedrock(prompt: str, context: dict) -> str:
             accept="application/json"
         )
         response_body = json.loads(response["body"].read())
-        return response_body
+        return response_body["content"][0]["text"]
     except Exception as e:
         print(f"Error from Bedrock: {e}")
         return "Error generating response."

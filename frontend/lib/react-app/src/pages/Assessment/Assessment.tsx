@@ -77,6 +77,7 @@ function AssessmentPage({
   };
 
   const handleSocketChatBot = (response: any) => {
+    console.log(response)
     const newMessage: MessageType = {
       sender: "bot",
       text: response.message,
