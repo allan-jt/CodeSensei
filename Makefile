@@ -7,6 +7,16 @@ DYNAMO_DATA = ${INFRA}/lib/storage/dynamo-stack/scripts
 I_CMD = cd ${INFRA} && cdk
 F_CMD = cd ${FRONTEND} && cdk
 
+install_infra_prereq:
+	cd ${INFRA} && npm install
+
+install_frontend_prereq:
+	cd ${FRONTEND} && npm install
+
+install_react_prereq:
+	cd ${REACT_APP} && npm install
+
+install_prereq: install_infra_prereq install_frontend_prereq install_react_prereq
 
 deploy_infra:
 	${I_CMD} deploy --all --require-approval never
