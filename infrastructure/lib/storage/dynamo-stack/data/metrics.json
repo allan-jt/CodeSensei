@@ -1,0 +1,64 @@
+[
+  {
+    "userId": "u001",
+    "metrics": {
+      "time_spent": {
+        "Array#easy": { "count": 1, "total": 60 },
+        "Array#all": { "count": 1, "total": 60 },
+        "all#easy": { "count": 1, "total": 60 },
+        "all#all": { "count": 1, "total": 60 }
+      },
+      "execution_time": {
+        "Array#easy": { "count": 1, "total": 1.2 },
+        "Array#all": { "count": 1, "total": 1.2 },
+        "all#easy": { "count": 1, "total": 1.2 },
+        "all#all": { "count": 1, "total": 1.2 }
+      },
+      "execution_memory": {
+        "Array#easy": { "count": 1, "total": 512 },
+        "Array#all": { "count": 1, "total": 512 },
+        "all#easy": { "count": 1, "total": 512 },
+        "all#all": { "count": 1, "total": 512 }
+      }
+    }
+  },
+  {
+    "userId": "u002",
+    "metrics": {}
+  },
+  {
+    "userId": "u003",
+    "metrics": {
+      "time_spent": {
+        "Array#easy": { "count": 1, "total": 900 },
+        "Array#medium": { "count": 1, "total": 1800 },
+        "Array#all": { "count": 2, "total": 2700 },
+        "Dynamic Programming#medium": { "count": 1, "total": 1800 },
+        "Dynamic Programming#all": { "count": 1, "total": 1800 },
+        "all#easy": { "count": 1, "total": 900 },
+        "all#medium": { "count": 1, "total": 1800 },
+        "all#all": { "count": 2, "total": 2700 }
+      },
+      "execution_time": {
+        "Array#easy": { "count": 1, "total": 1.9 },
+        "Array#medium": { "count": 1, "total": 2.8 },
+        "Array#all": { "count": 2, "total": 4.7 },
+        "Dynamic Programming#medium": { "count": 1, "total": 2.8 },
+        "Dynamic Programming#all": { "count": 1, "total": 2.8 },
+        "all#easy": { "count": 1, "total": 1.9 },
+        "all#medium": { "count": 1, "total": 2.8 },
+        "all#all": { "count": 2, "total": 4.7 }
+      },
+      "execution_memory": {
+        "Array#easy": { "count": 1, "total": 680 },
+        "Array#medium": { "count": 1, "total": 720 },
+        "Array#all": { "count": 2, "total": 1400 },
+        "Dynamic Programming#medium": { "count": 1, "total": 720 },
+        "Dynamic Programming#all": { "count": 1, "total": 720 },
+        "all#easy": { "count": 1, "total": 680 },
+        "all#medium": { "count": 1, "total": 720 },
+        "all#all": { "count": 2, "total": 1400 }
+      }
+    }
+  }
+]
