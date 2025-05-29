@@ -16,7 +16,11 @@ install_frontend_prereq:
 install_react_prereq:
 	cd ${REACT_APP} && npm install
 
-install_prereq: install_infra_prereq install_frontend_prereq install_react_prereq
+install_opensearchpy:
+	cd ${INFRA}/lib/storage/opensearch-stack/lambda-code/ && \
+	pip install opensearch-py --target ./opensearch-py
+
+install_prereq: install_infra_prereq install_frontend_prereq install_react_prereq install_opensearchpy
 
 deploy_infra:
 	${I_CMD} deploy --all --require-approval never
