@@ -67,7 +67,7 @@ AWS Cognito manages user authentication and signups. Upon signup, a Lambda funct
 <img src="media/system_design/Authentication.png" alt="Authentication" style="width: 35%; display: block;"/>
 <br>
 
-The Assessment Handler receives HTTP requests via an entrypoint Lambda, which performs validation before forwarding the request to the main handler service running on ECS. This service queries the Assessment table to gather the current context, including assessment configurations (i.e., selected topics and difficulty levels) and the user’s performance on prior questions. It then passes this context to an LLM on AWS Bedrock, prompting it suggest the topic and difficulty of the next question. To efficiently retrieve matching questions, we query OpenSearch, which is indexed by topic and difficulty, enabling fast lookups without scanning and filtering the entire Questions table. A question ID is randomly selected from the retrieved list, and the corresponding full question is fetched from the Questions table. The question is then returned to the user via the entrypoint Lambda.
+The Assessment Handler receives HTTP requests via an entrypoint Lambda, which performs validation before forwarding the request to the main handler service running on ECS. This service queries the Assessment table to gather the current context, including assessment configurations (i.e., selected topics and difficulty levels) and the user’s performance on prior questions. It then passes this context to an LLM on AWS Bedrock, prompting it to suggest the topic and difficulty of the next question. To efficiently retrieve matching questions, we query OpenSearch, which is indexed by topic and difficulty, enabling fast lookups without scanning and filtering the entire Questions table. A question ID is randomly selected from the retrieved list, and the corresponding full question is fetched from the Questions table. The question is then returned to the user via the entrypoint Lambda.
 
 <img src="media/system_design/Assessment.png" alt="Assessment" style="width: 50%; display: block;"/>
 <br>
@@ -89,7 +89,7 @@ The Metrics feature has two Lambda entrypoints. The getter Lambda retrieves user
 ## Usage
 Because CodeSensei is deployed on AWS from the terminal and implemented using AWS CDK, the below instructions assume that you have an AWS account and installed [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html) and [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html). Additionally, they expect [Node.js](https://nodejs.org/en/download/), [Docker](https://www.docker.com/), TypeScript, Python, and [Make](https://en.wikipedia.org/wiki/Make_(software)) to be installed.
 
-CodeSensei consists of two deployments: the frontend and the infrastructure. Getting both deployed and functional isn't straightforward, as they are interdependent. For this reason, the below instructions need to be followed carefully. 
+CodeSensei consists of two deployments: the frontend and the infrastructure. Getting both deployed and functional isn't straightforward, as they are interdependent. For this reason, the below instructions need to be followed carefully: 
 
 1. Install all package dependencies
    ```bash
@@ -97,42 +97,43 @@ CodeSensei consists of two deployments: the frontend and the infrastructure. Get
 2. Build the react app for frontend deployment
    ```bash
    make build_frontend
-4. Deploy the frontend (takes ~10 minutes)
+3. Deploy the frontend (takes ~10 minutes)
    ```bash
    make deploy_frontend
-7. Deploy the infrastructure (takes ~30 minutes)
+4. Deploy the infrastructure (takes ~30 minutes)
    ```bash
    make deploy_infra
-9. Extract the following variables from the deployments using the AWS console:
+5. Extract the following variables from the deployments using the AWS console:
    - `frontend url` from CloudFront
    - `client id` from Cognito (see app client settings)
    - `authority` from Cognito (see domain in app client settings)
    - `socket url` from API Gateway (see socket API)
    - `http url` from API Gateway (see http API)
-10. In Cognito, replace the allowed callback URLs in the app client settings with `frontend url`
-11. Duplicate `.env.example` in `./frontend/`
+6. In Cognito, replace the allowed callback URLs in the app client settings with `frontend url`
+    
+7. Duplicate `.env.example` in `./frontend/`
     ```bash
     cp frontend/.env.example frontend/.env
-13. Fill in the following variables in `frontend/.env` using values obtained from step 5:
+8. Fill in the following variables in `frontend/.env` using values obtained from step 5:
     ```bash
     CLIENT_ID=<client id>
     AUTHORITY=<authority>
     SOCKET_URL=<socket url>
     HTTP_URL=<http url>
     REDIRECT_URL=<frontend url>
-11. Generate an env file in the frontend build for deployment
+9. Generate an env file in the frontend build for deployment
     ```bash
     make gen_frontend_env
-13. Re-deploy the frontend with the env file (takes ~3 minutes)
+10. Re-deploy the frontend with the env file (takes ~3 minutes)
     ```bash
     make deploy_frontend
-14. Seed the Questions DynamoDB table with sample questions
+11. Seed the Questions DynamoDB table with sample questions
     ```bash
     make seed_dynamo questions
-15. Index the OpenSearch service using data from the Questions table (may need to run twice)
+12. Index the OpenSearch service using data from the Questions table (may need to run twice)
     ```bash
     make seed_opensearch
-16. Destroy the resources when done
+13. Destroy the resources when done
     ```bash
     make destroy_all
 
