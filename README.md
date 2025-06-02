@@ -42,23 +42,32 @@ Upon completing all questions, users can submit the assessment and view detailed
 
 ## System Design
 
-![Architecture](media/system_design/Architecture.png)
+<img src="media/system_design/Architecture.png" alt="Architecture" style="width: 60%; display: block;">
+<br>
 
-![Databases](media/system_design/Databases.png)
+<img src="media/system_design/Databases.png" alt="Databases" style="width: 60%; display: block;"/>
+<br>
 
-![Containers](media/system_design/Containers.png)
+<img src="media/system_design/Containers.png" alt="Containers" style="width: 85%; display: block;"/>
+<br>
 
-![Frontend](media/system_design/Frontend.png)
+<img src="media/system_design/Frontend.png" alt="Frontend" style="width: 30%; display: block;"/>
+<br>
 
-![Authentication](media/system_design/Authentication.png)
+<img src="media/system_design/Authentication.png" alt="Authentication" style="width: 35%; display: block;"/>
+<br>
 
-![Assessment](media/system_design/Assessment.png)
+<img src="media/system_design/Assessment.png" alt="Assessment" style="width: 50%; display: block;"/>
+<br>
 
-![Chatbot](media/system_design/Chatbot.png)
+<img src="media/system_design/Chatbot.png" alt="Chatbot" style="width: 55%; display: block;"/>
+<br>
 
-![Execution](media/system_design/Execution.png)
+<img src="media/system_design/Execution.png" alt="Execution" style="width: 70%; display: block;"/>
+<br>
 
-![Metrics](media/system_design/Metrics.png)
+<img src="media/system_design/Metrics.png" alt="Metrics" style="width: 45%; display: block;"/>
+
 
 ## Contributors
 - Aaron Bengochea
