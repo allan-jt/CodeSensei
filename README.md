@@ -44,6 +44,22 @@ Upon completing all questions, users can submit the assessment and view detailed
 
 ![Architecture](media/system_design/Architecture.png)
 
+![Databases](media/system_design/Databases.png)
+
+![Containers](media/system_design/Containers.png)
+
+![Frontend](media/system_design/Frontend.png)
+
+![Authentication](media/system_design/Authentication.png)
+
+![Assessment](media/system_design/Assessment.png)
+
+![Chatbot](media/system_design/Chatbot.png)
+
+![Execution](media/system_design/Execution.png)
+
+![Metrics](media/system_design/Metrics.png)
+
 ## Contributors
 - Aaron Bengochea
 - Timothy Cao
