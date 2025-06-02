@@ -36,10 +36,13 @@ After completing a question, users can proceed to the next one, which is selecte
 ![Next](media/demo/submit_and_next.gif)
 
 #### Assessment Submission and Metrics
-Upon completing all questions, users can submit the assessment and view detailed metrics, including time spent, execution time, and memory usage by a combination of topic and difficulty.
+Upon completing all questions, users can submit the assessment and view detailed metrics on time spent, execution time, and memory usage, broken down by topic and difficulty. They can also view aggregate metrics across assessments to benchmark their overall performance.
 
 ![Metrics](media/demo/metrics.gif)
 
+## System Design
+
+![Architecture](media/system_design/Architecture.png)
 
 ## Contributors
 - Aaron Bengochea
